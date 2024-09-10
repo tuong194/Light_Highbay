@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #endif
 
+#include "../mesh/RD_Lib.h"
 
 /** @addtogroup Mesh_Common
   * @{
@@ -66,6 +67,7 @@ u8 ct_flag = 0; // always HSL
 #define RES_HW_PWM_G    {PWM_G, PWMID_G, PWM_INV_G, PWM_FUNC_G}
 #define RES_HW_PWM_B    {PWM_B, PWMID_B, PWM_INV_B, PWM_FUNC_B}
 #define RES_HW_PWM_W    {PWM_W, PWMID_W, PWM_INV_W, PWM_FUNC_W}
+#define RES_HW_PWM_Y    {PWM_Y, PWMID_Y, PWM_INV_Y, PWM_FUNC_Y}
 #endif
 
 #if MD_SERVER_EN
@@ -88,8 +90,8 @@ const light_res_hw_t light_res_hw[LIGHT_CNT][3] = {
 	/*[0] = */{RES_HW_PWM_R, RES_HW_PWM_G, RES_HW_PWM_W},
 };
 	#else
-const light_res_hw_t light_res_hw[LIGHT_CNT][2] = {
-	/*[0] = */{RES_HW_PWM_R, RES_HW_PWM_G},
+const light_res_hw_t light_res_hw[LIGHT_CNT][2] = { //RD_EDIT
+	/*[0] = */{RES_HW_PWM_W, RES_HW_PWM_Y},
 };
 	#endif
 #else
@@ -111,7 +113,9 @@ const light_res_hw_t light_res_hw[LIGHT_CNT][1] = {
 #endif
 #endif
 
-const u32 GPIO_LED_INDEX = (((u32)GPIO_LED == (u32)PWM_R) ? 0 : (((u32)GPIO_LED == (u32)PWM_G) ? 1 : (((u32)GPIO_LED == (u32)PWM_B) ? 2 : (((u32)GPIO_LED == (u32)PWM_W) ? 3 : 0))));
+//const u32 GPIO_LED_INDEX = (((u32)GPIO_LED == (u32)PWM_R) ? 0 : (((u32)GPIO_LED == (u32)PWM_G) ? 1 : (((u32)GPIO_LED == (u32)PWM_B) ? 2 : (((u32)GPIO_LED == (u32)PWM_W) ? 3 : 0))));
+// RD_EDIT
+const u32 GPIO_LED_INDEX = (((u32)GPIO_LED == (u32)PWM_R) ? 0 : (((u32)GPIO_LED == (u32)PWM_G) ? 1 : (((u32)GPIO_LED == (u32)PWM_B) ? 2 : (((u32)GPIO_LED == (u32)PWM_W) ? 3 : (((u32)GPIO_LED == (u32)PWM_Y) ? 4 : 0)))));
 
 #define LIGHT_ADJUST_INTERVAL       (20)   // unit :ms;     min:20ms; max 100ms
 
@@ -840,6 +844,7 @@ _USER_CAN_REDEFINE_ void light_dim_refresh(int idx) // idx: index of LIGHT_CNT.
 	// u16 lightness = get_lightness_from_level(p_trans->present);
 #if (LIGHT_TYPE_SEL != LIGHT_TYPE_HSL)
 	u32 lightness_65535 = s16_to_u16(p_trans_l->present);
+	u8 lum_100 = level2lum(p_trans_l->present);            // RD_EDIT lum_100
 #endif
 
     //LOG_MSG_INFO(DEBUG_SHOW_VC_SELF_EN ? TL_LOG_COMMON : TL_LOG_MESH,0,0,"present_lum %d", lum_100);
@@ -861,7 +866,22 @@ _USER_CAN_REDEFINE_ void light_dim_refresh(int idx) // idx: index of LIGHT_CNT.
 	light_dim_refresh_mi_ct(idx);
             #else
 	st_transition_t *p_trans_ct = P_ST_TRANS(idx, ST_TRANS_CTL_TEMP);
+
+//	u16 temp = light_ctl_temp_prensent_get(idx);
+//	u8 ct_100 = temp_to_temp100_hw(temp);
 	u32 ct_65535 = s16_to_u16(p_trans_ct->present);
+	u8 ct_100 = temp_to_temp100_hw(ct_65535);          // RD_EDIT ct_100
+
+	u16 vrs_lum = 0;
+#if (SELECT_DIM == RD_DIM_0) // RD_EDIT: cong suat den
+	vrs_lum = lum_100;
+#elif (SELECT_DIM == RD_DIM_10)
+	vrs_lum = 10 + lum_100*0.9;
+#elif (SELECT_DIM == RD_DIM_20)
+	vrs_lum = 20 + lum_100*0.8;
+#elif (SELECT_DIM == RD_DIM_25)
+	vrs_lum = 25 + lum_100*0.75;
+#endif
     if(ct_flag && (lightness_65535 != 0)){
 		#if 0 // to get color temperature value from level which store in flash.
 	    u16 color_temperature = light_ctl_temp_prensent_get(idx); // range from CTL_TEMP_MIN(800) to CTL_TEMP_MAX(20000) by default.
@@ -871,12 +891,21 @@ _USER_CAN_REDEFINE_ void light_dim_refresh(int idx) // idx: index of LIGHT_CNT.
     }
 
     if(ct_flag){
-		u32 warn_led_lightness = ((65535 - ct_65535) * lightness_65535) / 65535;
-		u32 cold_led_lightness = (ct_65535 * lightness_65535) / 65535;
-		u32 warn_led_pwm = get_pwm_smooth(warn_led_lightness, LIGHTNESS_AVERAGE_STEP);
-		u32 cold_led_pwm = get_pwm_smooth(cold_led_lightness, LIGHTNESS_AVERAGE_STEP);
-		light_dim_set_hw(idx, 0, warn_led_pwm);
-		light_dim_set_hw(idx, 1, cold_led_pwm); 
+//		u32 warn_led_lightness = ((65535 - ct_65535) * lightness_65535) / 65535;
+//		u32 cold_led_lightness = (ct_65535 * lightness_65535) / 65535;
+//		u32 warn_led_pwm = get_pwm_smooth(warn_led_lightness, LIGHTNESS_AVERAGE_STEP);
+//		u32 cold_led_pwm = get_pwm_smooth(cold_led_lightness, LIGHTNESS_AVERAGE_STEP);
+//		light_dim_set_hw(idx, 0, warn_led_pwm);
+//		light_dim_set_hw(idx, 1, cold_led_pwm);
+
+		//RD_EDIT control dim, ctt
+		if(lum_100 == 0){
+			light_dim_set_hw(idx, 0, get_pwm_cmp(0xff,ct_100));
+			light_dim_set_hw(idx, 1, get_pwm_cmp(0xff,0));
+		}else{
+			light_dim_set_hw(idx, 0, get_pwm_cmp(0xff,ct_100));
+			light_dim_set_hw(idx, 1, get_pwm_cmp(0xff,vrs_lum));
+		}
 		
 		//LOG_MSG_LIB(TL_LOG_NODE_SDK,0,0,"pwm:0x%04x,0x%04x", warn_led_pwm, cold_led_pwm);
     }
@@ -2138,6 +2167,23 @@ void light_ev_with_sleep(u32 count, u32 half_cycle_us)
 	gpio_write(GPIO_LED, 0);
 }
 
+void RD_light_ev_with_sleep(u32 count, u32 half_cycle_us){
+	for(u32 i = 0; i<count; i++){
+#if (MODULE_WATCHDOG_ENABLE)
+		wd_clear();
+#endif
+		light_dim_set_hw(0, 0, get_pwm_cmp(0xff, 255));
+		light_dim_set_hw(0, 1, get_pwm_cmp(0xff,255));
+		sleep_us(half_cycle_us);
+#if (MODULE_WATCHDOG_ENABLE)
+		wd_clear();
+#endif
+		light_dim_set_hw(0, 0, get_pwm_cmp(0xff, 0));
+		light_dim_set_hw(0, 1, get_pwm_cmp(0xff,0));
+		sleep_us(half_cycle_us);
+	}
+}
+
 /**
  * @brief       This function flash LED for ota event.
  * @param[in]   result	- ota result
@@ -2171,7 +2217,8 @@ _USER_CAN_REDEFINE_ void show_ota_result(int result)
  */
 _USER_CAN_REDEFINE_ void show_factory_reset()
 {
-	light_ev_with_sleep(6, 500*1000);	//1Hz shine for  6 second
+	//light_ev_with_sleep(6, 500*1000);	//1Hz shine for  6 second
+	RD_light_ev_with_sleep(3, 500*1000); // RD_EDIT: nhay led 3 lan sau kick out
 }
 #endif
 

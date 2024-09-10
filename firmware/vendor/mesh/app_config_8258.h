@@ -101,8 +101,9 @@ extern "C" {
 	#if GATT_RP_EN
 #define HCI_ACCESS		HCI_USE_UART
 	#else
-#define HCI_ACCESS		HCI_USE_NONE
+#define HCI_ACCESS		HCI_USE_UART // RD_EDIT uart
 	#endif
+
 #endif 
 
 #if (HCI_ACCESS==HCI_USE_UART)
@@ -370,10 +371,12 @@ extern "C" {
 
 //---------------  LED / PWM
 #if(PCBA_8258_SEL == PCBA_8258_DONGLE_48PIN)
-#define PWM_R       GPIO_PWM1A3		//red
-#define PWM_G       GPIO_PWM0A2		//green
-#define PWM_B       GPIO_PWM3B0		//blue
-#define PWM_W       GPIO_PWM4B1		//white
+#define PWM_R       GPIO_PC4		//red
+#define PWM_G       GPIO_PWM1C3		//green
+#define PWM_B       GPIO_PWM0C2		//blue
+#define PWM_W       GPIO_PWM4B4		//white
+#define PWM_Y       GPIO_PWM5B5		//yellow  //RD_EDIT pin config
+
 #elif(PCBA_8258_SEL == PCBA_8258_C1T140A3_V1_1)
 #define PWM_R       GPIO_PWM2ND4    //red
 #define PWM_G       GPIO_PWM0NA0    //green
@@ -396,16 +399,19 @@ extern "C" {
 #define PWM_FUNC_G  AS_PWM  // AS_PWM_SECOND
 #define PWM_FUNC_B  AS_PWM  // AS_PWM_SECOND
 #define PWM_FUNC_W  AS_PWM  // AS_PWM_SECOND
+#define PWM_FUNC_Y  AS_PWM  // AS_PWM_SECOND   //RD_EDIT func conf
 
 #define PWMID_R     (GET_PWMID(PWM_R, PWM_FUNC_R))
 #define PWMID_G     (GET_PWMID(PWM_G, PWM_FUNC_G))
 #define PWMID_B     (GET_PWMID(PWM_B, PWM_FUNC_B))
 #define PWMID_W     (GET_PWMID(PWM_W, PWM_FUNC_W))
+#define PWMID_Y     (GET_PWMID(PWM_Y, PWM_FUNC_Y))  // RD_EDIT
                     
 #define PWM_INV_R   (GET_PWM_INVERT_VAL(PWM_R, PWM_FUNC_R))
 #define PWM_INV_G   (GET_PWM_INVERT_VAL(PWM_G, PWM_FUNC_G))
 #define PWM_INV_B   (GET_PWM_INVERT_VAL(PWM_B, PWM_FUNC_B))
 #define PWM_INV_W   (GET_PWM_INVERT_VAL(PWM_W, PWM_FUNC_W))
+#define PWM_INV_Y   (GET_PWM_INVERT_VAL(PWM_Y, PWM_FUNC_Y)) //RD_EDIT
 
 #ifndef GPIO_LED
 #define GPIO_LED	PWM_R

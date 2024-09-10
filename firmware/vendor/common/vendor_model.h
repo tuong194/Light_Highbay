@@ -144,6 +144,10 @@ extern u8 max_time_10ms;
 #define VD_MESH_TRANS_TIME_SET			0xc7
 #endif
 
+
+//RD_EDIT OPCODE VENDER RANG DONG
+#define RD_OPCODE_TYPE_SEND            (0xE0)
+#define RD_OPCDOE_TYPE_RSP             (0xE1)
 //------op parameters
 typedef struct{
 	u8 code;

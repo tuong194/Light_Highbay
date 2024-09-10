@@ -26,6 +26,7 @@ RM := rm -rf
 -include vendor/common/llsync/samples/telink/main/hal/subdir.mk
 -include vendor/common/llsync/hal/subdir.mk
 -include vendor/common/certify_base/subdir.mk
+-include vendor/TUONG/subdir.mk
 -include proj/mcu_spec/subdir.mk
 -include proj/mcu/subdir.mk
 -include proj/drivers/subdir.mk

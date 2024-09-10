@@ -42,6 +42,8 @@
 #include "pair_provision.h"
 #endif
 
+#include "../TUONG/RD_Secure.h"
+
 #if (VENDOR_MD_NORMAL_EN)
 model_vd_light_t       	model_vd_light;
 
@@ -1050,6 +1052,9 @@ mesh_cmd_sig_func_t mesh_cmd_vd_func[] = {
     CMD_NO_STR(VD_MESH_USER_DEMO_STATUS, 1, VENDOR_MD_LIGHT_S, VENDOR_MD_LIGHT_C, cb_vd_user_demo_status, STATUS_NONE),
 	#endif
 #endif
+
+    //RD_EDIT opcode vender
+    {RD_OPCODE_TYPE_SEND, 0, VENDOR_MD_LIGHT_C, VENDOR_MD_LIGHT_S, RD_Messenger_CheckSecure, RD_OPCDOE_TYPE_RSP},
 
     USER_MESH_CMD_VD_ARRAY
 };

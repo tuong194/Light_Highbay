@@ -33,6 +33,7 @@ vendor/common/llsync/samples/telink/main \
 vendor/common/llsync/samples/telink/main/hal \
 vendor/common/llsync/hal \
 vendor/common/certify_base \
+vendor/TUONG \
 proj/mcu_spec \
 proj/mcu \
 proj/drivers \

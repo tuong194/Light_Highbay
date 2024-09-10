@@ -307,6 +307,7 @@ extern void uart_set_cts(unsigned char Enable, unsigned char Select,UART_CtsPinD
 */
 extern void uart_gpio_set(UART_TxPinDef tx_pin,UART_RxPinDef rx_pin);
 
+unsigned char uart_Csend(char* data);//RD_EDIT uart
 
 #endif
 
