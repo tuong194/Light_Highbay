@@ -609,6 +609,7 @@ void kick_out(int led_en){
     #if !WIN32
     if(led_en){
         show_factory_reset();
+    	//RD_light_ev_with_sleep(3, 500*1000); // RD_EDIT: nhay led 3 lan sau kick out
     }
     mesh_start_reboot();
     #endif

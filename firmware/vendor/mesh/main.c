@@ -32,6 +32,9 @@
 #include "proj_lib/sig_mesh/app_mesh.h"
 
 #include "../TUONG/RD_Secure.h"
+#include "../TUONG/RD_MessData.h"
+
+extern uint8_t step_down;
 
 extern void user_init();
 extern void main_loop ();
@@ -225,7 +228,11 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		user_init();
 		uart_init_baudrate(9600,CLOCK_SYS_CLOCK_HZ,PARITY_NONE, STOP_BIT_ONE);
 		uart_gpio_set(GPIO_PA7,GPIO_PD0);
+		uart_dma_enable(0,0);
 		uart_Csend("start\n");
+
+		Read_val_kick_out();
+
 	}
 
     irq_enable();
@@ -235,7 +242,12 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		wd_clear(); //clear watch dog
 #endif
 		main_loop ();
+
+//		sprintf(buf,"%d\n",system_time_ms);
+//		uart_Csend(buf);
+
 		check_done_provision();
+		reset_kickout();
 
 	}
 }

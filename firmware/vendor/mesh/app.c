@@ -77,6 +77,8 @@
 #include "vendor/common/sensors_model.h"
 #endif
 
+#include "../TUONG/RD_sceen.h"
+
 #define BLT_RX_FIFO_SIZE        (MESH_DLE_MODE ? DLE_RX_FIFO_SIZE : 64)
 #define BLT_TX_FIFO_SIZE        (MESH_DLE_MODE ? DLE_TX_FIFO_SIZE : 40)
 #if GATT_LPN_EN
@@ -183,6 +185,16 @@ u8 find_mac_in_filter_list(u8 *p_mac)
 }
 #endif
 
+typedef struct{
+	u8 length;
+	u8 type;
+	u16 vid;
+	u8 frame;
+	u32 counter;
+	u8 type_device;
+	u8 key;
+	u32 signature;
+}switchKP9_proxy_t;
 
 //----------------------- handle BLE event ---------------------------------------------
 int app_event_handler (u32 h, u8 *p, int n)
@@ -201,6 +213,23 @@ int app_event_handler (u32 h, u8 *p, int n)
 		if (subcode == HCI_SUB_EVT_LE_ADVERTISING_REPORT)	// ADV packet
 		{
 			event_adv_report_t *pa = (event_adv_report_t *)p;
+			/*-----------------------------------------------------------------------------------------------------------------*/		//RD_EDIT K9BHC
+			mesh_cmd_bear_t *p_bear = GET_BEAR_FROM_ADV_PAYLOAD(pa->data);
+			adv_report_extend_t *p_extend = get_adv_report_extend(&p_bear->len);
+			switchKP9_proxy_t *KP9_Data_Rec = (switchKP9_proxy_t *)(pa->data);
+			if((KP9_Data_Rec->type == 0xff) && (KP9_Data_Rec->length == 0x0e)){
+				if((event_cb_num != KP9_Data_Rec->counter) && (KP9_Data_Rec->key & 0x80) != 0x80){
+					event_cb_num = KP9_Data_Rec->counter;
+					uint32_t MacK9B_Buff = (uint32_t) (pa->mac[0]<<24 | pa->mac[1]<<16 | pa->mac[2]<<8 | pa->mac[3]);
+					uint8_t key_buff = KP9_Data_Rec->key;
+					RD_Check_ScanK9BHC(MacK9B_Buff, KP9_Data_Rec->type_device, p_extend->rssi);
+
+					//scan press sceen
+
+				}
+			}
+
+			/*-----------------------------------------------------------------------------------------------------------------*/
 			#if MD_REMOTE_PROV
 				#if REMOTE_PROV_SCAN_GATT_EN
 			mesh_cmd_conn_prov_adv_cb(pa);// only for the remote gatt-provision proc part.

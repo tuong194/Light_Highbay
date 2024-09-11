@@ -119,7 +119,7 @@ void check_done_provision(void) {
 
 void Kickout_Security(void) {
 	if (flag_provision == TRUE) {
-		if (flag_process_aes == -1 && clock_time_s() - vrs_time_bindall > 120) { // ko co ban tin
+		if (flag_process_aes == -1 && clock_time_s() - vrs_time_bindall > 60) { // ko co ban tin
 			flag_provision = FALSE;
 			flag_process_aes = -1;
 			kick_out(1);

@@ -456,6 +456,7 @@ void set_keep_onoff_state_after_ota();
 void clr_keep_onoff_state_after_ota();
 int is_state_after_ota();
 void RD_light_ev_with_sleep(u32 count, u32 half_cycle_us);// RD_EDIT
+void RD_light_ev1(void);
 
 extern u16 g_op_access_layer_rx;
 

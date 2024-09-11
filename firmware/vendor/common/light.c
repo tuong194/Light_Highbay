@@ -2038,7 +2038,10 @@ void proc_led(void)
                     #ifdef CB_USER_PROC_LED_ONOFF_DRIVER  // user can define in "user_app_config.h"
                     CB_USER_PROC_LED_ONOFF_DRIVER(led_on);
                     #else
-                    light_dim_set_hw(GPIO_LED_INDEX, 0, LED_INDICATE_VAL * led_on);
+                    //light_dim_set_hw(GPIO_LED_INDEX, 0, LED_INDICATE_VAL * led_on);
+
+                    light_dim_set_hw(GPIO_LED_INDEX, 0, LED_INDICATE_VAL * led_on); //RD_EDIT
+                    light_dim_set_hw(GPIO_LED_INDEX, 1, LED_INDICATE_VAL * led_on);
                     #endif
                 }
                 #if 0
@@ -2167,7 +2170,7 @@ void light_ev_with_sleep(u32 count, u32 half_cycle_us)
 	gpio_write(GPIO_LED, 0);
 }
 
-void RD_light_ev_with_sleep(u32 count, u32 half_cycle_us){
+void RD_light_ev_with_sleep(u32 count, u32 half_cycle_us){ //RD_EDIT: nhay led
 	for(u32 i = 0; i<count; i++){
 #if (MODULE_WATCHDOG_ENABLE)
 		wd_clear();
@@ -2182,6 +2185,21 @@ void RD_light_ev_with_sleep(u32 count, u32 half_cycle_us){
 		light_dim_set_hw(0, 1, get_pwm_cmp(0xff,0));
 		sleep_us(half_cycle_us);
 	}
+}
+
+void RD_light_ev1(void){
+#if (MODULE_WATCHDOG_ENABLE)
+		wd_clear();
+#endif
+		light_dim_set_hw(0, 0, get_pwm_cmp(0xff, 0));
+		light_dim_set_hw(0, 1, get_pwm_cmp(0xff,0));
+		sleep_ms(500);
+#if (MODULE_WATCHDOG_ENABLE)
+		wd_clear();
+#endif
+		light_dim_set_hw(0, 0, get_pwm_cmp(0xff, 255));
+		light_dim_set_hw(0, 1, get_pwm_cmp(0xff,255));
+		sleep_ms(500);
 }
 
 /**

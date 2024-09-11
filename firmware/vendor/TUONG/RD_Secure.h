@@ -17,7 +17,7 @@
 #include "proj_lib/ble/ll/ll.h"
 #include "proj_lib/sig_mesh/app_mesh.h"
 
-#define EN_SECURE 1
+#define EN_SECURE 0
 
 typedef struct{
 	uint8_t Header[2];
