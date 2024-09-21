@@ -3494,7 +3494,7 @@ int mesh_provision_par_set(provison_net_info_str *p_prov_data)
 	// after provision ,need to enter search mode first .
 	mesh_iv_update_enter_search_mode();
 	#endif
-	rf_link_light_event_callback(LGT_CMD_PROV_SUC_EVE);
+	//rf_link_light_event_callback(LGT_CMD_PROV_SUC_EVE);  //RD_EDIT: DISABLE provision
 	provision_mag_cfg_s_store();
 	return 0;
 }

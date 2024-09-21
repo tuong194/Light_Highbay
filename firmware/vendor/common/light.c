@@ -90,7 +90,7 @@ const light_res_hw_t light_res_hw[LIGHT_CNT][3] = {
 	/*[0] = */{RES_HW_PWM_R, RES_HW_PWM_G, RES_HW_PWM_W},
 };
 	#else
-const light_res_hw_t light_res_hw[LIGHT_CNT][2] = { //RD_EDIT
+const light_res_hw_t light_res_hw[LIGHT_CNT][2] = { //RD_EDIT: idx = LIGHT_CNT, idx2 = 2
 	/*[0] = */{RES_HW_PWM_W, RES_HW_PWM_Y},
 };
 	#endif
@@ -114,7 +114,7 @@ const light_res_hw_t light_res_hw[LIGHT_CNT][1] = {
 #endif
 
 //const u32 GPIO_LED_INDEX = (((u32)GPIO_LED == (u32)PWM_R) ? 0 : (((u32)GPIO_LED == (u32)PWM_G) ? 1 : (((u32)GPIO_LED == (u32)PWM_B) ? 2 : (((u32)GPIO_LED == (u32)PWM_W) ? 3 : 0))));
-// RD_EDIT
+// RD_EDIT gpio
 const u32 GPIO_LED_INDEX = (((u32)GPIO_LED == (u32)PWM_R) ? 0 : (((u32)GPIO_LED == (u32)PWM_G) ? 1 : (((u32)GPIO_LED == (u32)PWM_B) ? 2 : (((u32)GPIO_LED == (u32)PWM_W) ? 3 : (((u32)GPIO_LED == (u32)PWM_Y) ? 4 : 0)))));
 
 #define LIGHT_ADJUST_INTERVAL       (20)   // unit :ms;     min:20ms; max 100ms
@@ -867,10 +867,10 @@ _USER_CAN_REDEFINE_ void light_dim_refresh(int idx) // idx: index of LIGHT_CNT.
             #else
 	st_transition_t *p_trans_ct = P_ST_TRANS(idx, ST_TRANS_CTL_TEMP);
 
-//	u16 temp = light_ctl_temp_prensent_get(idx);
+	u16 temp = light_ctl_temp_prensent_get(idx);
 //	u8 ct_100 = temp_to_temp100_hw(temp);
-	u32 ct_65535 = s16_to_u16(p_trans_ct->present);
-	u8 ct_100 = temp_to_temp100_hw(ct_65535);          // RD_EDIT ct_100
+	//u32 ct_65535 = s16_to_u16(p_trans_ct->present);
+	u8 ct_100 = temp_to_temp100_hw(temp);          // RD_EDIT ct_100
 
 	u16 vrs_lum = 0;
 #if (SELECT_DIM == RD_DIM_0) // RD_EDIT: cong suat den
@@ -2109,6 +2109,9 @@ _USER_CAN_REDEFINE_ void rf_link_light_event_callback (u8 status)
 	    #else
         cfg_led_event(LED_EVENT_FLASH_1HZ_3S);
         #endif
+    }else if(status==LGT_CMD_SET_SCENE){		//RD_EDIT: nhay 2 lan set Scene
+    	cfg_led_event(LED_EVENT_FLASH_1HZ_2S);  // T= 1s => 2s: nhay 2 chu ky
+
 #if DEBUG_BLE_EVENT_ENABLE
     }else if(status == LGT_CMD_BLE_ADV){
 		cfg_led_event(LED_EVENT_FLASH_1HZ_2S);
@@ -2182,7 +2185,7 @@ void RD_light_ev_with_sleep(u32 count, u32 half_cycle_us){ //RD_EDIT: nhay led
 		wd_clear();
 #endif
 		light_dim_set_hw(0, 0, get_pwm_cmp(0xff, 0));
-		light_dim_set_hw(0, 1, get_pwm_cmp(0xff,0));
+		light_dim_set_hw(0, 1, get_pwm_cmp(0xff, 0));
 		sleep_us(half_cycle_us);
 	}
 }

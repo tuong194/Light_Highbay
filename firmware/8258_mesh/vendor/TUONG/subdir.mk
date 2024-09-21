@@ -5,10 +5,12 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../vendor/TUONG/RD_MessData.c \
+../vendor/TUONG/RD_Sceen.c \
 ../vendor/TUONG/RD_Secure.c 
 
 OBJS += \
 ./vendor/TUONG/RD_MessData.o \
+./vendor/TUONG/RD_Sceen.o \
 ./vendor/TUONG/RD_Secure.o 
 
 

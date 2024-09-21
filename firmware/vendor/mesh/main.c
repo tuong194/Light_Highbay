@@ -33,6 +33,7 @@
 
 #include "../TUONG/RD_Secure.h"
 #include "../TUONG/RD_MessData.h"
+#include "../TUONG/RD_sceen.h"
 
 extern uint8_t step_down;
 
@@ -227,7 +228,7 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		#endif
 		user_init();
 		uart_init_baudrate(9600,CLOCK_SYS_CLOCK_HZ,PARITY_NONE, STOP_BIT_ONE);
-		uart_gpio_set(GPIO_PA7,GPIO_PD0);
+		uart_gpio_set(GPIO_PD7,GPIO_PD0);
 		uart_dma_enable(0,0);
 		uart_Csend("start\n");
 
@@ -243,12 +244,20 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 #endif
 		main_loop ();
 
-//		sprintf(buf,"%d\n",system_time_ms);
-//		uart_Csend(buf);
-
 		check_done_provision();
 		reset_kickout();
+		RD_K9B_TimeOutScan_OnOff();
+
+
+
 
 	}
 }
 #endif
+
+
+
+
+
+
+

@@ -1330,7 +1330,7 @@ typedef struct{
 #endif
 }model_g_power_level_t;
 
-#define SCENE_CNT_MAX			(16)
+#define SCENE_CNT_MAX			(50) //RD_EDIT max num scene
 
 typedef struct{
 	u16 id;

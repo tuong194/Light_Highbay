@@ -3099,7 +3099,7 @@ void ble_mac_init()
 		#if(MCU_CORE_TYPE == MCU_CORE_8258)
 			tbl_mac[3] = 0x38;             //company id: 0xA4C138
 			tbl_mac[4] = 0xC1;
-			tbl_mac[5] = 0xA4;
+			tbl_mac[5] = 0xA5;
 		#elif(MCU_CORE_TYPE == MCU_CORE_8278)
 			tbl_mac[3] = 0xD1;             //company id: 0xC119D1
 			tbl_mac[4] = 0x19;

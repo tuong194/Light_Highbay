@@ -417,6 +417,7 @@ u8 light_remain_time_get(st_transition_t *p_trans);
 #define	LGT_CMD_SET_SUBSCRIPTION        0xc7 // light event for set subscription address
 #define	LGT_CMD_FRIEND_SHIP_OK          0xc8 // light event for friend ship establish ok.
 #define	LGT_CMD_DUAL_MODE_MESH        	0xc9
+#define LGT_CMD_SET_SCENE               0xca // RD_EDIT: status scene
 
 #define LGT_CMD_SWITCH_POWERON 			0xd0
 #define LGT_CMD_SWITCH_PROVISION		0xd1

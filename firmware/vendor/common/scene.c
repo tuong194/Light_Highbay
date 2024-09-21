@@ -285,6 +285,7 @@ int mesh_cmd_sig_scene_set(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 	
 	if(cb_par->op_rsp != STATUS_NONE){
 		err = mesh_scene_reg_st_rsp(cb_par, st);
+		rf_link_light_event_callback(LGT_CMD_SET_SCENE); // RD_EDIT: nhay scene
 	}
 	
     return err;

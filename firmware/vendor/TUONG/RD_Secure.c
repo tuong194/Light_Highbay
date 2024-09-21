@@ -83,8 +83,9 @@ int RD_Messenger_CheckSecure(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 		}
 		break;
 
-		return 0;
+
 	}
+	return 0;
 }
 void check_done_provision(void) {
 	static u8 first = 0;
@@ -99,16 +100,18 @@ void check_done_provision(void) {
 			vrs_time_bindall = clock_time_s();
 		} else if (flag_process_aes == 1) { // ma hoa dung
 			RD_light_ev_with_sleep(3, 500 * 1000); // T=1s, nhay 3 lan
-			st_pub_list_t pub_list = { { 0 } };
-			mesh_cmd_light_ctl_set_t p_set_ctl;
-			mesh_cmd_lightness_set_t p_set_light;
-			p_set_ctl.temp = 0x0320;
-			p_set_ctl.lightness = 0xffff;
-			p_set_light.lightness = 0xffff;
-
-			light_ctl_temp_set(&p_set_ctl, 2, 0, 0, 0, &pub_list);
-			lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
 		}
+
+		sleep_ms(100);
+		st_pub_list_t pub_list = { { 0 } };
+		mesh_cmd_light_ctl_set_t p_set_ctl;
+		mesh_cmd_lightness_set_t p_set_light;
+		p_set_ctl.temp = 0x0320;
+		p_set_ctl.lightness = 0xffff;
+		p_set_light.lightness = 0xffff;
+
+		light_ctl_temp_set(&p_set_ctl, 2, 0, 0, 0, &pub_list);
+		lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
 
 		first = 1;
 	}
@@ -131,3 +134,7 @@ void Kickout_Security(void) {
 		}
 	}
 }
+
+
+
+

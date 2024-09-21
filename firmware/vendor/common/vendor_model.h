@@ -148,6 +148,9 @@ extern u8 max_time_10ms;
 //RD_EDIT OPCODE VENDER RANG DONG
 #define RD_OPCODE_TYPE_SEND            (0xE0)
 #define RD_OPCDOE_TYPE_RSP             (0xE1)
+#define RD_OPCODE_FAST_CREATE_ROOM     (0xE2)
+#define RD_OPCODE_RSP_FOR_E2           (0xE3)
+
 //------op parameters
 typedef struct{
 	u8 code;

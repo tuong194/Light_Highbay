@@ -225,11 +225,11 @@ int app_event_handler (u32 h, u8 *p, int n)
 					RD_Check_ScanK9BHC(MacK9B_Buff, KP9_Data_Rec->type_device, p_extend->rssi);
 
 					//scan press sceen
-
+					RD_K9B_ScanPress_K9BHC(MacK9B_Buff, key_buff, event_cb_num);
 				}
 			}
 
-			/*-----------------------------------------------------------------------------------------------------------------*/
+			/*-----------------------------------------------------------------------------------------------------------------*/     //RD_EDIT end
 			#if MD_REMOTE_PROV
 				#if REMOTE_PROV_SCAN_GATT_EN
 			mesh_cmd_conn_prov_adv_cb(pa);// only for the remote gatt-provision proc part.
