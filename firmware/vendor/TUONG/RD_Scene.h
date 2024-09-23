@@ -19,7 +19,11 @@
 
 #include "../common/scene.h"
 
-#define RD_K9B_FLASH_AREA 0x7b000
+#define RD_K9B_FLASH_AREA      (0x7b000)
+#define RD_K9B_FLASH_SIZE      (4+51*5)
+#define RD_CHECK_FLASH_K9B_H   (0x55)
+#define RD_CHECK_FLASH_K9B_L   (0xAA)
+
 #define RD_MAXRESPONESEND 2
 #define MAX_NUM_K9B 5
 #define MAX_NUM_K9B_PRESS_STYLE 12
@@ -47,7 +51,7 @@ typedef struct{
 	uint8_t Scene_ID[2];
 	uint8_t Null_Byte;
 	uint8_t Tss[2];
-	uint8_t Future[2];
+	uint8_t Future[3];
 }Call_Scene_Str;
 
 typedef struct
@@ -55,7 +59,7 @@ typedef struct
 	uint8_t Pair_K9BOnOff_Flag;
 	uint8_t Button_K9BOnOff_Pair;
 	uint8_t Pair_K9BHc_Flag;
-	uint16_t Add_K9B_HCSet;			// HC set add for K9B remote
+	uint16_t Add_K9B_HCSet;			// HC set addr for K9B remote
 	uint32_t ClockTimeSetHc_ms;
 	uint32_t Clock_BtK9BStartPress_ms[3];
 	uint8_t  Bt_K9B_CountPress[3];
@@ -90,6 +94,7 @@ uint8_t RD_Flash_DeleteK9BHC(uint16_t K9BAdd);
 
 int RD_CheckButton_Pos_K9BHC(uint8_t ButtonID_Aray[MAX_NUM_K9B_PRESS_STYLE], uint8_t ButtonID_Check);
 void RD_K9B_TimeOutScan_OnOff(void);
+void Init_Flash_K9B(void);
 
 
 #endif /* RD_SCEEN_H_ */

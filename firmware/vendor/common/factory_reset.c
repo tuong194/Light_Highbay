@@ -26,6 +26,14 @@
 #include "proj_lib/ble/blt_config.h"
 #include "app_beacon.h"
 
+//RD_EDIT include lib
+#include "light.h"
+#include "lighting_model.h"
+#include "../mesh/RD_Lib.h"
+
+extern void light_dim_set_hw(int idx, int idx2, u16 val);
+extern uint8_t RD_rst_cnt;
+
 //FLASH_ADDRESS_EXTERN;
 
 //////////////////Factory Reset///////////////////////////////////////////////////////////////////////
@@ -217,12 +225,23 @@ new factory reset:
 user can change any one of factory_reset_serials, and also can change SERIALS_CNT
 *****************************************/
 
-#ifndef FACTORY_RESET_SERIALS      // user can define in "user_app_config.h"
-#define FACTORY_RESET_SERIALS      { 0, 3, \
-                                     0, 3, \
-                                     0, 3, \
-                                     3, 30,\
-                                     3, 30,}
+//#ifndef FACTORY_RESET_SERIALS      // user can define in "user_app_config.h"
+//#define FACTORY_RESET_SERIALS      { 0, 3, \
+//                                     0, 3, \
+//                                     0, 3, \
+//                                     3, 30,\
+//                                     3, 30,}
+//#endif
+//RD_EDIT: factory reset serial
+#ifndef FACTORY_RESET_SERIALS
+#define FACTORY_RESET_SERIALS      { 0, TIME_RESET, \
+                                     0, TIME_RESET, \
+                                     0, TIME_RESET, \
+                                     0, TIME_RESET, \
+                                     0, TIME_RESET, \
+                                     0, TIME_RESET, \
+                                     TIME_RESET, 30,\
+                                     TIME_RESET, 30,}
 #endif
 
 const u8 factory_reset_serials[] = FACTORY_RESET_SERIALS;
@@ -348,6 +367,33 @@ void increase_reset_cnt ()
 	}
 	
 	reset_cnt++;
+	RD_rst_cnt = reset_cnt; // test
+	//RD_EDIT reset cung
+	if(reset_cnt > 2){
+		st_pub_list_t pub_list = {{0}};
+		mesh_cmd_light_ctl_set_t p_set;
+		mesh_cmd_lightness_set_t p_set_light;
+		p_set.temp = 0x4e20;
+		p_set_light.lightness = 0xffff;
+		light_ctl_temp_set(&p_set, 2, 0, 0, 0, &pub_list);
+		lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
+	}
+	if(reset_cnt == 10){
+		RD_light_ev_with_sleep(3, 500*1000);
+		light_dim_refresh(0);
+	}if(reset_cnt == 12){
+		light_dim_set_hw(0, 0, get_pwm_cmp(0xff,0));
+		light_dim_set_hw(0, 1, get_pwm_cmp(0xff,0));
+		sleep_ms(500);
+		wd_clear();
+		sleep_ms(500);
+		wd_clear();
+		kick_out(0);
+
+	}
+
+
+	/*-------------------------------------------------------*/
 	write_reset_cnt(reset_cnt);
 	#if FACTORY_RESET_LOG_EN
     LOG_USER_MSG_INFO(0,0,"cnt %d\r\n",reset_cnt);

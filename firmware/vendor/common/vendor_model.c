@@ -42,8 +42,8 @@
 #include "pair_provision.h"
 #endif
 
-#include "../TUONG/RD_Secure.h"
-#include "../TUONG/RD_sceen.h"
+#include "../TUONG/RD_MessData.h"
+#include "../TUONG/RD_Scene.h"
 
 #if (VENDOR_MD_NORMAL_EN)
 model_vd_light_t       	model_vd_light;

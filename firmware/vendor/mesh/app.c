@@ -77,7 +77,7 @@
 #include "vendor/common/sensors_model.h"
 #endif
 
-#include "../TUONG/RD_sceen.h"
+#include "../TUONG/RD_Scene.h"
 
 #define BLT_RX_FIFO_SIZE        (MESH_DLE_MODE ? DLE_RX_FIFO_SIZE : 64)
 #define BLT_TX_FIFO_SIZE        (MESH_DLE_MODE ? DLE_TX_FIFO_SIZE : 40)

@@ -6,65 +6,63 @@
  */
 
 #include "RD_MessData.h"
+#include "RD_Secure.h"
 #include "../common/light.h"
 #include "../common/lighting_model.h"
 
-extern u32 get_pwm_cmp(u8 val, u8 lum);
-extern void light_dim_set_hw(int idx, int idx2, u16 val);
+RD_Type_Device_Message *RD_Mess_Temp_Receive;
+RD_Type_Device_Message RD_Mess_Recevie;
+uint8_t *BuffRec;
 
-uint8_t step_down;
-uint8_t flag_down_step = 1;
-u32 time_out_down_step;
 
-void reset_kickout(void) {
+extern RD_Flash_Save_Secure flash_save_secure;
 
-	if (flag_down_step == 1) {
-		if (clock_time_exceed_ms(time_out_down_step, 1000) && (clock_time_ms() - time_out_down_step) < 3000) {
-			step_down--;
+int RD_Messenger_CheckSecure(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
+	RD_Mess_Temp_Receive = (RD_Type_Device_Message *) (&par[0]);
+	RD_Mess_Recevie = *RD_Mess_Temp_Receive;
+	u16 Header = RD_Mess_Recevie.Header[1] << 8 | RD_Mess_Recevie.Header[0];
+	switch (Header) {
+	case 0x0003:
+		if(is_provision_success()){
+			if (RD_AesreCheck(cb_par->adr_dst, &par[2])) {
+				flash_save_secure.flag_process_aes = 1;
 
-			uint8_t buff[2];
-			buff[0] = step_down;
-			flag_down_step = 0;
-			flash_erase_sector(ADDR_FLASH_KICK_OUT);
-			flash_write_page(ADDR_FLASH_KICK_OUT, 1, buff);
+				RD_Mess_Recevie.Header[0] = 0x03;
+				RD_Mess_Recevie.Header[1] = 0x00;
+				RD_Mess_Recevie.MainType = 0x01;
+				RD_Mess_Recevie.Feature = 0x02;
+				RD_Mess_Recevie.Name = 0x03; // NAME
+				RD_Mess_Recevie.Future[0] = 0x00;
+				RD_Mess_Recevie.Future[1] = 0x03;
+				RD_Mess_Recevie.Future[2] = 0x00;
 
+				BuffRec = (uint8_t *) (&RD_Mess_Recevie.Header[0]);
+				mesh_tx_cmd2normal_primary(cb_par->op_rsp, BuffRec, 8,
+						cb_par->adr_src, 2);
+
+			} else {
+				flash_save_secure.flag_process_aes = 0;
+
+				RD_Mess_Recevie.Header[0] = 0x03;
+				RD_Mess_Recevie.Header[1] = 0x00;
+				RD_Mess_Recevie.MainType = 0xff;
+				RD_Mess_Recevie.Feature = 0xfe;
+				RD_Mess_Recevie.Name = 0xff; // NAME
+				RD_Mess_Recevie.Future[0] = 0xfe;
+				RD_Mess_Recevie.Future[1] = 0xff;
+				RD_Mess_Recevie.Future[2] = 0xfe;
+
+				BuffRec = (uint8_t *) (&RD_Mess_Recevie.Header[0]);
+				mesh_tx_cmd2normal_primary(cb_par->op_rsp, BuffRec, 8,
+						cb_par->adr_src, 2);
+			}
 		}
-	}
-	if (clock_time_exceed_ms(time_out_down_step, 3000) && step_down != 6 && step_down!=0) {
-		step_down = 6;
-		uint8_t buff[2];
-		buff[0] = step_down;
-		flag_down_step = 0;
-		flash_erase_sector(ADDR_FLASH_KICK_OUT);
-		flash_write_page(ADDR_FLASH_KICK_OUT, 1, buff);
-	}
-	if (step_down == 1) {
-		step_down--;
-		RD_light_ev_with_sleep(3, 500 * 1000);
-		light_dim_refresh(0);
-		flash_erase_sector(ADDR_FLASH_KICK_OUT);
-		flash_write_page(ADDR_FLASH_KICK_OUT, 1, &step_down);
-	}
 
+		break;
+
+
+	}
+	return 0;
 }
 
-void Read_val_kick_out(void) {
-	flash_read_page(ADDR_FLASH_KICK_OUT, 1, &step_down);
-	if (step_down > 6)
-		step_down = 6;
-	flag_down_step = 1;
-	if (step_down == 0) {
-		//RD_light_ev_with_sleep(1, 500 * 1000);
-		light_dim_set_hw(0,1,get_pwm_cmp(0xff,0));
-		light_dim_set_hw(0,0,get_pwm_cmp(0xff,0));
-		sleep_ms(500);
-		wd_clear();
-		step_down = 6;
-		flash_erase_sector(ADDR_FLASH_KICK_OUT);
-		flash_write_page(ADDR_FLASH_KICK_OUT, 1, &step_down);
-		flag_down_step = 0;
-		kick_out(0);
-	}
-	time_out_down_step = clock_time_ms();
-}
 

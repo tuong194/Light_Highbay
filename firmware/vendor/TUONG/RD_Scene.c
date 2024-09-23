@@ -5,7 +5,7 @@
  *      Author: PC5
  */
 
-#include "RD_sceen.h"
+#include "RD_Scene.h"
 #include "../mesh/RD_Lib.h"
 
 Sw_Working_Stt_Str Sw_Working_Stt_Val = { 0 };
@@ -254,9 +254,9 @@ void RD_Call_Scene(uint16_t Scene_ID, uint8_t Mess_ID){
 	Call_Scene_Str Scene_Mess_Buff;
 	Scene_Mess_Buff.Scene_ID[0] = Scene_ID & 0xff;
 	Scene_Mess_Buff.Scene_ID[1] = Scene_ID>>8 & 0xff;
-	Scene_Mess_Buff.Scene_ID[0] = Mess_ID;
-	Scene_Mess_Buff.Scene_ID[0] = TSS_DEFAULT & 0xff;
-	Scene_Mess_Buff.Scene_ID[0] = TSS_DEFAULT>>8 & 0xff;
+	Scene_Mess_Buff.Null_Byte = Mess_ID;
+	Scene_Mess_Buff.Tss[0] = TSS_DEFAULT & 0xff;
+	Scene_Mess_Buff.Tss[1] = TSS_DEFAULT>>8 & 0xff;
 	Scene_Mess_Buff.Future[0] = 0x00;
 	Scene_Mess_Buff.Future[1] = 0x00;
 	Scene_Mess_Buff.Future[2] = 0x00;
@@ -317,6 +317,7 @@ uint8_t RD_K9B_ScanPress_K9BHC(u32 macDevice, u8 key, u32 par_signature) {  // k
 	return scanSttReturn;
 }
 
+// qua 10s ko co rsp tu K9B -> HUY
 void RD_K9B_TimeOutScan_OnOff(void) {
 	if (Sw_Working_Stt_Val.Pair_K9BHc_Flag == 0x01 && clock_time_exceed_ms(Sw_Working_Stt_Val.Clock_time_start_pair_onOff_ms, TIME_OUT_SCAN_K9B)) {
 		Sw_Working_Stt_Val.Pair_K9BHc_Flag = 0x00;
@@ -633,3 +634,56 @@ void RD_Scene_Auto(uint16_t Scene_ID, mesh_cb_fun_par_t *cb_par, uint16_t Opcode
 	}
 
 }
+
+/*--------------------------FLASH-----------------------------------*/
+void Flash_Clean_K9B(void){
+	dataFlashK9B.Used[0] = RD_CHECK_FLASH_K9B_H;
+	dataFlashK9B.Used[1] = RD_CHECK_FLASH_K9B_L;
+	dataFlashK9B.Used[2] = RD_CHECK_FLASH_K9B_H;
+	dataFlashK9B.Used[3] = RD_CHECK_FLASH_K9B_L;
+	for(u8 i=0; i< MAX_NUM_K9B; i++){
+		dataFlashK9B.deviceK9B[i].AddrK9B = 0;
+		dataFlashK9B.deviceK9B[i].MacK9B = 0;
+		dataFlashK9B.deviceK9B[i].Num_Of_Button = 0;
+		for(u8 j=0;j<MAX_NUM_K9B_PRESS_STYLE;j++){
+			dataFlashK9B.deviceK9B[i].Scene_ID_OnePress[j] = 0;
+			dataFlashK9B.deviceK9B[i].Button_ID[j] = 0;
+		}
+	}
+	flash_erase_sector(RD_K9B_FLASH_AREA);
+	flash_write_page(RD_K9B_FLASH_AREA, sizeof(dataFlashK9B), (unsigned char *) (&dataFlashK9B.Used[0]));
+}
+
+void Read_Flash_K9B(void){
+	flash_read_page(RD_K9B_FLASH_AREA, sizeof(dataFlashK9B), (unsigned char *) (&dataFlashK9B.Used[0]));
+}
+
+void Init_Flash_K9B(void){
+	//flash_read_page(RD_K9B_FLASH_AREA, sizeof(dataFlashK9B), (unsigned char *) (&dataFlashK9B.Used[0]));
+	Read_Flash_K9B();
+
+	if(dataFlashK9B.Used[0] != RD_CHECK_FLASH_K9B_H && dataFlashK9B.Used[1] != RD_CHECK_FLASH_K9B_L
+       && dataFlashK9B.Used[2] != RD_CHECK_FLASH_K9B_H && dataFlashK9B.Used[3] != RD_CHECK_FLASH_K9B_L){
+		Flash_Clean_K9B();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

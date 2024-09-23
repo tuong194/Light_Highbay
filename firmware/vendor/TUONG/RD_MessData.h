@@ -17,9 +17,18 @@
 #include "proj_lib/ble/ll/ll.h"
 #include "proj_lib/sig_mesh/app_mesh.h"
 
-#define ADDR_FLASH_KICK_OUT 0x79000
 
-void reset_kickout(void);
-void Read_val_kick_out(void);
+
+typedef struct{
+	uint8_t Header[2];
+	uint8_t MainType;
+	uint8_t Feature;
+	uint8_t Name;
+	uint8_t Future[8];
+}RD_Type_Device_Message;
+
+int RD_Messenger_CheckSecure(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par);
+
+
 
 #endif /* RD_MESSDATA_H_ */

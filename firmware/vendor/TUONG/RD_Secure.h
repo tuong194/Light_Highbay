@@ -17,18 +17,23 @@
 #include "proj_lib/ble/ll/ll.h"
 #include "proj_lib/sig_mesh/app_mesh.h"
 
+#define RD_PROVISION_FLASH_AREA (0x7a000)
+#define RD_SIZE_FLASH_SECURE    6
+#define RD_CHECK_FLASH_H   (0x55)
+#define RD_CHECK_FLASH_L   (0xAA)
+
 #define EN_SECURE 1
 
 typedef struct{
-	uint8_t Header[2];
-	uint8_t MainType;
-	uint8_t Feature;
-	uint8_t Name;
-	uint8_t Future[8];
-}RD_Type_Device_Message;
+	uint8_t Used[4];
+	s8 flag_process_aes;
+	//uint8_t step_down;
+}RD_Flash_Save_Secure;
 
 unsigned char RD_AesreCheck(uint16_t unicast_ID, uint8_t compare_key[6]);
-int RD_Messenger_CheckSecure(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par);
 void check_done_provision(void);
+void reset_kickout(void);
+void Init_Flash_Secure(void);
+
 
 #endif /* RD_SECURE_H_ */
