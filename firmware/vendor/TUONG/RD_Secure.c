@@ -100,7 +100,7 @@ void Kickout_Security(void) {
 
 
 // reset cung
-void reset_kickout(void) {
+void reset_kickout(void) { // not use
 	if (flag_down_step == 1) {
 		if (clock_time_exceed_ms(time_out_down_step, 1000) && (clock_time_ms() - time_out_down_step) < 3000) {
 			step_down--;
@@ -131,7 +131,7 @@ void reset_kickout(void) {
 
 }
 
-void Read_val_kick_out(void) {
+void Read_val_kick_out(void) { // not use
 //	flash_read_page(RD_PROVISION_FLASH_AREA, 1, &step_down);
 //	if (step_down > 6)
 //		step_down = 6;
@@ -156,6 +156,8 @@ void Flash_Clean_Secure(){
 	flash_save_secure.Used[2] = RD_CHECK_FLASH_H;
 	flash_save_secure.Used[3] = RD_CHECK_FLASH_L;
 	flash_save_secure.flag_process_aes = -1;
+	flash_erase_sector(RD_PROVISION_FLASH_AREA);
+	flash_write_page(RD_PROVISION_FLASH_AREA, RD_SIZE_FLASH_SECURE, (uint8_t *) (&flash_save_secure.Used[0]));
 
 }
 
@@ -166,11 +168,14 @@ void Init_Flash_Secure(void){
 		Flash_Clean_Secure();
 	}
 	//Read_val_kick_out();
+#if EN_SECURE
 	if(is_provision_success()){
 		if(flash_save_secure.flag_process_aes != 1){
 			kick_out(0);
 		}
 	}
+#endif
+
 }
 
 

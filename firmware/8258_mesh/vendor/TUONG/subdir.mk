@@ -6,12 +6,16 @@
 C_SRCS += \
 ../vendor/TUONG/RD_MessData.c \
 ../vendor/TUONG/RD_Scene.c \
-../vendor/TUONG/RD_Secure.c 
+../vendor/TUONG/RD_Secure.c \
+../vendor/TUONG/RD_Training.c \
+../vendor/TUONG/RD_Type_Device.c 
 
 OBJS += \
 ./vendor/TUONG/RD_MessData.o \
 ./vendor/TUONG/RD_Scene.o \
-./vendor/TUONG/RD_Secure.o 
+./vendor/TUONG/RD_Secure.o \
+./vendor/TUONG/RD_Training.o \
+./vendor/TUONG/RD_Type_Device.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes

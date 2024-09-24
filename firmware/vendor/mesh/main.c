@@ -34,6 +34,7 @@
 #include "../TUONG/RD_Secure.h"
 #include "../TUONG/RD_MessData.h"
 #include "../TUONG/RD_Scene.h"
+#include "../TUONG/RD_Training.h"
 
 uint8_t RD_rst_cnt;
 
@@ -235,7 +236,7 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 
 		Init_Flash_K9B();
 		Init_Flash_Secure();
-		//Read_val_kick_out();
+		RD_Flash_Type_Init();
 
 	}
 
@@ -249,6 +250,7 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 
 		check_done_provision();
 		RD_K9B_TimeOutScan_OnOff();
+		RD_Kickout_All();
 
 
 	}

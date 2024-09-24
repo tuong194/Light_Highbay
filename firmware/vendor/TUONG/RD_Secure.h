@@ -18,7 +18,7 @@
 #include "proj_lib/sig_mesh/app_mesh.h"
 
 #define RD_PROVISION_FLASH_AREA (0x7a000)
-#define RD_SIZE_FLASH_SECURE    6
+#define RD_SIZE_FLASH_SECURE    5
 #define RD_CHECK_FLASH_H   (0x55)
 #define RD_CHECK_FLASH_L   (0xAA)
 
