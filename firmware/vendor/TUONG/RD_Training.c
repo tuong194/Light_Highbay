@@ -20,18 +20,21 @@ void Time_Kick_Out_All(void){
 	}
 	if(timeNew - timeOld > 1600000){ // 100ms
 		timeOld = timeNew;
-		count ++;
+		count++;
 		if(count > 600){
 			count =0;
 			flag_kickout_all = FALSE;
 			kick_out(1);
 		}
 	}
-
 }
 
 void RD_Kickout_All(void){
 	if(flag_kickout_all == TRUE){
 		Time_Kick_Out_All();
 	}
+}
+
+void RD_Clean_Flash_Training(void){
+
 }

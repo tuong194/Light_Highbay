@@ -35,8 +35,14 @@
 #include "../TUONG/RD_MessData.h"
 #include "../TUONG/RD_Scene.h"
 #include "../TUONG/RD_Training.h"
+#include "../TUONG/RD_Type_Device.h"
+#include "../TUONG/MS58.h"
 
-uint8_t RD_rst_cnt;
+
+
+
+//uint8_t RD_rst_cnt;
+
 
 extern void user_init();
 extern void main_loop ();
@@ -231,34 +237,33 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 
 		uart_init_baudrate(9600,CLOCK_SYS_CLOCK_HZ,PARITY_NONE, STOP_BIT_ONE);
 		uart_gpio_set(GPIO_PD7,GPIO_PA0);
-		uart_dma_enable(0,0);
-		uart_Csend("start\n");
+		uart_dma_enable(1,0);
+		uart_Csend("startzz\n");
 
 		Init_Flash_K9B();
 		Init_Flash_Secure();
 		RD_Flash_Type_Init();
+		RD_config_pin_MS58();
 
 	}
 
     irq_enable();
 
-	while (1) {
+    while (1) {
 #if (MODULE_WATCHDOG_ENABLE)
 		wd_clear(); //clear watch dog
 #endif
 		main_loop ();
 
-		check_done_provision();
-		RD_K9B_TimeOutScan_OnOff();
-		RD_Kickout_All();
 
+
+//		check_done_provision();
+//		RD_K9B_TimeOutScan_OnOff();
+//		RD_Kickout_All();
 
 	}
 }
 #endif
-
-
-
 
 
 

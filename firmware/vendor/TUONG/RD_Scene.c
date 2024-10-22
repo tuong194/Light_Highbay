@@ -268,7 +268,7 @@ void RD_Call_Scene(uint16_t Scene_ID, uint8_t Mess_ID){
 }
 void RD_Check_ScanK9BHC(uint32_t k9BMac_Buff, uint8_t Num_Of_Button, s8 rssi) {//rssi cuong do tin hieu K9B
 	if (Sw_Working_Stt_Val.Pair_K9BHc_Flag == 0x01) {
-		RD_Mess_ScanK9BHC_Rsp(RD_GW_ADDR, k9BMac_Buff, Num_Of_Button, rssi);
+		RD_Mess_ScanK9BHC_Rsp(RD_GW_ADDR, k9BMac_Buff, Num_Of_Button, rssi); // phan hoi lại HC
 		Sw_Working_Stt_Val.Add_K9B_HCSet = 0x0000;
 		Sw_Working_Stt_Val.Pair_K9BHc_Flag = 0x00;
 	}
@@ -345,7 +345,7 @@ uint8_t RD_Flash_Save_K9B(u32 macDevice, u8 NUm_Of_Button, u16 K9Badd) {
 	}
 
 	//not exits
-	for (u8 i = 0; i < MAX_NUM_K9B; i++) { //exits
+	for (u8 i = 0; i < MAX_NUM_K9B; i++) {
 		if (dataFlashK9B.deviceK9B[i].MacK9B == 0x00) {
 			dataFlashK9B.deviceK9B[i].MacK9B = macDevice;
 			dataFlashK9B.deviceK9B[i].Num_Of_Button = NUm_Of_Button;
@@ -452,7 +452,7 @@ uint8_t RD_Flash_DeleteSceneK9BHC(uint16_t K9BAdd)
 				flash_erase_sector(RD_K9B_FLASH_AREA);
 				flash_write_page(RD_K9B_FLASH_AREA, sizeof(dataFlashK9B), (uint8_t *) &dataFlashK9B.Used[0]);
 				//uart_CSend("delete all scene K9B add: 0x%x\n",K9BAdd);
-				uart_Csend("delete all scene K9B add:\n");
+				//uart_Csend("delete all scene K9B add:\n");
 				return 1;
 			}
 		}

@@ -321,7 +321,7 @@ void mesh_global_var_init_light_sw()
  * @return      none
  * @note        
  */
-void light_res_sw_load()
+void light_res_sw_load()  // RD_EDIT load status light from flash
 {
 	foreach_arr(i,light_res_sw){
 		foreach_arr(k,light_res_sw[i].trans){

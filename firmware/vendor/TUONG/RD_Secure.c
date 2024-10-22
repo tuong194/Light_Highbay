@@ -93,7 +93,7 @@ void Kickout_Security(void) {
 				> 10) { // ma hoa sai
 			flag_provision = FALSE;
 			flash_save_secure.flag_process_aes = -1;
-			kick_out(1);
+			 kick_out(1);
 		}
 	}
 }

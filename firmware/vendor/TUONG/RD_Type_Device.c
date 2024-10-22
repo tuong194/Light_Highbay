@@ -53,3 +53,13 @@ void RD_Flash_Type_Init(void){
 		RD_GATEWAY_ADDR = Flash_Save_Type_Val.GWID[1] << 8 | Flash_Save_Type_Val.GWID[0];
 	}
 }
+
+//RD_EDIT LOG UART
+void RD_LOG(const char *format, ...){
+	char out[128];
+	char *p = &out[0];
+	va_list args;
+	va_start( args, format );
+	print(&p, format, args);
+	uart_Csend(out);
+}

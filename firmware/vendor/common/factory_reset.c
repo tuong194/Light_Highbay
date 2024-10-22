@@ -32,7 +32,7 @@
 #include "../mesh/RD_Lib.h"
 
 extern void light_dim_set_hw(int idx, int idx2, u16 val);
-extern uint8_t RD_rst_cnt;
+//extern uint8_t RD_rst_cnt;
 
 //FLASH_ADDRESS_EXTERN;
 
@@ -259,7 +259,7 @@ STATIC_ASSERT(sizeof(factory_reset_serials) < 100);
  */
 void	reset_cnt_clean ()
 {
-	if (adr_reset_cnt_idx < 3840)
+	if (adr_reset_cnt_idx < 3840) // 0xF00
 	{
 		return;
 	}
@@ -311,7 +311,7 @@ STATIC_ASSERT(BIT_IS_POW2(RESET_CNT_SIZE));
  */
 void reset_cnt_get_idx ()		//return 0 if unconfigured
 {
-	for (adr_reset_cnt_idx=0; adr_reset_cnt_idx<4096; adr_reset_cnt_idx+=RESET_CNT_SIZE)
+	for (adr_reset_cnt_idx=0; adr_reset_cnt_idx<4096; adr_reset_cnt_idx+=RESET_CNT_SIZE) // 4096 = 0x1000
 	{
 		#if __TLSR_RISCV_EN__
 		// if want to use pointer to read flash, must add FLASH_R_BASE_ADDR and initiate offset of 0x140104 which is max by default.
@@ -367,7 +367,7 @@ void increase_reset_cnt ()
 	}
 	
 	reset_cnt++;
-	RD_rst_cnt = reset_cnt; // test
+	//RD_rst_cnt = reset_cnt; // test
 	//RD_EDIT reset cung
 	if(reset_cnt > 2){
 		st_pub_list_t pub_list = {{0}};

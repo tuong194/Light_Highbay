@@ -4342,7 +4342,7 @@ void mesh_common_reset_all()
 	
 	mesh_global_var_init();
 	mesh_set_ele_adr_ll(ele_adr_primary, 0, 0);
-	#if MD_SERVER_EN
+	#if MD_SERVER_EN // RD_EDIT read flag status light
 	mesh_par_retrieve((u8 *)&light_res_sw_save, &mesh_sw_level_addr, FLASH_ADR_SW_LEVEL, sizeof(light_res_sw_save), NULL);//retrieve light_res_sw_save
 	#endif
 	mesh_par_retrieve((u8 *)&provision_mag, &mesh_provision_mag_addr, FLASH_ADR_PROVISION_CFG_S, sizeof(provision_mag), NULL);//retrieve oob

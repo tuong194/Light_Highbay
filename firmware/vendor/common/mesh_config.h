@@ -723,7 +723,7 @@ extern "C" {
 #elif (MI_API_ENABLE)
 #define MD_REMOTE_PROV              0   // must 0
 #elif (__PROJECT_MESH__)
-#define MD_REMOTE_PROV              0   // dufault disable
+#define MD_REMOTE_PROV              1  //RD_EDIT en remote provision    // dufault disable
 #elif (__PROJECT_MESH_PRO__)
 #define MD_REMOTE_PROV              0   // dufault disable
 #else

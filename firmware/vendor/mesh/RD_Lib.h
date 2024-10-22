@@ -8,6 +8,8 @@
 #ifndef RD_LIB_H_
 #define RD_LIB_H_
 
+#define RD_LOG_UART         0
+
 
 #define MAINTYPE			0x01			//RD_EDIT: Config cac loai den
 #define FEATURE				0x02
@@ -149,6 +151,7 @@
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0
 #endif
+
 
 
 #endif /* RD_LIB_H_ */

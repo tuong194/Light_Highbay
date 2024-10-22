@@ -14,7 +14,7 @@ OBJS += \
 %.o: ../%.S
 	@echo 'Building file: $<'
 	@echo 'Invoking: TC32 CC/Assembler'
-	tc32-elf-gcc -Xassembler"E:\Telink_code\SDK_test\firmware" -DMCU_STARTUP_8258_RET_16K -D__PROJECT_MESH__=1 -DCHIP_TYPE=CHIP_TYPE_8258 -c -o"$@" "$<"
+	tc32-elf-gcc -Xassembler"E:\TELINK\Telink_code\SDK_CTT_DIM\firmware" -DMCU_STARTUP_8258_RET_16K -D__PROJECT_MESH__=1 -DCHIP_TYPE=CHIP_TYPE_8258 -c -o"$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

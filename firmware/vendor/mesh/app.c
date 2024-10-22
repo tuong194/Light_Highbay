@@ -78,6 +78,7 @@
 #endif
 
 #include "../TUONG/RD_Scene.h"
+extern void RD_LOG(const char *format, ...);
 
 #define BLT_RX_FIFO_SIZE        (MESH_DLE_MODE ? DLE_RX_FIFO_SIZE : 64)
 #define BLT_TX_FIFO_SIZE        (MESH_DLE_MODE ? DLE_TX_FIFO_SIZE : 40)
@@ -208,7 +209,10 @@ int app_event_handler (u32 h, u8 *p, int n)
 		u8 subcode = p[0];
 		#if MI_API_ENABLE
 		telink_ble_mi_app_event(subcode,p,n);
-		#endif 
+		#endif
+
+		uint8_t data_log[sizeof(switchKP9_proxy_t)] = {0};
+
 	//------------ ADV packet --------------------------------------------
 		if (subcode == HCI_SUB_EVT_LE_ADVERTISING_REPORT)	// ADV packet
 		{
@@ -217,7 +221,15 @@ int app_event_handler (u32 h, u8 *p, int n)
 			mesh_cmd_bear_t *p_bear = GET_BEAR_FROM_ADV_PAYLOAD(pa->data);
 			adv_report_extend_t *p_extend = get_adv_report_extend(&p_bear->len);
 			switchKP9_proxy_t *KP9_Data_Rec = (switchKP9_proxy_t *)(pa->data);
+
 			if((KP9_Data_Rec->type == 0xff) && (KP9_Data_Rec->length == 0x0e)){
+//				memcpy(&data_log[0], KP9_Data_Rec,sizeof(switchKP9_proxy_t));
+//				RD_LOG("data rec K9B: ");
+//				for(u8 i = 0; i<sizeof(switchKP9_proxy_t); i++){
+//					RD_LOG("0x%02X ", data_log[i]);
+//				}
+//				RD_LOG("\n");
+
 				if((event_cb_num != KP9_Data_Rec->counter) && (KP9_Data_Rec->key & 0x80) != 0x80){
 					event_cb_num = KP9_Data_Rec->counter;
 					uint32_t MacK9B_Buff = (uint32_t) (pa->mac[0]<<24 | pa->mac[1]<<16 | pa->mac[2]<<8 | pa->mac[3]);

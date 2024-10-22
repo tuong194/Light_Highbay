@@ -59,7 +59,7 @@ main-build: DIM_CTT.elf secondary-outputs
 DIM_CTT.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: TC32 C Linker'
-	tc32-elf-ld --gc-sections -L"E:\Telink_code\SDK_test\firmware\proj_lib" -T ../boot.link -o"DIM_CTT.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	tc32-elf-ld --gc-sections -L"E:\TELINK\Telink_code\SDK_CTT_DIM\firmware\proj_lib" -T ../boot.link -o"DIM_CTT.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
@@ -88,11 +88,11 @@ clean:
 	-@echo ' '
 
 pre-build:
-	-"E:\Telink_code\SDK_test\firmware/getver.sh"
+	-"E:\TELINK\Telink_code\SDK_CTT_DIM\firmware/getver.sh"
 	-@echo ' '
 
 post-build:
-	-"E:\Telink_code\SDK_test\firmware/tl_check_fw.sh"   8258_mesh   DIM_CTT
+	-"E:\TELINK\Telink_code\SDK_CTT_DIM\firmware/tl_check_fw.sh"   8258_mesh   DIM_CTT
 	-@echo ' '
 
 secondary-outputs: $(LST) $(FLASH_IMAGE) $(SIZEDUMMY)

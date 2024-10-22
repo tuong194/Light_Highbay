@@ -577,5 +577,10 @@ unsigned char uart_Csend(char* data){
 	return 0;
 }
 
+void uart_send_data_arr(uint8_t *arr, uint8_t len){
+	for(u8 i=0; i<len; i++){
+		uart_ndma_send_byte(arr[i]);
+	}
+}
 
 
