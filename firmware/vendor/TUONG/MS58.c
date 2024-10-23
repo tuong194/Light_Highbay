@@ -91,4 +91,11 @@ void RD_restore_MS58(void){
 #endif
 }
 
+unsigned int is_motion(void){
+	unsigned int out = gpio_read(PIN_MS58);
+#if LOG_MS58
+	RD_LOG("gia tri out la: %d\n", out);
+#endif
+	return out;
+}
 

@@ -23,9 +23,16 @@
 #define LOG_MS58 				RD_LOG_UART
 #define PIN_MS58                GPIO_PC4
 
+typedef enum{
+	MANUAL = 0,
+	AUTO,
+	KEEP_STATUS,
+}startup_status_e;
+
 void RD_config_pin_MS58(void);
 void RD_config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]);
 void RD_get_data_MS58(void);
 void RD_restore_MS58(void);
+unsigned int is_motion(void);
 
 #endif /* MS58_H_ */

@@ -91,12 +91,15 @@ const light_res_hw_t light_res_hw[LIGHT_CNT][3] = {
 };
 	#else
 const light_res_hw_t light_res_hw[LIGHT_CNT][2] = { //RD_EDIT: idx = LIGHT_CNT, idx2 = 2
-	/*[0] = */{RES_HW_PWM_W, RES_HW_PWM_Y},
+	/*[0] = */ {RES_HW_PWM_W, RES_HW_PWM_Y},
+	//{RES_HW_PWM_Y, RES_HW_PWM_W},
 };
+
 	#endif
 #else
 const light_res_hw_t light_res_hw[LIGHT_CNT][1] = {
-	[0] = {RES_HW_PWM_R},
+	//[0] = {RES_HW_PWM_R},
+	[0] = {RES_HW_PWM_W}, // RD_EDIT: light res hw
     #if (LIGHT_CNT >= 2)
     [1] = {RES_HW_PWM_G},
     #endif
@@ -857,7 +860,8 @@ _USER_CAN_REDEFINE_ void light_dim_refresh(int idx) // idx: index of LIGHT_CNT.
 	return ;
 #else
     #if(!(LIGHT_TYPE_CT_EN || LIGHT_TYPE_HSL_EN))
-    light_dim_set_hw(idx, 0, get_pwm_smooth(lightness_65535, LIGHTNESS_AVERAGE_STEP));
+    //light_dim_set_hw(idx, 0, get_pwm_smooth(lightness_65535, LIGHTNESS_AVERAGE_STEP));
+    light_dim_set_hw(idx, 0, get_pwm_cmp(0xff,lum_100)); // RD_EDIT set dim hw
     #else
 	    #if (LIGHT_TYPE_CT_EN)
             #if (XIAOMI_MODULE_ENABLE&&!AIS_ENABLE)

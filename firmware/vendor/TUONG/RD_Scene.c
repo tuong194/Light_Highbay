@@ -59,7 +59,10 @@ uint8_t numscene = 0;
 	uint16_t groupType 		= 0x000e;
 	uint16_t temp[6] 		= {0x4e20,  0x15c0, 0x4e20, 0x0320, 0x0320, 0x0320};
 	uint16_t lightness[6] 	= {0x0000,  0xcccc, 0xffff,	0xcccc, 0xffff, 0x7fff};
-
+#elif(NAME == HIGHTBAY_RADA)
+	uint16_t groupType 		= 0x0004;
+	uint16_t temp[6] 		= {0x4e20,  0x4e20, 0x4e20, 0x4e20, 0x0320, 0x4e20};
+	uint16_t lightness[6] 	= {0x0000,  0x0000, 0x0000,	0x0000, 0xffff, 0x0000};
 //----------------------------------------------------------------------------------------
 
 #elif(NAME == RLT03_12W_12026)

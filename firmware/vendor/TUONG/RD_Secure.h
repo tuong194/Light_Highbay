@@ -22,7 +22,7 @@
 #define RD_CHECK_FLASH_H   (0x55)
 #define RD_CHECK_FLASH_L   (0xAA)
 
-#define EN_SECURE 1
+#define EN_SECURE           0
 
 typedef struct{
 	uint8_t Used[4];

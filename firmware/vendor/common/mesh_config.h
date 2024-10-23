@@ -31,6 +31,8 @@ extern "C" {
 
 #include "../user_app/user_app_config.h"
 
+#include "../mesh/RD_Lib.h" //T_NOTE include RD_lib.h
+
 //------------hardware parameters
 // HCI Select
 #define PROXY_HCI_GATT					1
@@ -596,8 +598,14 @@ extern "C" {
 #define LIGHT_TYPE_SEL				LIGHT_TYPE_PANEL
 		#endif
 	#else
-#define LIGHT_TYPE_SEL				LIGHT_TYPE_CT	// 
+//T_NOTE: config LIGHT_TYPE_SEL
+		#if NAME == HIGHTBAY_RADA
+			#define LIGHT_TYPE_SEL				LIGHT_TYPE_DIM	//
+		#else
+			#define LIGHT_TYPE_SEL				LIGHT_TYPE_CT	//
+		#endif
 	#endif
+/*============================================*/
 #endif
 #endif
 

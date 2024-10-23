@@ -1055,8 +1055,8 @@ mesh_cmd_sig_func_t mesh_cmd_vd_func[] = {
 #endif
 
     //RD_EDIT opcode vender
-    {RD_OPCODE_TYPE_SEND, 0, VENDOR_MD_LIGHT_C, VENDOR_MD_LIGHT_S, RD_Messenger_CheckSecure, RD_OPCDOE_TYPE_RSP},
-    {RD_OPCODE_FAST_CREATE_ROOM, 0, VENDOR_MD_LIGHT_C,VENDOR_MD_LIGHT_S, RD_mesh_cmd_sig_cfg_model_sub_net,  RD_OPCODE_RSP_FOR_E2},
+    {RD_OPCODE_TYPE_SEND, 0, VENDOR_MD_LIGHT_C, VENDOR_MD_LIGHT_S, RD_Messenger_Mess, RD_OPCDOE_TYPE_RSP},
+    {RD_OPCODE_FAST_CREATE_ROOM, 0, VENDOR_MD_LIGHT_C,VENDOR_MD_LIGHT_S, RD_mesh_cmd_sig_cfg_model_sub_net,  RD_OPCODE_RSP_FOR_E2}, // scene
 
     USER_MESH_CMD_VD_ARRAY
 };

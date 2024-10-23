@@ -24,7 +24,7 @@ _Bool flag_kickout_all = FALSE;
 
 extern RD_Flash_Save_Secure flash_save_secure;
 
-int RD_Messenger_CheckSecure(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
+int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 	RD_Mess_Temp_Receive = (RD_Type_Device_Message *) (&par[0]);
 	RD_Mess_Recevie = *RD_Mess_Temp_Receive;
 	u16 Header = RD_Mess_Recevie.Header[1] << 8 | RD_Mess_Recevie.Header[0];
@@ -68,6 +68,9 @@ int RD_Messenger_CheckSecure(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 		if(is_provision_success()){
 			flag_kickout_all = TRUE;
 		}
+		break;
+	case RD_SWITCH_SELECT_AUTO_RADA: //T_NOTE auto rada
+		/*  todo  */
 		break;
 	case RD_PROVISION_AES:
 		if(is_provision_success()){

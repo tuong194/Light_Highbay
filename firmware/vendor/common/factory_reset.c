@@ -371,11 +371,14 @@ void increase_reset_cnt ()
 	//RD_EDIT reset cung
 	if(reset_cnt > 2){
 		st_pub_list_t pub_list = {{0}};
+#if NAME != HIGHTBAY_RADA
 		mesh_cmd_light_ctl_set_t p_set;
-		mesh_cmd_lightness_set_t p_set_light;
 		p_set.temp = 0x4e20;
-		p_set_light.lightness = 0xffff;
 		light_ctl_temp_set(&p_set, 2, 0, 0, 0, &pub_list);
+#endif
+		mesh_cmd_lightness_set_t p_set_light;
+		p_set_light.lightness = 0xffff;
+
 		lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
 	}
 	if(reset_cnt == 10){
@@ -383,7 +386,9 @@ void increase_reset_cnt ()
 		light_dim_refresh(0);
 	}if(reset_cnt == 12){
 		light_dim_set_hw(0, 0, get_pwm_cmp(0xff,0));
+#if NAME != HIGHTBAY_RADA
 		light_dim_set_hw(0, 1, get_pwm_cmp(0xff,0));
+#endif
 		sleep_ms(500);
 		wd_clear();
 		sleep_ms(500);
