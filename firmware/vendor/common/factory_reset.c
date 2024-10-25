@@ -240,6 +240,8 @@ user can change any one of factory_reset_serials, and also can change SERIALS_CN
                                      0, TIME_RESET, \
                                      0, TIME_RESET, \
                                      0, TIME_RESET, \
+                                     0, TIME_RESET, \
+                                     0, TIME_RESET, \
                                      TIME_RESET, 30,\
                                      TIME_RESET, 30,}
 #endif
@@ -367,20 +369,21 @@ void increase_reset_cnt ()
 	}
 	
 	reset_cnt++;
-	//RD_rst_cnt = reset_cnt; // test
+
+	RD_LOG("reset count: %d\n", reset_cnt);
 	//RD_EDIT reset cung
-//	if(reset_cnt > 2 && reset_cnt <10){
-//		st_pub_list_t pub_list = {{0}};
-//#if NAME != HIGHTBAY_RADA
-//		mesh_cmd_light_ctl_set_t p_set;
-//		p_set.temp = 0x4e20;
-//		light_ctl_temp_set(&p_set, 2, 0, 0, 0, &pub_list);
-//#endif
-//		mesh_cmd_lightness_set_t p_set_light;
-//		p_set_light.lightness = 0xffff;
-//
-//		lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
-//	}
+	if(reset_cnt > 2 && reset_cnt <10){
+		st_pub_list_t pub_list = {{0}};
+#if NAME != HIGHTBAY_RADA
+		mesh_cmd_light_ctl_set_t p_set;
+		p_set.temp = 0x4e20;
+		light_ctl_temp_set(&p_set, 2, 0, 0, 0, &pub_list);
+#endif
+		mesh_cmd_lightness_set_t p_set_light;
+		p_set_light.lightness = 0xffff;
+
+		lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
+	}
 	if(reset_cnt == 10){
 		RD_light_ev_with_sleep(3, 500*1000);
 		light_dim_refresh(0);
@@ -397,7 +400,7 @@ void increase_reset_cnt ()
 		kick_out(0);
 
 	}
-	//RD_LOG("reset count: %d\n", reset_cnt);
+
 
 	/*-------------------------------------------------------*/
 	write_reset_cnt(reset_cnt);

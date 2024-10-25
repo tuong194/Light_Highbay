@@ -17,9 +17,9 @@ void RD_config_pin_MS58(void){
 	gpio_set_input_en(PIN_MS58, 1);
 	gpio_setup_up_down_resistor(PIN_MS58, PM_PIN_PULLDOWN_100K);
 
-	gpio_set_func(LED_OUT, AS_GPIO);
-	gpio_set_output_en(LED_OUT, 1);
-	gpio_write(LED_OUT,0);
+//	gpio_set_func(LED_OUT, AS_GPIO);
+//	gpio_set_output_en(LED_OUT, 1);
+//	gpio_write(LED_OUT,0);
 }
 
 void RD_save_data_MS58(void){
@@ -108,12 +108,12 @@ unsigned int is_motion(void){
 	return out;
 }
 
-void loop_rada(void){
-	if(is_motion()){
-		ON_LED_RADA;
-	}else{
-		OFF_LED_RADA;
-	}
-}
+//void loop_rada(void){
+//	if(is_motion()){
+//		ON_LED_RADA;
+//	}else{
+//		OFF_LED_RADA;
+//	}
+//}
 
 

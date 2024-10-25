@@ -24,8 +24,8 @@
 #define PIN_MS58            GPIO_PB4
 #define LED_OUT             GPIO_PC3
 
-#define ON_LED_RADA         gpio_write(PIN_MS58,1)
-#define OFF_LED_RADA        gpio_write(PIN_MS58,0)
+#define ON_LED_RADA         gpio_write(LED_OUT,1)
+#define OFF_LED_RADA        gpio_write(LED_OUT,0)
 
 typedef enum{
 	MANUAL 		= 0x00,

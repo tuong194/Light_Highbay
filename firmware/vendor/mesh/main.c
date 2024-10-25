@@ -240,7 +240,6 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		uart_init_baudrate(9600,CLOCK_SYS_CLOCK_HZ,PARITY_NONE, STOP_BIT_ONE);
 		uart_dma_enable(1,0);
 
-		uart_Csend("startzz\n");
 
 		RD_config_pin_MS58();
 		Init_Flash_K9B();
@@ -262,12 +261,6 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 #endif
 
 		main_loop ();
-
-		loop_rada();
-		sleep_ms(500);
-		wd_clear();
-		sleep_ms(500);
-		wd_clear();
 
 //		check_done_provision();
 //		RD_K9B_TimeOutScan_OnOff();
