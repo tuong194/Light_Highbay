@@ -7,6 +7,7 @@
 
 #include "RD_Secure.h"
 #include "../common/lighting_model.h"
+#include "../mesh/RD_Lib.h"
 
 unsigned char RD_key[16] = "Digital@28112804";
 unsigned char param_RD[8] = { 0x24, 0x02, 0x28, 0x04, 0x28, 0x11, 0x20, 0x20 }; // 8 byte selfgen by RD
@@ -66,12 +67,15 @@ void check_done_provision(void) {
 
 		sleep_ms(100);
 		st_pub_list_t pub_list = { { 0 } };
+
+#if	NAME != HIGHTBAY_RADA
 		mesh_cmd_light_ctl_set_t p_set_ctl;
-		mesh_cmd_lightness_set_t p_set_light;
 		p_set_ctl.temp = 0x0320;
 		p_set_ctl.lightness = 0xffff;
-		p_set_light.lightness = 0xffff;
 		light_ctl_temp_set(&p_set_ctl, 2, 0, 0, 0, &pub_list);
+#endif
+		mesh_cmd_lightness_set_t p_set_light;
+		p_set_light.lightness = 0xffff;
 		lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
 
 		flash_erase_sector(RD_PROVISION_FLASH_AREA);
@@ -150,6 +154,7 @@ void Read_val_kick_out(void) { // not use
 	}
 	time_out_down_step = clock_time_ms();
 }
+
 void Flash_Clean_Secure(){
 	flash_save_secure.Used[0] = RD_CHECK_FLASH_H;
 	flash_save_secure.Used[1] = RD_CHECK_FLASH_L;

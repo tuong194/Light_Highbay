@@ -20,7 +20,7 @@
 #define RD_SET_TYPE_DEVICE  	 	(0x0001)
 #define RD_SAVE_GATEWAY_ADDRESS  	(0x0002)
 #define RD_PROVISION_AES         	(0x0003)
-#define RD_SWITCH_SELECT_AUTO_RADA  (0x0004) // T_NOTE: on/off auto rada
+
 #define RD_KICKOUT_ALL              (0xffff)
 
 #define PROVIDER_MAIN    0x00

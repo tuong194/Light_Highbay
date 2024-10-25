@@ -235,16 +235,23 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		#endif
 		user_init();
 
-		uart_init_baudrate(9600,CLOCK_SYS_CLOCK_HZ,PARITY_NONE, STOP_BIT_ONE);
 		uart_gpio_set(GPIO_PD7,GPIO_PA0);
+		uart_reset();
+		uart_init_baudrate(9600,CLOCK_SYS_CLOCK_HZ,PARITY_NONE, STOP_BIT_ONE);
 		uart_dma_enable(1,0);
+
 		uart_Csend("startzz\n");
 
+		RD_config_pin_MS58();
 		Init_Flash_K9B();
 		Init_Flash_Secure();
 		RD_Flash_Type_Init();
-		RD_config_pin_MS58();
+		RD_Flash_MS58_Init();
 
+//		uint8_t gain = 0x33;
+//		uint8_t delta[2] = {0x00,0x14};
+//		uint8_t lot[4] = {0x00, 0x00, 0x01, 0xff};
+//		RD_config_MS58(gain, delta, lot);
 	}
 
     irq_enable();
@@ -253,9 +260,14 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 #if (MODULE_WATCHDOG_ENABLE)
 		wd_clear(); //clear watch dog
 #endif
+
 		main_loop ();
 
-
+		loop_rada();
+		sleep_ms(500);
+		wd_clear();
+		sleep_ms(500);
+		wd_clear();
 
 //		check_done_provision();
 //		RD_K9B_TimeOutScan_OnOff();

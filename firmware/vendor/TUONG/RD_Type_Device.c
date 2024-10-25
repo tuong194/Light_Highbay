@@ -7,8 +7,10 @@
 
 #include "RD_Type_Device.h"
 #include "RD_MessData.h"
+#include "MS58.h"
 
 Flash_Save_Type_GW Flash_Save_Type_Val;
+Flash_Save_MS58_t  Flash_Save_MS58;
 
 void RD_Flash_Save_GW(uint16_t GW_ADDR){
 	Flash_Save_Type_Val.GWID[1] = (uint8_t) (GW_ADDR>>8 & 0xff);
@@ -16,7 +18,6 @@ void RD_Flash_Save_GW(uint16_t GW_ADDR){
 
 	flash_erase_sector(RD_GW_FLASH_AREA);
 	flash_write_page(RD_GW_FLASH_AREA, sizeof(Flash_Save_Type_Val), (uint8_t *) (&Flash_Save_Type_Val.Used[0]));
-
 }
 
 void RD_Flash_Save_Type(uint8_t MainType, uint8_t Feature, uint8_t Name){
@@ -53,6 +54,63 @@ void RD_Flash_Type_Init(void){
 		RD_GATEWAY_ADDR = Flash_Save_Type_Val.GWID[1] << 8 | Flash_Save_Type_Val.GWID[0];
 	}
 }
+
+void Read_Flash_MS58(void){
+	flash_read_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));
+}
+
+void RD_Write_Flash_MS58(void){
+	flash_erase_sector(RD_MS58_FLASH_AREA);
+	flash_write_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));
+}
+
+
+
+
+void RD_Flash_Clean_MS58(void){
+	Flash_Save_MS58.user[0] = RD_CHECK_FLASH_H;
+	Flash_Save_MS58.user[1] = RD_CHECK_FLASH_L;
+	Flash_Save_MS58.user[2] = RD_CHECK_FLASH_H;
+	Flash_Save_MS58.user[3] = RD_CHECK_FLASH_L;
+
+	Flash_Save_MS58.mode = AUTO;
+	Flash_Save_MS58.start_status = KEEP_STATUS;
+	Flash_Save_MS58.sw_select = 0x00;
+	Flash_Save_MS58.parMS58.gain = 0x33;
+	Flash_Save_MS58.parMS58.delta[0] = 0x00;
+	Flash_Save_MS58.parMS58.delta[1] = 0x64;
+	Flash_Save_MS58.parMS58.lot[0] = 0x00;
+	Flash_Save_MS58.parMS58.lot[1] = 0x00;
+	Flash_Save_MS58.parMS58.lot[2] = 0x01;
+	Flash_Save_MS58.parMS58.lot[3] = 0xff;
+
+	flash_erase_sector(RD_MS58_FLASH_AREA);
+	flash_write_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));
+}
+
+void RD_Flash_MS58_Init(void){
+	Read_Flash_MS58();
+	if(Flash_Save_MS58.user[0] != RD_CHECK_FLASH_H && Flash_Save_MS58.user[1] != RD_CHECK_FLASH_L &&
+	   Flash_Save_MS58.user[2] != RD_CHECK_FLASH_H && Flash_Save_MS58.user[3] != RD_CHECK_FLASH_L){
+		RD_Flash_Clean_MS58();
+	}
+}
+void RD_Check_Startup_Rada(void){
+	switch(Flash_Save_MS58.start_status){
+	case MANUAL:
+		Flash_Save_MS58.mode = MANUAL;
+		break;
+	case AUTO:
+		Flash_Save_MS58.mode = AUTO;
+		break;
+	}
+}
+void Init_Data_Rada(void){
+	RD_Flash_MS58_Init();
+	RD_Check_Startup_Rada();
+}
+
+
 
 //RD_EDIT LOG UART
 void RD_LOG(const char *format, ...){

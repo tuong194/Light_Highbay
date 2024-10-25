@@ -6,6 +6,7 @@
  */
 #include"MS58.h"
 
+
 u16 flag_check_rec_uart = 0;
 extern u16 uart_rx_irq;
 uint8_t data_rec[15] = {0};
@@ -15,6 +16,10 @@ void RD_config_pin_MS58(void){
 	gpio_set_func(PIN_MS58, AS_GPIO);
 	gpio_set_input_en(PIN_MS58, 1);
 	gpio_setup_up_down_resistor(PIN_MS58, PM_PIN_PULLDOWN_100K);
+
+	gpio_set_func(LED_OUT, AS_GPIO);
+	gpio_set_output_en(LED_OUT, 1);
+	gpio_write(LED_OUT,0);
 }
 
 void RD_save_data_MS58(void){
@@ -40,6 +45,7 @@ void RD_config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]){
 	uart_send_data_arr(data_conf, sizeof(data_conf));
 	sleep_ms(5);
 	RD_save_data_MS58();
+	sleep_ms(5);
 #if LOG_MS58
 	uart_recbuff_init(&data_rec[0],128, &tx_buff[0]);
 	sleep_ms(5);
@@ -55,6 +61,8 @@ void RD_config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]){
 void RD_get_data_MS58(void){
 	uint8_t data_send[5] = {0x55, 0x02, 0x12, 0x00, 0x69};
 	uart_send_data_arr(data_send,5);
+	sleep_ms(500);
+	wd_clear();
 	sleep_ms(500);
 	wd_clear();
 #if LOG_MS58
@@ -94,8 +102,18 @@ void RD_restore_MS58(void){
 unsigned int is_motion(void){
 	unsigned int out = gpio_read(PIN_MS58);
 #if LOG_MS58
-	RD_LOG("gia tri out la: %d\n", out);
+	RD_LOG("gia tri out: %d\n", out);
+	sleep_ms(5);
 #endif
 	return out;
 }
+
+void loop_rada(void){
+	if(is_motion()){
+		ON_LED_RADA;
+	}else{
+		OFF_LED_RADA;
+	}
+}
+
 

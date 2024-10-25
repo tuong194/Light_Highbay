@@ -32,6 +32,10 @@ typedef struct{
 void RD_Flash_Save_GW(uint16_t GW_ADDR);
 void RD_Flash_Save_Type(uint8_t MainType, uint8_t Feature, uint8_t Name);
 void RD_Flash_Type_Init(void);
+void RD_Flash_MS58_Init(void);
+void Init_Data_Rada(void);
+void RD_Write_Flash_MS58(void);
+
 
 void RD_LOG(const char *format, ...);
 #endif /* RD_TYPE_DEVICE_H_ */

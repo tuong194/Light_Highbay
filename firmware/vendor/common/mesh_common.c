@@ -4330,12 +4330,12 @@ void uart_drv_init()
 	#elif (CLOCK_SYS_CLOCK_HZ == 24000000)
 		uart_init(12, 15, PARITY_NONE, STOP_BIT_ONE);
 	#elif (CLOCK_SYS_CLOCK_HZ == 32000000)
-		uart_init(30, 8, PARITY_NONE, STOP_BIT_ONE);
+		uart_init(235, 13, PARITY_NONE, STOP_BIT_ONE);
 	#elif (CLOCK_SYS_CLOCK_HZ == 48000000)
 		uart_init(25, 15, PARITY_NONE, STOP_BIT_ONE);
 	#endif
 
-	uart_dma_enable(1, 1); 	//uart data in hardware buffer moved by dma, so we need enable them first
+	uart_dma_enable(1, 0); 	//uart data in hardware buffer moved by dma, so we need enable them first
 
 	irq_set_mask(FLD_IRQ_DMA_EN);
 	dma_chn_irq_enable(FLD_DMA_CHN_UART_RX | FLD_DMA_CHN_UART_TX, 1);   	//uart Rx/Tx dma irq enable

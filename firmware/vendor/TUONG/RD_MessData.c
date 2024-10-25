@@ -17,6 +17,7 @@ RD_Type_Device_Message RD_Mess_Recevie;
 RD_Save_GW_Address RD_Save_GW_Addr;
 RD_Rsp_GW_Address  RD_Rsp_GW_Addr;
 
+
 uint8_t *BuffRec;
 uint16_t RD_GATEWAY_ADDR = 0x0001;
 
@@ -29,6 +30,7 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 	RD_Mess_Recevie = *RD_Mess_Temp_Receive;
 	u16 Header = RD_Mess_Recevie.Header[1] << 8 | RD_Mess_Recevie.Header[0];
 	switch (Header) {
+
 	case RD_SET_TYPE_DEVICE:
 		RD_Mess_Recevie.Header[0] = 0x01;
 		RD_Mess_Recevie.Header[1] = 0x00;
@@ -69,9 +71,6 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 			flag_kickout_all = TRUE;
 		}
 		break;
-	case RD_SWITCH_SELECT_AUTO_RADA: //T_NOTE auto rada
-		/*  todo  */
-		break;
 	case RD_PROVISION_AES:
 		if(is_provision_success()){
 			if (RD_AesreCheck(cb_par->adr_dst, &par[2])) {
@@ -87,8 +86,7 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 				RD_Mess_Recevie.Future[2] = 0x00;
 
 				BuffRec = (uint8_t *) (&RD_Mess_Recevie.Header[0]);
-				mesh_tx_cmd2normal_primary(cb_par->op_rsp, BuffRec, 8,
-						cb_par->adr_src, 2);
+				mesh_tx_cmd2normal_primary(cb_par->op_rsp, BuffRec, 8, cb_par->adr_src, 2);
 
 			} else {
 				flash_save_secure.flag_process_aes = 0;

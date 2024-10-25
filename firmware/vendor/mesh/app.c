@@ -862,7 +862,7 @@ void user_init()
 	usb_bulk_drv_init (0);
 	blc_register_hci_handler (app_hci_cmd_from_usb, blc_hci_tx_to_usb);
 	#elif (HCI_ACCESS == HCI_USE_UART)	//uart
-	uart_drv_init();
+	uart_drv_init(); // RD_EDIT init uart
 	blc_register_hci_handler (blc_rx_from_uart, blc_hci_tx_to_uart);		//default handler
 	//blc_register_hci_handler(rx_from_uart_cb,tx_to_uart_cb);				//customized uart handler
 	#endif

@@ -6,10 +6,13 @@
  */
 
 #include "RD_Scene.h"
+#include "MS58.h"
+#include "RD_Type_Device.h"
 #include "../mesh/RD_Lib.h"
 
 Sw_Working_Stt_Str Sw_Working_Stt_Val = { 0 };
 Flash_Save_K9B dataFlashK9B = { { 0 } };
+extern Flash_Save_MS58_t  Flash_Save_MS58;
 
 uint16_t RD_list_check_scene[50] = {0};
 uint8_t numscene = 0;
@@ -98,6 +101,10 @@ uint8_t numscene = 0;
 
 void RD_Group_Auto(uint16_t Group_ID, mesh_cb_fun_par_t *cb_par, uint16_t Opcode_Group);
 void RD_Scene_Auto(uint16_t Scene_ID, mesh_cb_fun_par_t *cb_par, uint16_t Opcode_Scene);
+static void RD_Handle_Select_Rada(uint8_t on_off_mess);
+static void RD_Handle_Config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]);
+static void RD_Handle_Set_Mode_Rada(uint8_t mode);
+static void RD_Handle_Set_Startup_Rada(uint8_t mode_start);
 static void RD_Handle_ScanK9BHC(uint8_t par[8], uint16_t Gw_Add_Buff);
 static void RD_Handle_Save_K9BHC(uint8_t par[8], uint16_t Gw_Add_Buff);
 static void RD_Handle_K9B_SaveScene(uint8_t par[8], uint16_t Gw_Add_Buff);
@@ -117,6 +124,21 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 	GW_Addr_Buff = cb_par->adr_src;
 
 	switch (Header) {
+	case RD_SET_STARTUP_MODE:
+		RD_Handle_Set_Startup_Rada(par[2]);
+		break;
+	case RD_SW_SELECT_MODE_RADA:
+		RD_Handle_Select_Rada(par[2]);
+		break;
+	case RD_CONFIG_MS58_DISTANCE:
+		break;
+	case RD_CONFIG_MS58_SENSITIVE:
+		break;
+	case RD_CONFIG_MS58_LOT:
+		break;
+	case RD_SET_MODE_RADA:
+		RD_Handle_Set_Mode_Rada(par[2]);
+		break;
 	case RD_AUTO_CREATE_GROUP_SCENE:
 		if(is_provision_success()){
 			ID_Group = par[3] << 8 | par[2];
@@ -158,6 +180,34 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 
 
 /*----------------------------------------------------------------Handle Func-------------------------------------------------------------------------*/
+
+static void RD_Handle_Config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]){
+	RD_config_MS58(gain, delta, lot);
+	Flash_Save_MS58.parMS58.gain = gain;
+	Flash_Save_MS58.parMS58.delta[0] = delta[0];
+	Flash_Save_MS58.parMS58.delta[1] = delta[1];
+	Flash_Save_MS58.parMS58.lot[0] = lot[0];
+	Flash_Save_MS58.parMS58.lot[1] = lot[1];
+	Flash_Save_MS58.parMS58.lot[2] = lot[2];
+	Flash_Save_MS58.parMS58.lot[3] = lot[3];
+	RD_Write_Flash_MS58();
+}
+static void RD_Handle_Select_Rada(uint8_t on_off_mess){
+	Flash_Save_MS58.sw_select = on_off_mess;
+	RD_Write_Flash_MS58();
+	RD_LOG("set select mode: 0x%02X\n",Flash_Save_MS58.sw_select);
+}
+static void RD_Handle_Set_Mode_Rada(uint8_t mode){
+
+	Flash_Save_MS58.mode = mode;
+	RD_Write_Flash_MS58();
+	RD_LOG("set mode rada: 0x%02X\n",Flash_Save_MS58.mode);
+}
+static void RD_Handle_Set_Startup_Rada(uint8_t mode_start){
+	Flash_Save_MS58.start_status = mode_start;
+	RD_Write_Flash_MS58();
+	RD_LOG("set startup rada: 0x%02X\n",Flash_Save_MS58.start_status);
+}
 static void RD_Handle_ScanK9BHC(uint8_t par[8], uint16_t Gw_Add_Buff) {
 	Sw_Working_Stt_Val.Add_K9B_HCSet = 0x0000;
 	Sw_Working_Stt_Val.Pair_K9BHc_Flag = par[2];

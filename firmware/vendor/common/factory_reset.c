@@ -31,6 +31,8 @@
 #include "lighting_model.h"
 #include "../mesh/RD_Lib.h"
 
+extern void RD_LOG(const char *format, ...);
+
 extern void light_dim_set_hw(int idx, int idx2, u16 val);
 //extern uint8_t RD_rst_cnt;
 
@@ -238,8 +240,6 @@ user can change any one of factory_reset_serials, and also can change SERIALS_CN
                                      0, TIME_RESET, \
                                      0, TIME_RESET, \
                                      0, TIME_RESET, \
-                                     0, TIME_RESET, \
-                                     0, TIME_RESET, \
                                      TIME_RESET, 30,\
                                      TIME_RESET, 30,}
 #endif
@@ -369,22 +369,23 @@ void increase_reset_cnt ()
 	reset_cnt++;
 	//RD_rst_cnt = reset_cnt; // test
 	//RD_EDIT reset cung
-	if(reset_cnt > 2){
-		st_pub_list_t pub_list = {{0}};
-#if NAME != HIGHTBAY_RADA
-		mesh_cmd_light_ctl_set_t p_set;
-		p_set.temp = 0x4e20;
-		light_ctl_temp_set(&p_set, 2, 0, 0, 0, &pub_list);
-#endif
-		mesh_cmd_lightness_set_t p_set_light;
-		p_set_light.lightness = 0xffff;
-
-		lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
-	}
+//	if(reset_cnt > 2 && reset_cnt <10){
+//		st_pub_list_t pub_list = {{0}};
+//#if NAME != HIGHTBAY_RADA
+//		mesh_cmd_light_ctl_set_t p_set;
+//		p_set.temp = 0x4e20;
+//		light_ctl_temp_set(&p_set, 2, 0, 0, 0, &pub_list);
+//#endif
+//		mesh_cmd_lightness_set_t p_set_light;
+//		p_set_light.lightness = 0xffff;
+//
+//		lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
+//	}
 	if(reset_cnt == 10){
 		RD_light_ev_with_sleep(3, 500*1000);
 		light_dim_refresh(0);
-	}if(reset_cnt == 12){
+	}else if(reset_cnt == 12){
+		extern u32 get_pwm_cmp(u8 val, u8 lum);
 		light_dim_set_hw(0, 0, get_pwm_cmp(0xff,0));
 #if NAME != HIGHTBAY_RADA
 		light_dim_set_hw(0, 1, get_pwm_cmp(0xff,0));
@@ -396,7 +397,7 @@ void increase_reset_cnt ()
 		kick_out(0);
 
 	}
-
+	//RD_LOG("reset count: %d\n", reset_cnt);
 
 	/*-------------------------------------------------------*/
 	write_reset_cnt(reset_cnt);
@@ -664,7 +665,7 @@ void kick_out(int led_en){
         wd_clear();
         sleep_ms(500);
         wd_clear();
-    	//RD_light_ev_with_sleep(3, 500*1000); // RD_EDIT: nhay led 3 lan sau kick out
+    	RD_light_ev_with_sleep(3, 500*1000); // RD_EDIT: nhay led 3 lan sau kick out
     }
     mesh_start_reboot();
     #endif

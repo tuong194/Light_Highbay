@@ -371,10 +371,10 @@ extern "C" {
 
 //---------------  LED / PWM
 #if(PCBA_8258_SEL == PCBA_8258_DONGLE_48PIN)
-#define PWM_R       GPIO_PC5	//GPIO_PC4	//red //RD: tuong config lai
+#define PWM_R       GPIO_PC5//GPIO_PWM4B4 //GPIO_PC4	//red //RD: tuong config lai
 #define PWM_G       GPIO_PWM1C3		//green
 #define PWM_B       GPIO_PWM0C2		//blue
-#define PWM_W       GPIO_PWM4B4		//white
+#define PWM_W       GPIO_PC4 //GPIO_PWM4B4		//white
 #define PWM_Y       GPIO_PWM5B5		//yellow  //RD_EDIT pin config
 
 #elif(PCBA_8258_SEL == PCBA_8258_C1T140A3_V1_1)
@@ -442,7 +442,7 @@ extern "C" {
 #elif (MI_API_ENABLE)
 #define CLOCK_SYS_CLOCK_HZ  	48000000
 #else
-#define CLOCK_SYS_CLOCK_HZ  	32000000
+#define CLOCK_SYS_CLOCK_HZ  	16000000
 #endif
 //////////////////Extern Crystal Type///////////////////////
 #define CRYSTAL_TYPE			XTAL_12M		//  extern 12M crystal

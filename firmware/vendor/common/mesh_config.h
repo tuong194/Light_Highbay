@@ -600,7 +600,7 @@ extern "C" {
 	#else
 //T_NOTE: config LIGHT_TYPE_SEL
 		#if NAME == HIGHTBAY_RADA
-			#define LIGHT_TYPE_SEL				LIGHT_TYPE_DIM	//
+			#define LIGHT_TYPE_SEL				 LIGHT_TYPE_DIM	//
 		#else
 			#define LIGHT_TYPE_SEL				LIGHT_TYPE_CT	//
 		#endif
