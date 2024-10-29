@@ -17,7 +17,7 @@ unsigned char aesEncrypt[16] = { 0 };
 extern u32 get_pwm_cmp(u8 val, u8 lum);
 extern void light_dim_set_hw(int idx, int idx2, u16 val);
 
-RD_Flash_Save_Secure flash_save_secure;
+RD_Flash_Save_Secure flash_save_secure = {{0}};
 
 uint8_t step_down;
 uint8_t flag_down_step = 1;
@@ -52,17 +52,27 @@ unsigned char RD_AesreCheck(uint16_t unicast_ID, uint8_t compare_key[6]) {
 
 void check_done_provision(void) {
 	static u8 first = 0;
-	if (get_provision_state() == STATE_DEV_PROVED && first == 0) {
+
+	if(get_provision_state() == STATE_DEV_PROVED && flash_save_secure.flag_check_mess == 1 && first == 0){
+		uart_Csend("provision sucess\n");
+		RD_light_ev_with_sleep(3, 500 * 1000);
+		first = 1;
+	}
+	if (get_provision_state() == STATE_DEV_PROVED && flash_save_secure.flag_check_mess == 1) {
+
 		flag_provision = TRUE;
-		uart_Csend("provision sucess");
-		if (flash_save_secure.flag_process_aes == 0) { // ma hoa sai
-			RD_light_ev_with_sleep(3, 500 * 1000);
+
+		if (flash_save_secure.flag_process_aes == ENCRYPT_ERR ) { // ma hoa sai
+			//RD_light_ev_with_sleep(2, 500 * 1000);
 			vrs_time_err_aes = clock_time_s();
-		} else if (flash_save_secure.flag_process_aes == -1) { // ko co ban tin ma hoa
-			RD_light_ev_with_sleep(1, 500 * 1000);
+			RD_LOG("sai ma hoa r \n");
+		} else if (flash_save_secure.flag_process_aes == NO_MESS ) { // ko co ban tin ma hoa
+			//RD_light_ev_with_sleep(1, 500 * 1000);
 			vrs_time_bindall = clock_time_s();
-		} else if (flash_save_secure.flag_process_aes == 1) { // ma hoa dung
-			RD_light_ev_with_sleep(3, 500 * 1000); // T=1s, nhay 3 lan
+			RD_LOG("ko co ban tin\n");
+		} else if (flash_save_secure.flag_process_aes == ENCRYPT_OK ) { // ma hoa dung
+			//RD_light_ev_with_sleep(3, 500 * 1000); // T=1s, nhay 3 lan
+			RD_LOG("chuan HC nha\n");
 		}
 
 		sleep_ms(100);
@@ -78,9 +88,10 @@ void check_done_provision(void) {
 		p_set_light.lightness = 0xffff;
 		lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
 
+		flash_save_secure.flag_check_mess = 0;
+
 		flash_erase_sector(RD_PROVISION_FLASH_AREA);
 		flash_write_page(RD_PROVISION_FLASH_AREA, RD_SIZE_FLASH_SECURE, (uint8_t *) (&flash_save_secure.Used[0]));
-		first = 1;
 	}
 #if EN_SECURE
 	Kickout_Security();
@@ -89,78 +100,26 @@ void check_done_provision(void) {
 
 void Kickout_Security(void) {
 	if (flag_provision == TRUE) {
-		if (flash_save_secure.flag_process_aes == -1 && clock_time_s() - vrs_time_bindall > 60) { // ko co ban tin
+		if (flash_save_secure.flag_process_aes == NO_MESS && clock_time_s() - vrs_time_bindall > 60) { // ko co ban tin
 			flag_provision = FALSE;
-			flash_save_secure.flag_process_aes = -1;
+			flash_save_secure.flag_process_aes = NO_MESS;
 			kick_out(1);
-		} else if (flash_save_secure.flag_process_aes == 0 && clock_time_s() - vrs_time_err_aes
-				> 10) { // ma hoa sai
+		} else if (flash_save_secure.flag_process_aes == ENCRYPT_ERR && clock_time_s() - vrs_time_err_aes > 10) { // ma hoa sai
 			flag_provision = FALSE;
-			flash_save_secure.flag_process_aes = -1;
+			flash_save_secure.flag_process_aes = NO_MESS;
 			 kick_out(1);
 		}
 	}
 }
 
 
-// reset cung
-void reset_kickout(void) { // not use
-	if (flag_down_step == 1) {
-		if (clock_time_exceed_ms(time_out_down_step, 1000) && (clock_time_ms() - time_out_down_step) < 3000) {
-			step_down--;
-
-			uint8_t buff[2];
-			buff[0] = step_down;
-			flag_down_step = 0;
-			flash_erase_sector(RD_PROVISION_FLASH_AREA);
-			flash_write_page(RD_PROVISION_FLASH_AREA, 1, buff);
-
-		}
-	}
-	if (clock_time_exceed_ms(time_out_down_step, 3000) && step_down != 6 && step_down!=0) {
-		step_down = 6;
-		uint8_t buff[2];
-		buff[0] = step_down;
-		flag_down_step = 0;
-		flash_erase_sector(RD_PROVISION_FLASH_AREA);
-		flash_write_page(RD_PROVISION_FLASH_AREA, 1, buff);
-	}
-	if (step_down == 1) {
-		step_down--;
-		RD_light_ev_with_sleep(3, 500 * 1000);
-		light_dim_refresh(0);
-		flash_erase_sector(RD_PROVISION_FLASH_AREA);
-		flash_write_page(RD_PROVISION_FLASH_AREA, 1, &step_down);
-	}
-
-}
-
-void Read_val_kick_out(void) { // not use
-//	flash_read_page(RD_PROVISION_FLASH_AREA, 1, &step_down);
-//	if (step_down > 6)
-//		step_down = 6;
-	flag_down_step = 1;
-	if (step_down == 0) {
-		//RD_light_ev_with_sleep(1, 500 * 1000);
-		light_dim_set_hw(0,1,get_pwm_cmp(0xff,0));
-		light_dim_set_hw(0,0,get_pwm_cmp(0xff,0));
-		sleep_ms(500);
-		wd_clear();
-		step_down = 6;
-//		flash_erase_sector(RD_PROVISION_FLASH_AREA);
-//		flash_write_page(RD_PROVISION_FLASH_AREA, RD_SIZE_FLASH_SECURE, (uint8_t *) (&flash_save_secure.Used[0]));
-		flag_down_step = 0;
-		kick_out(0);
-	}
-	time_out_down_step = clock_time_ms();
-}
-
 void Flash_Clean_Secure(){
 	flash_save_secure.Used[0] = RD_CHECK_FLASH_H;
 	flash_save_secure.Used[1] = RD_CHECK_FLASH_L;
 	flash_save_secure.Used[2] = RD_CHECK_FLASH_H;
 	flash_save_secure.Used[3] = RD_CHECK_FLASH_L;
-	flash_save_secure.flag_process_aes = -1;
+	flash_save_secure.flag_process_aes = NO_MESS;
+	flash_save_secure.flag_check_mess = 0;
 	flash_erase_sector(RD_PROVISION_FLASH_AREA);
 	flash_write_page(RD_PROVISION_FLASH_AREA, RD_SIZE_FLASH_SECURE, (uint8_t *) (&flash_save_secure.Used[0]));
 
@@ -168,14 +127,18 @@ void Flash_Clean_Secure(){
 
 void Init_Flash_Secure(void){
 	flash_read_page(RD_PROVISION_FLASH_AREA, RD_SIZE_FLASH_SECURE, (uint8_t *) (&flash_save_secure.Used[0]));
+
 	if(flash_save_secure.Used[0] != RD_CHECK_FLASH_H && flash_save_secure.Used[1] != RD_CHECK_FLASH_L
 		&& flash_save_secure.Used[2] != RD_CHECK_FLASH_H && flash_save_secure.Used[3] != RD_CHECK_FLASH_L){
+		RD_LOG("init flash secure err\n");
 		Flash_Clean_Secure();
 	}
+	RD_LOG("start flag_secure: %d\n",flash_save_secure.flag_process_aes);
+	RD_LOG("start flag_check_mess: %d\n",flash_save_secure.flag_check_mess);
 	//Read_val_kick_out();
 #if EN_SECURE
 	if(is_provision_success()){
-		if(flash_save_secure.flag_process_aes != 1){
+		if(flash_save_secure.flag_process_aes != ENCRYPT_OK){
 			kick_out(0);
 		}
 	}

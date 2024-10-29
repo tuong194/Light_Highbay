@@ -539,7 +539,7 @@ void light_par_save(int quick)
  * @return      none
  * @note        
  */
-void light_par_save_proc()
+void light_par_save_proc() // RD_EDIT luu lai trang thai sau 3s
 {
 	// save proc
 	if(tick_light_save && clock_time_exceed(tick_light_save, 3*1000*1000)){

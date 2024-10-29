@@ -241,7 +241,7 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		uart_dma_enable(1,0);
 
 
-		RD_config_pin_MS58();
+		//RD_config_pin_MS58();
 		Init_Flash_K9B();
 		Init_Flash_Secure();
 		RD_Flash_Type_Init();
@@ -262,9 +262,9 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 
 		main_loop ();
 
-//		check_done_provision();
-//		RD_K9B_TimeOutScan_OnOff();
-//		RD_Kickout_All();
+		check_done_provision();
+		RD_K9B_TimeOutScan_OnOff();
+		RD_Kickout_All();
 
 	}
 }

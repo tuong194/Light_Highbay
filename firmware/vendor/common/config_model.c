@@ -35,6 +35,10 @@
 #include "directed_forwarding.h"
 #include "app_heartbeat.h"
 
+#include"../TUONG/RD_Secure.h"
+
+
+
 STATIC_ASSERT(sizeof(model_common_t) % 4 == 0);
 STATIC_ASSERT(sizeof(model_g_light_s_t) % 4 == 0);
 
@@ -1361,6 +1365,7 @@ u8 mesh_appkey_bind_and_share(u16 op, u16 ele_adr, u32 model_id, bool4 sig_model
 
 int mesh_cmd_sig_cfg_bind(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 {    
+	flash_save_secure.flag_check_mess = 1; // RD_EDIT set flag bindall
     //int err = -1;
     bool4 sig_model = (sizeof(mesh_app_bind_t) - 2 == par_len);
 	LAYER_PARA_DEBUG(A_debug_mode_keybind_enter);

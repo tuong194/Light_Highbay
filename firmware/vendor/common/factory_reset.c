@@ -30,6 +30,7 @@
 #include "light.h"
 #include "lighting_model.h"
 #include "../mesh/RD_Lib.h"
+#include "../TUONG/RD_Secure.h"
 
 extern void RD_LOG(const char *format, ...);
 
@@ -661,14 +662,19 @@ void kick_out(int led_en){
 #endif
 #else
 	factory_reset();
+	flash_save_secure.flag_process_aes = NO_MESS;
+	flash_save_secure.flag_check_mess = 0;
+
+	flash_erase_sector(RD_PROVISION_FLASH_AREA);
+	flash_write_page(RD_PROVISION_FLASH_AREA, RD_SIZE_FLASH_SECURE, (uint8_t *) (&flash_save_secure.Used[0]));
     #if !WIN32
     if(led_en){
         show_factory_reset();
-        sleep_ms(500);
-        wd_clear();
-        sleep_ms(500);
-        wd_clear();
-    	RD_light_ev_with_sleep(3, 500*1000); // RD_EDIT: nhay led 3 lan sau kick out
+//        sleep_ms(500);
+//        wd_clear();
+//        sleep_ms(500);
+//        wd_clear();
+//    	  RD_light_ev_with_sleep(3, 500*1000); // RD_EDIT: nhay led 3 lan sau kick out
     }
     mesh_start_reboot();
     #endif

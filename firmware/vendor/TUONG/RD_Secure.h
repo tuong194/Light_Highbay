@@ -18,17 +18,27 @@
 #include "proj_lib/sig_mesh/app_mesh.h"
 
 #define RD_PROVISION_FLASH_AREA (0x7a000)
-#define RD_SIZE_FLASH_SECURE    5
+#define RD_SIZE_FLASH_SECURE    6
 #define RD_CHECK_FLASH_H   (0x55)
 #define RD_CHECK_FLASH_L   (0xAA)
 
 #define EN_SECURE           0
 
+
+enum {
+	NO_MESS = 0,
+	ENCRYPT_ERR,
+	ENCRYPT_OK,
+}check_aes;
+
 typedef struct{
 	uint8_t Used[4];
-	s8 flag_process_aes;
+	uint8_t flag_process_aes;
+	uint8_t flag_check_mess;
 	//uint8_t step_down;
 }RD_Flash_Save_Secure;
+extern RD_Flash_Save_Secure flash_save_secure;
+
 
 unsigned char RD_AesreCheck(uint16_t unicast_ID, uint8_t compare_key[6]);
 void check_done_provision(void);

@@ -23,7 +23,7 @@ uint8_t numscene = 0;
 	uint16_t temp[6] 		= {0x4e20,  0x0320, 0x4e20, 0x15c0, 0x15c0, 0x15c0};
 	uint16_t lightness[6] 	= {0x0000,  0xcccc, 0xffff,	0xcccc, 0xffff, 0x4ccd};
 #elif(NAME == COB_122)
-	uint16_t groupType 		= 0x002;
+	uint16_t groupType 		= 0x0002;
 	uint16_t temp[6] 		= {0x4e20,  0x0320, 0x4e20, 0x15c0, 0x15c0, 0x15c0};
 	uint16_t lightness[6] 	= {0x0000,  0xcccc, 0xffff,	0xcccc, 0xffff, 0x4ccd};
 #elif(NAME == DOWNLIGHT_TT_124)
@@ -64,8 +64,8 @@ uint8_t numscene = 0;
 	uint16_t lightness[6] 	= {0x0000,  0xcccc, 0xffff,	0xcccc, 0xffff, 0x7fff};
 #elif(NAME == HIGHTBAY_RADA)
 	uint16_t groupType 		= 0x0004;
-	uint16_t temp[6] 		= {0x0320,  0x0320, 0x0320, 0x0320, 0x0320, 0x0320};
-	uint16_t lightness[6] 	= {0x0000,  0xffff, 0x0000,	0x0000, 0x0000, 0x0000};
+	uint16_t temp[6] 		= {0, 0, 0, 0, 0, 0};
+	uint16_t lightness[6] 	= {0x0000, 0x0000, 0x0000,	0x0000, 0xffff, 0x0000};
 //----------------------------------------------------------------------------------------
 
 #elif(NAME == RLT03_12W_12026)
@@ -123,6 +123,8 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 	Header = par[1] << 8 | par[0];
 	GW_Addr_Buff = cb_par->adr_src;
 
+	RD_LOG("header: %d\n",Header);
+
 	switch (Header) {
 	case RD_SET_STARTUP_MODE:
 		RD_Handle_Set_Startup_Rada(par[2]);
@@ -140,7 +142,9 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 		RD_Handle_Set_Mode_Rada(par[2]);
 		break;
 	case RD_AUTO_CREATE_GROUP_SCENE:
+		uart_Csend("set group va scene\n");
 		if(is_provision_success()){
+
 			ID_Group = par[3] << 8 | par[2];
 			ID_Group_Type = ID_Group + groupType;
 			ID_Scene = par[5] << 8 | par[4];
@@ -667,6 +671,8 @@ void RD_Scene_Auto(uint16_t Scene_ID, mesh_cb_fun_par_t *cb_par, uint16_t Opcode
 		foreach(i,6){
 			//set scene
 			RD_mesh_cmd_sig_scene_set_ll(Scene_ID+i, cb_par_s,lightness[i], temp[i]);
+			RD_LOG("SCENE[%d] ",i);
+			//RD_LOG(" id: 0x%04X, lightness: 0x%04X, temp: 0x%04X\n");
 		}
 	}else if(Opcode_Scene == SCENE_DEL_NOACK){
 		foreach(i,SCENE_CNT_MAX){
@@ -687,7 +693,6 @@ void RD_Scene_Auto(uint16_t Scene_ID, mesh_cb_fun_par_t *cb_par, uint16_t Opcode
 	}
 
 }
-
 /*--------------------------FLASH-----------------------------------*/
 void Flash_Clean_K9B(void){
 	dataFlashK9B.Used[0] = RD_CHECK_FLASH_K9B_H;

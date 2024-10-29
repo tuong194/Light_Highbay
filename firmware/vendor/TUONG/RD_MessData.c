@@ -23,7 +23,7 @@ uint16_t RD_GATEWAY_ADDR = 0x0001;
 
 _Bool flag_kickout_all = FALSE;
 
-extern RD_Flash_Save_Secure flash_save_secure;
+//extern RD_Flash_Save_Secure flash_save_secure;
 
 int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 	RD_Mess_Temp_Receive = (RD_Type_Device_Message *) (&par[0]);
@@ -32,6 +32,7 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 	switch (Header) {
 
 	case RD_SET_TYPE_DEVICE:
+		RD_LOG("SET TYPE DEVICE Name: 0x%04X", NAME);
 		RD_Mess_Recevie.Header[0] = 0x01;
 		RD_Mess_Recevie.Header[1] = 0x00;
 		RD_Mess_Recevie.MainType = 0x01;
@@ -48,6 +49,7 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 				cb_par->adr_src, 2);
 		break;
 	case RD_SAVE_GATEWAY_ADDRESS:
+		RD_LOG("SAVE GW\n");
 		RD_GATEWAY_ADDR = saveGatewayAddr(&par[2], cb_par->adr_src);
 		RD_Save_GW_Addr.GWID[0] = (uint8_t) (RD_GATEWAY_ADDR & 0xff);
 		RD_Save_GW_Addr.GWID[1] = (uint8_t) (RD_GATEWAY_ADDR>>8 & 0xff);
@@ -72,9 +74,12 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 		}
 		break;
 	case RD_PROVISION_AES:
+		RD_LOG("KIEM TRA BAO MAT\n");
 		if(is_provision_success()){
+			flash_save_secure.flag_check_mess = 1;
 			if (RD_AesreCheck(cb_par->adr_dst, &par[2])) {
-				flash_save_secure.flag_process_aes = 1;
+				flash_save_secure.flag_process_aes = ENCRYPT_OK;
+				RD_LOG("OK HC\n");
 
 				RD_Mess_Recevie.Header[0] = 0x03;
 				RD_Mess_Recevie.Header[1] = 0x00;
@@ -89,7 +94,8 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 				mesh_tx_cmd2normal_primary(cb_par->op_rsp, BuffRec, 8, cb_par->adr_src, 2);
 
 			} else {
-				flash_save_secure.flag_process_aes = 0;
+				flash_save_secure.flag_process_aes = ENCRYPT_ERR;
+				RD_LOG("MA HOA SAI\n");
 
 				RD_Mess_Recevie.Header[0] = 0x03;
 				RD_Mess_Recevie.Header[1] = 0x00;
@@ -104,6 +110,7 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 				mesh_tx_cmd2normal_primary(cb_par->op_rsp, BuffRec, 8,
 						cb_par->adr_src, 2);
 			}
+			RD_LOG("check_provision: %d\n", flash_save_secure.flag_process_aes);
 		}
 
 		break;

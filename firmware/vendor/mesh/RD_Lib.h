@@ -30,7 +30,7 @@
 
 #define SMT_121				0x01	// AT 16-20-22-
 #define COB_122				0x02	// AT14
-#define DOWNLIGHT_TT_124	0x04    // DOWLIGHT TRANG TRI AT 39-40-41 -18 -19
+#define DOWNLIGHT_TT_124	0x1c//0x04    // DOWLIGHT TRANG TRI AT 39-40-41 -18 -19
 #define PN_T_125			0x05   // panel tron P04
 #define PN_126				0x06   // P07
 #define OT_127				0x07   // op tran LNxx khong co OT_LN28
@@ -40,7 +40,7 @@
 #define LED_WIRE_CT			0x0d	//  led day ct
 #define TUBE_12e			0x0e	//  M36 - M66
 #define OT_LN28				0x1b    //
-#define HIGHTBAY_RADA       0x1c //T_NOTE them den hightbay rada
+#define HIGHTBAY_RADA       0x04//0x1c //T_NOTE them den hightbay rada
 
 //-----------------------------------------------------------------
 #define RLT03_06W_12020			0x14 //

@@ -961,7 +961,6 @@ int cb_vd_du_time_cmd_rsp(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 {
 	return 0;
 }
-
 #endif
 
 #if !WIN32
