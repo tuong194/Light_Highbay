@@ -72,7 +72,7 @@ void check_done_provision(void) {
 			RD_LOG("ko co ban tin\n");
 		} else if (flash_save_secure.flag_process_aes == ENCRYPT_OK ) { // ma hoa dung
 			//RD_light_ev_with_sleep(3, 500 * 1000); // T=1s, nhay 3 lan
-			RD_LOG("chuan HC nha\n");
+			RD_LOG("chuan RD nha\n");
 		}
 
 		sleep_ms(100);
@@ -80,7 +80,7 @@ void check_done_provision(void) {
 
 #if	NAME != HIGHTBAY_RADA
 		mesh_cmd_light_ctl_set_t p_set_ctl;
-		p_set_ctl.temp = 0x0320;
+		p_set_ctl.temp = 0x0320; // yellow
 		p_set_ctl.lightness = 0xffff;
 		light_ctl_temp_set(&p_set_ctl, 2, 0, 0, 0, &pub_list);
 #endif
@@ -100,11 +100,11 @@ void check_done_provision(void) {
 
 void Kickout_Security(void) {
 	if (flag_provision == TRUE) {
-		if (flash_save_secure.flag_process_aes == NO_MESS && clock_time_s() - vrs_time_bindall > 60) { // ko co ban tin
+		if (flash_save_secure.flag_process_aes == NO_MESS && clock_time_s() - vrs_time_bindall > 120) { // ko co ban tin
 			flag_provision = FALSE;
 			flash_save_secure.flag_process_aes = NO_MESS;
 			kick_out(1);
-		} else if (flash_save_secure.flag_process_aes == ENCRYPT_ERR && clock_time_s() - vrs_time_err_aes > 10) { // ma hoa sai
+		} else if (flash_save_secure.flag_process_aes == ENCRYPT_ERR && clock_time_s() - vrs_time_err_aes > 60) { // ma hoa sai
 			flag_provision = FALSE;
 			flash_save_secure.flag_process_aes = NO_MESS;
 			 kick_out(1);

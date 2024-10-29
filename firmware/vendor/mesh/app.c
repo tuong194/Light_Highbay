@@ -715,7 +715,7 @@ void user_init()
 	#else
 		user_sha256_data_proc();
 	#endif
-	mesh_global_var_init();
+	mesh_global_var_init(); // RD note init light
 	
 #if (APP_FLASH_PROTECTION_ENABLE)
 	app_flash_protection_operation(FLASH_OP_EVT_APP_INITIALIZATION, 0, 0);

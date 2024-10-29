@@ -20370,12 +20370,12 @@ mesh_global_var_init_light_sw():
     9426:	0a09      	tloadr	r2, [pc, #36]	; (944c <mesh_global_var_init_light_sw+0x40>)
     9428:	a38a      	tmovs	r3, #138	; 0x8a
     942a:	f09b      	tshftls	r3, r3, #2
-    942c:	14d1      	tstorerb	r1, [r2, r3]
-    942e:	a141      	tmovs	r1, #65	; 0x41
-    9430:	0b07      	tloadr	r3, [pc, #28]	; (9450 <mesh_global_var_init_light_sw+0x44>)
-    9432:	14d1      	tstorerb	r1, [r2, r3]
-    9434:	0770      	tjex	lr
-    9436:	46c0      	tnop			; (mov r8, r8)
+    942c:	a102      	tmovs	r1, #2
+    942e:	14d1      	tstorerb	r1, [r2, r3]
+    9430:	a141      	tmovs	r1, #65	; 0x41
+    9432:	0b07      	tloadr	r3, [pc, #28]	; (9450 <mesh_global_var_init_light_sw+0x44>)
+    9434:	14d1      	tstorerb	r1, [r2, r3]
+    9436:	0770      	tjex	lr
     9438:	00843e88 	taddeq	r3, r4, r8, lsl #29
     943c:	ffff8001 	undefined instruction 0xffff8001
     9440:	00007fff 	undefined instruction 0x00007fff
@@ -72620,7 +72620,7 @@ Disassembly of section .rodata:
    246dc:	6974206e 	tloadmdbvs	r4!, {r1, r2, r3, r5, r6, sp}^
    246e0:	00000a6e 	tandeq	r0, r0, lr, ror #20
    246e4:	61756863 	tcmpnvs	r5, r3, ror #16
-   246e8:	4348206e 	tcmpmi	r8, #110	; 0x6e
+   246e8:	4452206e 	tloadrbmi	r2, [r2], #-110	; 0x6e
    246ec:	61686e20 	tcmpnvs	r8, r0, lsr #28
    246f0:	0000000a 	tandeq	r0, r0, sl
    246f4:	74696e69 	tstorerbtvc	r6, [r9], #-3689	; 0xe69

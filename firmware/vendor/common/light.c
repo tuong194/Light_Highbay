@@ -258,7 +258,7 @@ int is_state_after_ota()
  * @return      none
  * @note        
  */
-void mesh_global_var_init_light_sw()
+void mesh_global_var_init_light_sw() //RD_EDIT init light
 {
 	foreach_arr(i,light_res_sw){
 		foreach_arr(k,light_res_sw[i].trans){
@@ -314,7 +314,7 @@ void mesh_global_var_init_light_sw()
 			p_trans->present = p_trans->target = get_on_power_up_last(p_save);
 		}
 
-		ONPOWER_UP_VAL(i) = ONPOWER_UP_SELECT;
+		ONPOWER_UP_VAL(i) = ONPOWER_UP_STORE; //ONPOWER_UP_SELECT; RD_EDIT on/off khi start
 		g_def_trans_time_val(i) = PTS_TEST_EN ? 0 : TRANSITION_TIME_DEFAULT_VAL;
 	}
 }
