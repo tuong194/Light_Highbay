@@ -3844,7 +3844,7 @@ mesh_md_adr_map_t mesh_md_adr_map[] = {
 #endif
 };
 
-const mesh_save_map_t mesh_save_map[] = {
+const mesh_save_map_t mesh_save_map[] = { // T_NOTE map flash
 #if MD_SERVER_EN
 	{FLASH_ADR_SW_LEVEL, (u8 *)&light_res_sw_save, &mesh_sw_level_addr, sizeof(light_res_sw_save)},
 #endif
@@ -4236,7 +4236,7 @@ void mesh_par_store(const u8 *in, u32 *p_adr, u32 adr_base, u32 size)
 #endif
 }
 
-int mesh_common_retrieve_by_index(u8 index){
+int mesh_common_retrieve_by_index(u8 index){ // T_NOTE read flash light_sw_save
 	const mesh_save_map_t *p_map = &mesh_save_map[index];
 	int err = mesh_par_retrieve(p_map->p_save_par, p_map->p_adr, p_map->adr_base, p_map->size_save_par, NULL);
     
@@ -4244,7 +4244,7 @@ int mesh_common_retrieve_by_index(u8 index){
 	return err;
 }
 
-int mesh_common_store_by_index(u8 index){
+int mesh_common_store_by_index(u8 index){ // T_NOTE write flash
 	const mesh_save_map_t *p_map = &mesh_save_map[index];
     mesh_par_store(p_map->p_save_par, p_map->p_adr, p_map->adr_base, p_map->size_save_par);
     return 0;	// err
@@ -4342,7 +4342,7 @@ void mesh_common_reset_all()
 	
 	mesh_global_var_init();
 	mesh_set_ele_adr_ll(ele_adr_primary, 0, 0);
-	#if MD_SERVER_EN // RD_EDIT read flag status light
+	#if MD_SERVER_EN // RD_EDIT read flash status light
 	mesh_par_retrieve((u8 *)&light_res_sw_save, &mesh_sw_level_addr, FLASH_ADR_SW_LEVEL, sizeof(light_res_sw_save), NULL);//retrieve light_res_sw_save
 	#endif
 	mesh_par_retrieve((u8 *)&provision_mag, &mesh_provision_mag_addr, FLASH_ADR_PROVISION_CFG_S, sizeof(provision_mag), NULL);//retrieve oob
@@ -6016,7 +6016,7 @@ void mesh_init_all()
     u8 node_ident_random[8];    // because it will be used in both mesh_flash_retrieve_()->mesh_net_key_set_() and mesh_provision_para_init_()
 	prov_random_proc(node_ident_random);
     // read parameters
-    mesh_flash_retrieve();	// should be first, get unicast addr from config model.
+    mesh_flash_retrieve();	// should be first, get unicast addr from config model. // T_NOTE: init light (2) read flash
     mesh_key_node_identity_init();// should be after key retrieve .
     provision_random_data_init();
 	mesh_provision_para_init(node_ident_random);
@@ -6028,7 +6028,7 @@ void mesh_init_all()
 
 	// init the health part 
 	init_health_para();
-	mesh_vd_init();
+	mesh_vd_init(); // T_NOTE: init light (3) load data from flash
 #if (!PROV_AUTH_LEAK_RECREATE_KEY_EN)
 	init_ecc_key_pair(0);
 #endif

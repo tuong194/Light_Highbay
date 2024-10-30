@@ -20,7 +20,7 @@
 #include "RD_Type_Device.h"
 #include"../mesh/RD_Lib.h"
 
-#define LOG_MS58 			1 //RD_LOG_UART
+#define LOG_MS58 			RD_LOG_UART
 #define PIN_MS58            GPIO_PB4
 #define LED_OUT             GPIO_PC3
 

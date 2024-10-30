@@ -191,7 +191,7 @@ void set_on_power_up_onoff(int idx, int st_trans_type, u8 onoff)
  * @return      none
  * @note        
  */
-void set_on_power_up_last(sw_level_save_t *p_save, s16 last)
+void set_on_power_up_last(sw_level_save_t *p_save, s16 last) // T_NOTE: set gia tri cuoi cung cho light_res_sw_save
 {
 	if(LEVEL_OFF == last){
 		p_save->onoff = 0;  // active for all level. include CT, Hue, Sat...
@@ -258,7 +258,7 @@ int is_state_after_ota()
  * @return      none
  * @note        
  */
-void mesh_global_var_init_light_sw() //RD_EDIT init light
+void mesh_global_var_init_light_sw() //T_NOTE init light (1) khoi tao cac gia tri ban dau
 {
 	foreach_arr(i,light_res_sw){
 		foreach_arr(k,light_res_sw[i].trans){
@@ -745,7 +745,7 @@ u16 g_op_access_layer_rx = 0;	// 0 means invalid op, not APPKEY_ADD.
  * @return      none
  * @note        
  */
-void light_res_sw_g_level_last_set(int idx, int st_trans_type)
+void light_res_sw_g_level_last_set(int idx, int st_trans_type) // T_NOTE  ham nay luu data vao light_res_sw_save
 {
 	//set_level_current_type(idx, st_trans_type);
 	sw_level_save_t *p_save = P_SW_LEVEL_SAVE(idx, st_trans_type);
@@ -1185,7 +1185,7 @@ s16 light_g_level_target_get(int idx, int st_trans_type)
  * @param  st_trans_type: A value in the enumeration type ST_TRANS_TYPE.
  * @retval light present level value.
  */
-s16 light_g_level_present_get(int idx, int st_trans_type)
+s16 light_g_level_present_get(int idx, int st_trans_type) // T_NOTE get lightness present
 {
 	if(idx < LIGHT_CNT){
 		set_level_current_type(idx, st_trans_type);

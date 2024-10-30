@@ -3425,7 +3425,7 @@ void mesh_global_var_init()
 	mesh_global_var_init_fn_buf();
 #endif
 #if MD_SERVER_EN
-	mesh_global_var_init_light_sw();
+	mesh_global_var_init_light_sw();// RD init light
     #if (MD_SENSOR_SERVER_EN)
 	mesh_global_var_init_sensor_descrip();
     #endif

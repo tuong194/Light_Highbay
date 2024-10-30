@@ -249,7 +249,7 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 
 //		uint8_t gain = 0x33;
 //		uint8_t delta[2] = {0x00,0x14};
-//		uint8_t lot[4] = {0x00, 0x00, 0x01, 0xff};
+//		uint8_t lot[4] = {0x00, 0x00, 0x07, 0xD0}; //7D0: 2000 ms
 //		RD_config_MS58(gain, delta, lot);
 	}
 
