@@ -1318,8 +1318,8 @@ typedef struct{
 #endif
 }model_g_power_onoff_trans_time_t;
 
-#define g_def_trans_time_val(idx)	(model_sig_g_power_onoff.trans_time[idx].val)
 
+#define g_def_trans_time_val(idx)	(model_sig_g_power_onoff.trans_time[idx].val)
 typedef struct{
 #if MD_SERVER_EN
 	model_g_light_s_t srv[LIGHT_CNT];			// server

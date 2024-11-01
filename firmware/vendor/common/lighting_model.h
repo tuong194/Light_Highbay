@@ -96,7 +96,7 @@ typedef struct{
 	u8 tid;
 	u8 transit_t;
 	u8 delay;		// unit 5ms
-}mesh_cmd_lightness_set_t;
+} mesh_cmd_lightness_set_t;
 
 typedef struct{
 	u16 present;
@@ -275,7 +275,7 @@ int mesh_cmd_sig_light_ctl_temp_status(u8 *par, int par_len, mesh_cb_fun_par_t *
 #define mesh_cmd_sig_lightness_range_status     (0)
 #define mesh_cmd_sig_light_ctl_status           (0)
 #define mesh_cmd_sig_light_ctl_def_status       (0)
-#define mesh_cmd_sig_light_ctl_temp_range_status    (0)
+#define mesh_cmd_sig_light_ctl_temp_range_status (0)
 #define mesh_cmd_sig_light_ctl_temp_status      (0)
 #endif
 

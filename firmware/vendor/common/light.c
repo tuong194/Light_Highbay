@@ -153,6 +153,7 @@ const u16 rgb_lumen_map[101] = {
 };
 
 
+
 /**
  * @brief       This function set light ct mode for LIGHT_TYPE_CT_HSL
  * @param[in]   mode	- 0:  HSL mode; 1: CT mode.
@@ -200,7 +201,6 @@ void set_on_power_up_last(sw_level_save_t *p_save, s16 last) // T_NOTE: set gia 
 		p_save->last = last;
 	}
 }
-
 
 /**
  * @brief       This function get last value which will be used when power up.

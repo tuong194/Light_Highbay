@@ -108,7 +108,7 @@ extern "C" {
 #define 	__PROJECT_MESH_PRO__	 	1 // "PRO" means provisioner, will be set as 1 for 8258_mesh_gw (gateway) and sig_mesh_tool.exe.
 #define FAST_PROVISION_ENABLE		 	1
 #else
-#define FAST_PROVISION_ENABLE		 	0
+#define FAST_PROVISION_ENABLE		 	1
 #endif
 
 #if (__PROJECT_MESH_PRO__ || __PROJECT_MESH_GW_NODE__)
@@ -731,7 +731,7 @@ extern "C" {
 #elif (MI_API_ENABLE)
 #define MD_REMOTE_PROV              0   // must 0
 #elif (__PROJECT_MESH__)
-#define MD_REMOTE_PROV              1  //RD_EDIT en remote provision    // dufault disable
+#define MD_REMOTE_PROV              0  //RD_EDIT en remote provision    // dufault disable
 #elif (__PROJECT_MESH_PRO__)
 #define MD_REMOTE_PROV              0   // dufault disable
 #else

@@ -329,6 +329,8 @@ STATIC_ASSERT(MD_REMOTE_PROV == 0); // can not enable both, because app can not 
  * @return      none
  * @note        
  */
+
+extern void RD_LOG(const char *format, ...);
 void uuid_create_by_mac(u8 *mac,u8 *uuid)
 {
 // test md5 function part 
@@ -346,7 +348,35 @@ void uuid_create_by_mac(u8 *mac,u8 *uuid)
         
 	char name_string[16] = {0};
 	memcpy(name_string,mac,6);
-	uuid_create_md5_from_name((uuid_mesh_t *)uuid, NameSpace_DNS, name_string, 15);
+
+#if 0
+		name_string[6] =  0x00;
+		name_string[7] = 0x00;
+		char key_VT_RD[8] = "VHT&&RAL";
+		key_VT_RD[0]    = 0x00;
+		key_VT_RD[1]    = 0x01;
+		key_VT_RD[2]    = 0x02;
+		key_VT_RD[3]    = 0x04;
+		key_VT_RD[4]    = 0x30;
+		key_VT_RD[5]    = 0x00;
+		key_VT_RD[6]    = 0x28;
+		key_VT_RD[7]    = 0x04;
+
+		for(int i=8; i<16; i++)
+		{
+			name_string[i] = key_VT_RD[i-8];
+		}
+		memcpy(uuid,name_string,16);
+
+#else
+		uuid_create_md5_from_name((uuid_mesh_t *)uuid, NameSpace_DNS, name_string, 15);
+#endif
+
+//		RD_LOG("send uuid:\n");
+//		for(u8 i=0; i<16;i++){
+//			RD_LOG("0x%02X ", uuid[i]);
+//		}
+//		RD_LOG("\n");
 
     //special proc to set the mac address into the uuid part 
     #if PAIR_PROVISION_ENABLE

@@ -45,6 +45,8 @@
 #include "certify_base/certify_base_crypto.h"
 #include "dual_mode_adapt.h"
 
+#include"../TUONG/RD_MessData.h"
+
 #if !WIN32
 #include "third_party/micro-ecc/uECC.h"
 #include "vendor/common/mi_api/telink_sdk_mible_api.h"
@@ -88,6 +90,8 @@
 #if MD_ON_DEMAND_PROXY_EN
 #include "vendor/common/solicitation_rpl_cfg_model.h"
 #endif
+
+
 
 int set_adv_solicitation(rf_packet_adv_t * p) ;
 
@@ -3099,7 +3103,7 @@ void ble_mac_init()
 		#if(MCU_CORE_TYPE == MCU_CORE_8258)
 			tbl_mac[3] = 0x38;             //company id: 0xA4C138
 			tbl_mac[4] = 0xC1;
-			tbl_mac[5] = 0xA5;
+			tbl_mac[5] = 0xA5; // RD_EDIT edit mac addr
 		#elif(MCU_CORE_TYPE == MCU_CORE_8278)
 			tbl_mac[3] = 0xD1;             //company id: 0xC119D1
 			tbl_mac[4] = 0x19;
@@ -3129,9 +3133,25 @@ _USER_CAN_REDEFINE_ void mesh_scan_rsp_init()
 	tbl_scanRsp.vendor_id = g_vendor_id;
 	tbl_scanRsp.adr_primary = ele_adr_primary;
 	memcpy(tbl_scanRsp.mac_adr, tbl_mac, sizeof(tbl_scanRsp.mac_adr));
-	#if 0
+
+	//RD_EDIT provider scan
+	uint8_t user_scan[11]={0};
+
+	user_scan[0] = MAINTYPE;
+	user_scan[1] = FEATURE;
+	user_scan[2] = NAME;
+	user_scan[3] = 0x00;
+	user_scan[4] = PROVIDER_MAIN;
+	user_scan[5] = PROVIDER_SUB;
+	user_scan[6] = VERSION_MAIN;
+	user_scan[7] = VERSION_SUB;
+	user_scan[8] = 0x00;
+	user_scan[9] = 0x00;
+	user_scan[10] = 0x00;
+
+	#if 1
 	foreach(i,sizeof(tbl_scanRsp.rsv_user)){
-		tbl_scanRsp.rsv_user[i] = 1 + i;
+		tbl_scanRsp.rsv_user[i] = user_scan[i];
 	}
 	#endif
 	

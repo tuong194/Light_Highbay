@@ -31,6 +31,7 @@
 
 #include "../../config.h"
 #include "mesh_config.h"
+#include "../mesh/RD_Lib.h"
 
 #if __TLSR_RISCV_EN__ // for B91m chips
 	#if MESH_IRONMAN_AP2T31F80_EN
@@ -133,7 +134,7 @@ user can be allowed to redefined PID and VID if needed.
 #define MESH_PID_SEL		(PID_UNKNOW)
 #define MESH_VID		    FW_VERSION_TELINK_RELEASE       // user can redefine
 #elif (__PROJECT_MESH__)   // light
-#define MESH_PID_SEL		(PID_LIGHT)
+#define MESH_PID_SEL		(RD_PID_TYPE) // T_NOTE: PID
 	#if DU_ENABLE
 #define MESH_VID		    DU_FW_VER       // in the du mode ,we will use to set version .
 	#else

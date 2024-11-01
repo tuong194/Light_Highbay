@@ -114,7 +114,7 @@
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_25
 #elif(NAME == HIGHTBAY_RADA) // T_NOTE: TYPE_LIGHT
-	#define VERSION_MAIN        0x01		//RD_EDIT: SEC : .h VERSION_MAIN
+	#define VERSION_MAIN        0x03		//RD_EDIT: SEC : .h VERSION_MAIN
 	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0

@@ -463,7 +463,7 @@ int g_level_set(u8 *par, int par_len, u16 op, int idx, bool4 retransaction, int 
 							|| set_LC_lightness_flag
 							#endif
 			)){ // force only for G_LEVEL_SET_NOACK
-			light_g_level_set_idx_with_trans((u8 *)p_set_trans, idx, st_trans_type, pub_list->hsl_set_cmd_flag);
+			light_g_level_set_idx_with_trans((u8 *)p_set_trans, idx, st_trans_type, pub_list->hsl_set_cmd_flag); // T_NOTE set transistion
 			// no need publish at start time now.
             get_light_pub_list(st_trans_type, present_level, set_trans.target_val, 1, pub_list);
 		}else{

@@ -31,6 +31,8 @@
 #include "proj_lib/ble/ll/ll.h"
 #include "proj_lib/sig_mesh/app_mesh.h"
 
+#include "../common/lighting_model.h"
+
 #include "../TUONG/RD_Secure.h"
 #include "../TUONG/RD_MessData.h"
 #include "../TUONG/RD_Scene.h"
@@ -40,8 +42,11 @@
 
 
 
-
-//uint8_t RD_rst_cnt;
+unsigned long TimeNew, TimeOld;
+int vrs_count = 0;
+st_pub_list_t pub_list = {{0}};
+mesh_cmd_lightness_set_t p_set_light;
+void process_test();
 
 
 extern void user_init();
@@ -240,7 +245,6 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		uart_init_baudrate(9600,CLOCK_SYS_CLOCK_HZ,PARITY_NONE, STOP_BIT_ONE);
 		uart_dma_enable(1,0);
 
-
 		//RD_config_pin_MS58();
 		Init_Flash_K9B();
 		Init_Flash_Secure();
@@ -251,9 +255,12 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 //		uint8_t delta[2] = {0x00,0x14};
 //		uint8_t lot[4] = {0x00, 0x00, 0x07, 0xD0}; //7D0: 2000 ms
 //		RD_config_MS58(gain, delta, lot);
+
 	}
 
     irq_enable();
+
+
 
     while (1) {
 #if (MODULE_WATCHDOG_ENABLE)
@@ -262,14 +269,44 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 
 		main_loop ();
 
+		//process_test();
+//		RD_get_data_MS58();
+//		sleep_ms(500);
+//		wd_clear();
+//		sleep_ms(500);
+//		wd_clear();
+
+		//loop_rada();
+
 		check_done_provision();
 		RD_K9B_TimeOutScan_OnOff();
 		RD_Kickout_All();
-
 	}
 }
 #endif
 
+void process_test(){
+	TimeNew = clock_time();
+
+	if(TimeNew > 0xfffffff0){
+		TimeNew = 0;
+		TimeOld = 0;
+	}
+	if (TimeNew - TimeOld > 160000) {
+		TimeOld = TimeNew;
+		vrs_count++;
+		if(vrs_count == 1000){ // 10s
+			p_set_light.lightness = 0x0000;
+			lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
+		}else if(vrs_count == 2000){
+			p_set_light.lightness = 0xffff;
+			lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
+
+		}else if(vrs_count > 3000){
+			vrs_count = 0;
+		}
+	}
+}
 
 
 
