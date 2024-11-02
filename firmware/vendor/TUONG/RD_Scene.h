@@ -34,12 +34,6 @@
 #define RD_OPCODE_SCENE_SEND			(0xE2)
 #define RD_OPCODE_SCENE_RSP				(0xE3)
 
-#define RD_SET_STARTUP_MODE                 (0x100B)
-#define RD_SW_SELECT_MODE_RADA              (0x0845)  // nhan ban tin hoac ko nhan ban tin
-#define RD_CONFIG_MS58_DISTANCE				(0x0745) //khoang cach
-#define RD_CONFIG_MS58_SENSITIVE            (0x0545) //do nhay cam
-#define RD_CONFIG_MS58_LOT					(0x0645) // thoi gian cam nhan
-#define RD_SET_MODE_RADA                 	(0x0445) //auto / manual
 
 #define RD_AUTO_CREATE_GROUP_SCENE          (0x0C0A)
 #define RD_AUTO_DELETE_GROUP_SCENE          (0x0D0A)

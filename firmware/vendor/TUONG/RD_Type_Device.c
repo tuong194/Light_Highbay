@@ -10,7 +10,7 @@
 #include "MS58.h"
 
 Flash_Save_Type_GW Flash_Save_Type_Val;
-Flash_Save_MS58_t  Flash_Save_MS58;
+Flash_Save_MS58_t  Flash_Save_MS58 = {{0}};
 
 void RD_Flash_Save_GW(uint16_t GW_ADDR){
 	Flash_Save_Type_Val.GWID[1] = (uint8_t) (GW_ADDR>>8 & 0xff);
@@ -65,8 +65,6 @@ void RD_Write_Flash_MS58(void){
 }
 
 
-
-
 void RD_Flash_Clean_MS58(void){
 	Flash_Save_MS58.user[0] = RD_CHECK_FLASH_H;
 	Flash_Save_MS58.user[1] = RD_CHECK_FLASH_L;
@@ -75,14 +73,16 @@ void RD_Flash_Clean_MS58(void){
 
 	Flash_Save_MS58.mode = AUTO;
 	Flash_Save_MS58.start_status = KEEP_STATUS;
-	Flash_Save_MS58.sw_select = 0x00;
+	Flash_Save_MS58.sw_select = 0x01;
+	Flash_Save_MS58.lightness_max = 0xffff;
+	Flash_Save_MS58.lightness_min = 0x0000;
 	Flash_Save_MS58.parMS58.gain = 0x33;
 	Flash_Save_MS58.parMS58.delta[0] = 0x00;
 	Flash_Save_MS58.parMS58.delta[1] = 0x64;
 	Flash_Save_MS58.parMS58.lot[0] = 0x00;
 	Flash_Save_MS58.parMS58.lot[1] = 0x00;
-	Flash_Save_MS58.parMS58.lot[2] = 0x01;
-	Flash_Save_MS58.parMS58.lot[3] = 0xff;
+	Flash_Save_MS58.parMS58.lot[2] = 0x07;  //7D0: 2000 ms
+	Flash_Save_MS58.parMS58.lot[3] = 0xD0;
 
 	flash_erase_sector(RD_MS58_FLASH_AREA);
 	flash_write_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));
@@ -93,7 +93,9 @@ void RD_Flash_MS58_Init(void){
 	if(Flash_Save_MS58.user[0] != RD_CHECK_FLASH_H && Flash_Save_MS58.user[1] != RD_CHECK_FLASH_L &&
 	   Flash_Save_MS58.user[2] != RD_CHECK_FLASH_H && Flash_Save_MS58.user[3] != RD_CHECK_FLASH_L){
 		RD_Flash_Clean_MS58();
+		RD_Init_Config_MS58();
 	}
+	log_par_flash_ms58();
 }
 void RD_Check_Startup_Rada(void){
 	switch(Flash_Save_MS58.start_status){
@@ -114,7 +116,7 @@ void Init_Data_Rada(void){
 
 //RD_EDIT LOG UART
 void RD_LOG(const char *format, ...){
-	char out[128];
+	char out[256];
 	char *p = &out[0];
 	va_list args;
 	va_start( args, format );

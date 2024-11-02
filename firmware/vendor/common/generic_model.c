@@ -49,6 +49,8 @@
 #if MD_CMR_EN
 #include "controlled_mesh_relay.h"
 #endif
+
+#include "../TUONG/RD_MessData.h"
 /** @addtogroup Mesh_Common
   * @{
   */
@@ -1707,7 +1709,7 @@ const mesh_cmd_sig_func_t mesh_cmd_sig_func[] = {
 	CMD_YS_STR(LIGHTNESS_STATUS, 1, SIG_MD_LIGHTNESS_S, SIG_MD_LIGHTNESS_C, mesh_cmd_sig_lightness_status, STATUS_NONE),
 	#if CMD_LINEAR_EN
 	CMD_NO_STR(LIGHTNESS_LINEAR_GET, 0, SIG_MD_LIGHTNESS_C, SIG_MD_LIGHTNESS_S, mesh_cmd_sig_lightness_linear_get, LIGHTNESS_LINEAR_STATUS),
-	CMD_NO_STR(LIGHTNESS_LINEAR_SET, 0, SIG_MD_LIGHTNESS_C, SIG_MD_LIGHTNESS_S, mesh_cmd_sig_lightness_linear_set, LIGHTNESS_LINEAR_STATUS),
+	CMD_NO_STR(LIGHTNESS_LINEAR_SET, 0, SIG_MD_LIGHTNESS_C, SIG_MD_LIGHTNESS_S, RD_mesh_cmd_sig_lightness_linear_set, LIGHTNESS_LINEAR_STATUS), //RD_EDIT cb_func
 	CMD_NO_STR(LIGHTNESS_LINEAR_SET_NOACK, 0, SIG_MD_LIGHTNESS_C, SIG_MD_LIGHTNESS_S, mesh_cmd_sig_lightness_linear_set, STATUS_NONE),
 	CMD_NO_STR(LIGHTNESS_LINEAR_STATUS, 1, SIG_MD_LIGHTNESS_S, SIG_MD_LIGHTNESS_C, mesh_cmd_sig_lightness_linear_status, STATUS_NONE),
 	#endif

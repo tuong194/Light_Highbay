@@ -5,7 +5,15 @@
  *      Author: PC5
  */
 #include"MS58.h"
+#include "../common/lighting_model.h"
+#include "RD_Type_Device.h"
 
+st_pub_list_t pub_list = {{0}};
+mesh_cmd_lightness_set_t p_set_light;
+unsigned long TimeNew, TimeOld;
+int vrs_count = 0;
+
+static u8 flag_check_motion = 0;
 
 u16 flag_check_rec_uart = 0;
 extern u16 uart_rx_irq;
@@ -17,9 +25,6 @@ void RD_config_pin_MS58(void){
 	gpio_set_input_en(PIN_MS58, 1);
 	gpio_setup_up_down_resistor(PIN_MS58, PM_PIN_PULLDOWN_100K);
 
-	gpio_set_func(LED_OUT, AS_GPIO);
-	gpio_set_output_en(LED_OUT, 1);
-	gpio_write(LED_OUT,0);
 }
 
 void RD_save_data_MS58(void){
@@ -108,12 +113,69 @@ unsigned int is_motion(void){
 	return out;
 }
 
-void loop_rada(void){
-	if(is_motion()){
-		ON_LED_RADA;
-	}else{
-		OFF_LED_RADA;
+void RD_set_lightness(u16 lightness){
+	TimeNew = clock_time();
+	if(TimeNew > 0xfffffff0){
+		TimeNew = 0;
+		TimeOld = 0;
+	}
+	if (TimeNew - TimeOld > 160000) { // 10ms
+		TimeOld = TimeNew;
+		vrs_count++;
+		if(vrs_count == 10){
+			p_set_light.lightness = lightness;
+			lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
+		}else if(vrs_count > 110) vrs_count = 0;
 	}
 }
 
+void RD_on_light(void){
+	static u32 time_motion_ms = 0;
+	if(is_motion() && flag_check_motion == 0){
+		uart_Csend("co chuyen dong\n");
+		time_motion_ms = clock_time_ms();
+		flag_check_motion = 1;
+	}
+	if(clock_time_exceed_ms(time_motion_ms, 3000) && flag_check_motion == 1){
+		RD_set_lightness(0xffff);
+	}
+}
+
+void RD_off_light(void){
+	static u32 time_no_motion_ms = 0;
+	if(is_motion() == 0 && flag_check_motion == 1){
+		uart_Csend("ko co chuyen dong\n");
+		time_no_motion_ms = clock_time_ms();
+		flag_check_motion = 0;
+	}
+	if(clock_time_exceed_ms(time_no_motion_ms, 1000) && flag_check_motion == 0){
+		RD_set_lightness(0x0000);
+	}
+}
+
+void loop_rada(void){
+	if(Flash_Save_MS58.mode == AUTO){
+		RD_on_light();
+		RD_off_light();
+	}
+}
+void RD_Init_Config_MS58(void){
+	uint8_t gain = 0x33;
+	uint8_t delta[2] = {Flash_Save_MS58.parMS58.delta[0], Flash_Save_MS58.parMS58.delta[1]};
+	uint8_t lot[4] = {0};
+	for(u8 i=0; i<4;i++){
+		lot[i] = Flash_Save_MS58.parMS58.lot[i];
+	}
+	RD_config_MS58(gain, delta, lot);
+}
+
+void log_par_flash_ms58(void){
+	uart_Csend("data flash ms58: \n");
+	RD_LOG("mode: %d, start_status: %d, co nhan mess: %d, light max: %d, light min: %d\n",Flash_Save_MS58.mode,
+			Flash_Save_MS58.start_status, Flash_Save_MS58.sw_select, Flash_Save_MS58.lightness_max, Flash_Save_MS58.lightness_min);
+	uint16_t delta = (Flash_Save_MS58.parMS58.delta[0]<<8) | Flash_Save_MS58.parMS58.delta[1];
+	uint32_t lot = (Flash_Save_MS58.parMS58.lot[0] << 24) | (Flash_Save_MS58.parMS58.lot[1] << 16) |
+			(Flash_Save_MS58.parMS58.lot[2] << 8) | Flash_Save_MS58.parMS58.lot[3];
+	RD_LOG("gain: 0x%02X, delta: %d, lot: %d\n", Flash_Save_MS58.parMS58.gain,delta, lot);
+}
 

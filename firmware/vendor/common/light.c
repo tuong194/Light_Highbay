@@ -2111,7 +2111,7 @@ _USER_CAN_REDEFINE_ void rf_link_light_event_callback (u8 status)
 	    #ifdef CFG_LED_EVENT_SET_SUBSCRIPTION
 	    CFG_LED_EVENT_SET_SUBSCRIPTION;
 	    #else
-        cfg_led_event(LED_EVENT_FLASH_1HZ_3S);
+        cfg_led_event(LED_EVENT_FLASH_1HZ_3S); //T_NOTE: nhay 3 lan khi vao group
         #endif
     }else if(status==LGT_CMD_SET_SCENE){		//RD_EDIT: nhay 2 lan set Scene
     	cfg_led_event(LED_EVENT_FLASH_1HZ_2S);  // T= 1s => 2s: nhay 2 chu ky

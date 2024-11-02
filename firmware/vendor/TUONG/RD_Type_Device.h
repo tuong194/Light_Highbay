@@ -20,6 +20,27 @@
 #define RD_GW_FLASH_AREA   (0x78000)
 #define RD_CHECK_FLASH_H   (0x55)
 #define RD_CHECK_FLASH_L   (0xAA)
+
+typedef struct{
+	//uint8_t power;
+	uint8_t gain;
+	uint8_t delta[2];
+	uint8_t lot[4];
+}Par_MS58_t;
+
+typedef struct{
+	uint8_t user[4];
+	uint8_t mode;
+	uint8_t start_status;
+	uint8_t sw_select;  // nhan hoac ko nhan message: 0x00 ko nhan, 0x01 co nhan
+	uint16_t lightness_max;
+	uint16_t lightness_min;
+	Par_MS58_t parMS58;
+}Flash_Save_MS58_t;
+
+#define RD_FLASH_SIZE_MS58			sizeof(Flash_Save_MS58_t)
+#define RD_MS58_FLASH_AREA          (0x7c000)
+
 typedef struct{
 	uint8_t Used[4];
 	uint8_t GWID[2];
@@ -28,6 +49,8 @@ typedef struct{
 	uint8_t Name;
 	uint8_t Future[7];
 }Flash_Save_Type_GW;
+
+extern Flash_Save_MS58_t Flash_Save_MS58;
 
 void RD_Flash_Save_GW(uint16_t GW_ADDR);
 void RD_Flash_Save_Type(uint8_t MainType, uint8_t Feature, uint8_t Name);
