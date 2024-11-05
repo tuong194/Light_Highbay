@@ -25,7 +25,7 @@
 #define EN_SECURE           0
 
 
-enum {
+typedef enum {
 	NO_MESS = 0,
 	ENCRYPT_ERR,
 	ENCRYPT_OK,

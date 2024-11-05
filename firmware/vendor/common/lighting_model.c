@@ -31,6 +31,8 @@
 #include "lighting_model_LC.h"
 #include "lighting_model.h"
 
+#include "../TUONG/RD_Type_Device.h"
+
 /** @addtogroup Mesh_Common
   * @{
   */
@@ -808,24 +810,26 @@ int lightness_set(mesh_cmd_lightness_set_t *p_set, int par_len, u16 op, int idx,
 int mesh_cmd_sig_lightness_set(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 {
 	int err = 0;
-    st_pub_list_t pub_list = {{0}};
-	#if LS_TEST_ENABLE
-	mesh_cmd_lightness_set_t *par_t = (mesh_cmd_lightness_set_t *)par;
-	par_t->lightness = par_t->lightness*655;
-	#endif
-	err = lightness_set((mesh_cmd_lightness_set_t *)par, par_len, cb_par->op, cb_par->model_idx, cb_par->retransaction, &pub_list);
-	if(err){
-		return 0;
-	}
-	if(cb_par->op_rsp != STATUS_NONE){
-		err = mesh_lightness_st_rsp(cb_par);
-	}else{
-		VC_RefreshUI_level(cb_par);
-	}
 
-	int linear = ((LIGHTNESS_LINEAR_SET == cb_par->op) || (LIGHTNESS_LINEAR_SET_NOACK == cb_par->op));
-    model_pub_check_set_bind_all(&pub_list, cb_par, linear);
+	if(Flash_Save_MS58.sw_select == 0x01){
+	    st_pub_list_t pub_list = {{0}};
+		#if LS_TEST_ENABLE
+		mesh_cmd_lightness_set_t *par_t = (mesh_cmd_lightness_set_t *)par;
+		par_t->lightness = par_t->lightness*655;
+		#endif
+		err = lightness_set((mesh_cmd_lightness_set_t *)par, par_len, cb_par->op, cb_par->model_idx, cb_par->retransaction, &pub_list);
+		if(err){
+			return 0;
+		}
+		if(cb_par->op_rsp != STATUS_NONE){
+			err = mesh_lightness_st_rsp(cb_par);
+		}else{
+			VC_RefreshUI_level(cb_par);
+		}
 
+		int linear = ((LIGHTNESS_LINEAR_SET == cb_par->op) || (LIGHTNESS_LINEAR_SET_NOACK == cb_par->op));
+	    model_pub_check_set_bind_all(&pub_list, cb_par, linear);
+	}
 	return err;
 }
 

@@ -137,7 +137,7 @@ void RD_on_light(void){
 		flag_check_motion = 1;
 	}
 	if(clock_time_exceed_ms(time_motion_ms, 3000) && flag_check_motion == 1){
-		RD_set_lightness(0xffff);
+		RD_set_lightness(Flash_Save_MS58.lightness_max);
 	}
 }
 
@@ -149,7 +149,7 @@ void RD_off_light(void){
 		flag_check_motion = 0;
 	}
 	if(clock_time_exceed_ms(time_no_motion_ms, 1000) && flag_check_motion == 0){
-		RD_set_lightness(0x0000);
+		RD_set_lightness(Flash_Save_MS58.lightness_min);
 	}
 }
 

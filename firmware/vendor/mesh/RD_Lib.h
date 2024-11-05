@@ -59,58 +59,58 @@
 	#define TIME_RESET			TIME_DIM10
 	#define SELECT_DIM			RD_DIM_10
 #elif(NAME == COB_122)
-	#define VERSION_MAIN        0x02		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x02		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x02
+	#define VERSION_SUB         0x02
 	#define TIME_RESET			TIME_DIM10
 	#define SELECT_DIM			RD_DIM_10
 #elif(NAME == DOWNLIGHT_TT_124)
-	#define VERSION_MAIN        0x03		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x03
+	#define VERSION_SUB         0x00
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0
 #elif(NAME == PN_T_125)
-	#define VERSION_MAIN        0x02		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x02		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x02
+	#define VERSION_SUB         0x02
 	#define TIME_RESET			TIME_DIM10
 	#define SELECT_DIM			RD_DIM_10
 #elif(NAME == PN_126)
-	#define VERSION_MAIN        0x02		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x02		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x02
+	#define VERSION_SUB         0x02
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0
 #elif(NAME == OT_127)
-	#define VERSION_MAIN        0x02		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x02		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x02
+	#define VERSION_SUB         0x02
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_20
 #elif(NAME == GT_128)
-	#define VERSION_MAIN        0x02		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x02		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x02
+	#define VERSION_SUB         0x02
 	#define TIME_RESET			TIME_DIM10
 	#define SELECT_DIM			RD_DIM_10
 #elif(NAME == TL_12a)
-	#define VERSION_MAIN        0x02		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x02		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x02
+	#define VERSION_SUB         0x02
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_20
 #elif(NAME == TT_12b)
-	#define VERSION_MAIN        0x02		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x02		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x02
+	#define VERSION_SUB         0x02
 	#define TIME_RESET			TIME_DIM10
 	#define SELECT_DIM			RD_DIM_10
 #elif(NAME == LED_WIRE_CT)
-	#define VERSION_MAIN        0x02		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x02		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x02
+	#define VERSION_SUB         0x02
 	#define TIME_RESET			TIME_LED_DAY
 	#define SELECT_DIM			RD_DIM_0
 #elif(NAME == TUBE_12e)
-	#define VERSION_MAIN        0x02		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x02		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x02
+	#define VERSION_SUB         0x02
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_20
 #elif(NAME == OT_LN28)
-	#define VERSION_MAIN        0x02		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x02		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x02
+	#define VERSION_SUB         0x02
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_25
 #elif(NAME == HIGHTBAY_RADA) // T_NOTE: TYPE_LIGHT
@@ -122,38 +122,38 @@
 //-----------------------------------------------------------------------------------------
 
 #elif(NAME == RLT03_06W_12020)
-	#define VERSION_MAIN        0x03		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x03
+	#define VERSION_SUB         0x00
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0
 #elif(NAME == RLT02_10W_12021)
-	#define VERSION_MAIN        0x03		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x03
+	#define VERSION_SUB         0x00
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0
 #elif(NAME == RLT02_20W_12022)
-	#define VERSION_MAIN        0x03		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x03
+	#define VERSION_SUB         0x00
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0
 #elif(NAME == RLT01_10W_12023)
-	#define VERSION_MAIN        0x03		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x03
+	#define VERSION_SUB         0x00
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0
 #elif(NAME == TRL08_20W_12024)
-	#define VERSION_MAIN        0x03		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x03
+	#define VERSION_SUB         0x00
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0
 #elif(NAME == TRL08_10W_12025)
-	#define VERSION_MAIN        0x03		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x03
+	#define VERSION_SUB         0x00
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0
 #elif(NAME == RLT03_12W_12026)
-	#define VERSION_MAIN        0x03		//RD_EDIT: SEC : .h VERSION_MAIN
-	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
+	#define VERSION_MAIN        0x03
+	#define VERSION_SUB         0x00
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0
 #endif

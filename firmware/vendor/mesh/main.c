@@ -243,12 +243,10 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		Init_Flash_K9B();
 		Init_Flash_Secure();
 		RD_Flash_Type_Init();
-		RD_Flash_MS58_Init();
+		Init_Data_Rada();
 	}
 
     irq_enable();
-
-
 
     while (1) {
 #if (MODULE_WATCHDOG_ENABLE)
@@ -257,8 +255,7 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 
 		main_loop ();
 
-		//loop_rada();
-
+		loop_rada();
 		check_done_provision();
 		RD_K9B_TimeOutScan_OnOff();
 		RD_Kickout_All();

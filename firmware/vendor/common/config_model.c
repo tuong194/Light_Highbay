@@ -36,6 +36,7 @@
 #include "app_heartbeat.h"
 
 #include"../TUONG/RD_Secure.h"
+#include "../TUONG/RD_Type_Device.h"
 
 
 
@@ -1403,6 +1404,9 @@ int mesh_cmd_sig_cfg_bind(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 	#if 0 // PTS_TEST_MMDL_SR_MLTEL_BV_01
 	bind_rsp.st = ST_SUCCESS;
 	#endif
+
+	RD_LOG("bind stt: 0x%02X\n", bind_rsp.st);
+
     return mesh_tx_cmd_rsp_cfg_model(MODE_APP_STATUS, (u8 *)&bind_rsp, sizeof(bind_rsp)-FIX_SIZE(sig_model), cb_par->adr_src);
 }
 

@@ -23,7 +23,7 @@
 
 #define RD_SET_STARTUP_MODE                 (0x0C)
 #define RD_SW_SELECT_MODE_RADA              (0x0B)  // nhan ban tin hoac ko nhan ban tin
-//#define RD_CONFIG_MS58_DISTANCE				(0x0745) //khoang cach
+//#define RD_CONFIG_MS58_DISTANCE			  (0x0745) //khoang cach
 #define RD_CONFIG_MS58_SENSITIVE            (0x0A) //do nhay
 #define RD_CONFIG_MS58_LOT					(0x07) // thoi gian giu chuyen dong
 #define RD_CONFIG_MIN_MAX					(0x08)

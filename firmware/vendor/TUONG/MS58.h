@@ -33,6 +33,12 @@ typedef enum{
 	KEEP_STATUS = 0x02,
 }startup_status_e;
 
+typedef enum{
+	HIGH_SEN  = 0x0004,
+	MIDLE_SEN = 0x0005,
+	LOW_SEN   = 0x0007,
+}sensitive_set_e;
+
 
 void RD_config_pin_MS58(void);
 void RD_config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]);
