@@ -53,38 +53,38 @@ sizedummy \
 all: pre-build main-build
 
 # Main-build Target
-main-build: DIM_CTT.elf secondary-outputs
+main-build: HIGHBAY_RADA.elf secondary-outputs
 
 # Tool invocations
-DIM_CTT.elf: $(OBJS) $(USER_OBJS)
+HIGHBAY_RADA.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: TC32 C Linker'
-	tc32-elf-ld --gc-sections -L"E:\TELINK\Telink_code\SDK_CTT_DIM\firmware\proj_lib" -T ../boot.link -o"DIM_CTT.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	tc32-elf-ld --gc-sections -L"E:\TELINK\Telink_code\SDK_CTT_DIM\firmware\proj_lib" -T ../boot.link -o"HIGHBAY_RADA.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
 
-8258_mesh.lst: DIM_CTT.elf
+8258_mesh.lst: HIGHBAY_RADA.elf
 	@echo 'Invoking: TC32 Create Extended Listing'
-	tc32-elf-objdump -x -D -l -S DIM_CTT.elf  >"8258_mesh.lst"
+	tc32-elf-objdump -x -D -l -S HIGHBAY_RADA.elf  >"8258_mesh.lst"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-: DIM_CTT.elf
+: HIGHBAY_RADA.elf
 	@echo 'Create Flash image (binary format)'
-	tc32-elf-objcopy -O binary DIM_CTT.elf
+	tc32-elf-objcopy -O binary HIGHBAY_RADA.elf
 	@echo 'Finished building: $@'
 	@echo ' '
 
-sizedummy: DIM_CTT.elf
+sizedummy: HIGHBAY_RADA.elf
 	@echo 'Invoking: Print Size'
-	tc32-elf-size -t DIM_CTT.elf
+	tc32-elf-size -t HIGHBAY_RADA.elf
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(FLASH_IMAGE)$(ELFS)$(OBJS)$(LST)$(SIZEDUMMY) DIM_CTT.elf
+	-$(RM) $(FLASH_IMAGE)$(ELFS)$(OBJS)$(LST)$(SIZEDUMMY) HIGHBAY_RADA.elf
 	-@echo ' '
 
 pre-build:
@@ -92,7 +92,7 @@ pre-build:
 	-@echo ' '
 
 post-build:
-	-"E:\TELINK\Telink_code\SDK_CTT_DIM\firmware/tl_check_fw.sh"   8258_mesh   DIM_CTT
+	-"E:\TELINK\Telink_code\SDK_CTT_DIM\firmware/tl_check_fw.sh"   8258_mesh   HIGHBAY_RADA
 	-@echo ' '
 
 secondary-outputs: $(LST) $(FLASH_IMAGE) $(SIZEDUMMY)

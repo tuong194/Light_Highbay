@@ -73,7 +73,7 @@ void RD_Flash_Clean_MS58(void){
 
 	Flash_Save_MS58.mode = AUTO;
 	Flash_Save_MS58.start_status = KEEP_STATUS;
-	Flash_Save_MS58.sw_select = 0x00; // ko nhan ban tin dieu khien
+	Flash_Save_MS58.sw_select = 0x01; // co nhan ban tin dieu khien
 	Flash_Save_MS58.lightness_max = 0xffff;
 	Flash_Save_MS58.lightness_min = 0x0000;
 	Flash_Save_MS58.parMS58.gain = 0x33;

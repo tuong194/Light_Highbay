@@ -10,10 +10,15 @@
 
 #define RD_LOG_UART         0
 
+#define NAME				HIGHTBAY_RADA
 
+#if NAME != HIGHTBAY_RADA
 #define MAINTYPE			0x01			//RD_EDIT: Config cac loai den
 #define FEATURE				0x02
-#define NAME				HIGHTBAY_RADA
+#else
+#define MAINTYPE			0x01
+#define FEATURE				0x60
+#endif
 
 
 #define RD_VID_TYPE         ((VERSION_MAIN << 8) | VERSION_SUB)
@@ -40,7 +45,7 @@
 #define LED_WIRE_CT			0x0d	//  led day ct
 #define TUBE_12e			0x0e	//  M36 - M66
 #define OT_LN28				0x1b    //
-#define HIGHTBAY_RADA       0x1c //T_NOTE them den hightbay rada
+#define HIGHTBAY_RADA       0x03 //T_NOTE them den hightbay rada
 
 //-----------------------------------------------------------------
 #define RLT03_06W_12020			0x14 //
@@ -114,7 +119,7 @@
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_25
 #elif(NAME == HIGHTBAY_RADA) // T_NOTE: TYPE_LIGHT
-	#define VERSION_MAIN        0x03		//RD_EDIT: SEC : .h VERSION_MAIN
+	#define VERSION_MAIN        0x01		//RD_EDIT: SEC : .h VERSION_MAIN
 	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
 	#define TIME_RESET			TIME_DIM20
 	#define SELECT_DIM			RD_DIM_0

@@ -34,7 +34,7 @@
 #define RD_OPCODE_SCENE_SEND			(0xE2)
 #define RD_OPCODE_SCENE_RSP				(0xE3)
 
-
+/*********************SCENE-GROUP****************************/
 #define RD_AUTO_CREATE_GROUP_SCENE          (0x0C0A)
 #define RD_AUTO_DELETE_GROUP_SCENE          (0x0D0A)
 #define RD_HEADER_SW_PAIR_K9BREMOTE			(0x0A0B)
@@ -43,6 +43,12 @@
 #define RD_HEADER_SW_SAVEK9BHC				(0x0D0B)
 #define RD_HEADER_SW_DELETEK9BHC			(0x0E0B)
 #define RD_HEADER_SW_DELETESCENE_K9BREMOTE	(0x0F0B)
+
+/*********************CONTROL****************************/
+#define RALI_CONFIG_MS58_SENSITIVE          (0x0545) //do nhay
+#define RALI_CONFIG_MS58_LOT			    (0x0345) // thoi gian giu chuyen dong
+#define RALI_SET_MODE_RADA                 	(0x0445) //auto / manual
+
 
 #define TIME_OUT_SCAN_K9B       10000
 #define TIMEOUT_PRESS_K9B_MS    500

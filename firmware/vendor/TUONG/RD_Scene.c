@@ -6,6 +6,7 @@
  */
 
 #include "RD_Scene.h"
+#include "RD_MessData.h"
 #include "MS58.h"
 #include "RD_Type_Device.h"
 #include "../mesh/RD_Lib.h"
@@ -108,9 +109,17 @@ static void RD_Handle_K9B_SaveScene(uint8_t par[8], uint16_t Gw_Add_Buff);
 static void RD_Handle_K9B_DeleteScene(uint8_t par[8], uint16_t Gw_Add_Buff);
 static void RD_Handle_Delete_K9BHC(uint8_t par[8], uint16_t Gw_Add_Buff);
 
+static void RALI_Handle_Config_Sensitive(uint8_t *par);
+static void RALI_Handle_Config_LOT(uint8_t *par);
+static void RALI_Handle_Set_Mode_Rada(uint8_t mode);
+
+void RD_rsp_hc(uint8_t *par, uint16_t GW_Addr);
 extern void scene_active_set(int idx, u16 scene_id, int trans_flag);
 
 int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *cb_par) {
+
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
+
 	uint16_t Header = 0;
 	uint16_t GW_Addr_Buff = 0x0000;
 	uint16_t ID_Group = 0;
@@ -157,6 +166,18 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 		break;
 	case RD_HEADER_SW_DELETEK9BHC:
 		RD_Handle_Delete_K9BHC(par, GW_Addr_Buff);
+		break;
+	case RALI_CONFIG_MS58_SENSITIVE:
+		RALI_Handle_Config_Sensitive(par);
+		RD_rsp_hc(par, GW_Addr_Buff);
+		break;
+	case RALI_CONFIG_MS58_LOT:
+		RALI_Handle_Config_LOT(par);
+		RD_rsp_hc(par, GW_Addr_Buff);
+		break;
+	case RALI_SET_MODE_RADA:
+		RALI_Handle_Set_Mode_Rada(par[2]);
+		RD_rsp_hc(par, GW_Addr_Buff);
 		break;
 	default:
 		uart_Csend("wrong header\n");
@@ -647,8 +668,84 @@ void RD_Scene_Auto(uint16_t Scene_ID, mesh_cb_fun_par_t *cb_par, uint16_t Opcode
 			numscene = 0;
 		}
 	}
+}
+
+/*-------------------------------RALI CONTROL-----------------------------------*/
+
+static void RALI_Handle_Config_Sensitive(uint8_t *par) {
+	//uart_Csend("hc config sensitive\n");
+	uint8_t gain = 0x33;
+	uint8_t delta[2] = { 0 };
+	uint8_t lot[4] = { 0 };
+
+	uint16_t delta_t = (par[3] << 8) | par[2];
+	switch(delta_t){
+	case HIGH_SEN:  // 20
+		delta[0] = 0x00;
+		delta[1] = 0x14;
+		break;
+	case MIDLE_SEN: // 50
+		delta[0] = 0x00;
+		delta[1] = 0x32;
+		break;
+	case LOW_SEN: // 100
+		delta[0] = 0x00;
+		delta[1] = 0x64;
+		break;
+	default:
+		//uart_Csend("delta wrong\n");
+		break;
+	}
+	lot[0] = Flash_Save_MS58.parMS58.lot[0];
+	lot[1] = Flash_Save_MS58.parMS58.lot[1];
+	lot[2] = Flash_Save_MS58.parMS58.lot[2];
+	lot[3] = Flash_Save_MS58.parMS58.lot[3];
+
+	RD_Mess_Config_MS58(gain, delta, lot);
+
 
 }
+
+static void RALI_Handle_Config_LOT(uint8_t *par) {
+
+	uint8_t gain = 0x33;
+	uint8_t delta[2] = { 0 };
+	uint8_t lot[4] = { 0 };
+
+	uint16_t time_s = (par[3] << 8) | par[2];
+	uint32_t time_ms = 0;
+	time_ms = (uint32_t)time_s * 1000;
+	delta[0] = Flash_Save_MS58.parMS58.delta[0];
+	delta[1] = Flash_Save_MS58.parMS58.delta[1];
+	lot[0] = (time_ms >> 24) & 0xff;
+	lot[1] = (time_ms >> 16) & 0xff;
+	lot[2] = (time_ms >> 8) & 0xff;
+	lot[3] = time_ms & 0xff;
+
+#if RD_LOG_UART
+	uart_Csend("hc config lot\n");
+	RD_LOG("time: %d\n", time_ms);
+	RD_LOG("lot: 0x%02X 0x%02X 0x%02X 0x%02X\n",lot[0], lot[1], lot[2], lot[3]);
+#endif
+	RD_Mess_Config_MS58(gain, delta, lot);
+}
+
+static void RALI_Handle_Set_Mode_Rada(uint8_t mode) {
+
+	Flash_Save_MS58.mode = mode;
+	RD_Write_Flash_MS58();
+
+#if RD_LOG_UART
+	RD_LOG("hc set mode rada: 0x%02X\n", Flash_Save_MS58.mode);
+#endif
+
+}
+
+void RD_rsp_hc(uint8_t *par, uint16_t GW_Addr){
+	mesh_tx_cmd2normal_primary(RD_OPCODE_SCENE_RSP, par, sizeof(par), GW_Addr, RD_MAXRESPONESEND);
+}
+
+
 /*--------------------------FLASH-----------------------------------*/
 void Flash_Clean_K9B(void){
 	dataFlashK9B.Used[0] = RD_CHECK_FLASH_K9B_H;

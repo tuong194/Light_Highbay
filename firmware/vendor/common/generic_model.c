@@ -52,6 +52,7 @@
 
 #include "../TUONG/RD_MessData.h"
 #include "../TUONG/RD_Type_Device.h"
+#include "../TUONG/MS58.h"
 /** @addtogroup Mesh_Common
   * @{
   */
@@ -343,7 +344,8 @@ int mesh_cmd_sig_g_onoff_set(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 	p_set->transit_t = 0;
 #endif
 
-	if(Flash_Save_MS58.sw_select == 0x01){
+
+
 	    st_pub_list_t pub_list = {{0}};
 	    err = g_onoff_set(p_set, par_len, 0, cb_par->model_idx, cb_par->retransaction, &pub_list);
 		if(err){
@@ -356,7 +358,7 @@ int mesh_cmd_sig_g_onoff_set(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 		}
 
 	    model_pub_check_set_bind_all(&pub_list, cb_par, 0);
-	}
+
     return err;
 }
 

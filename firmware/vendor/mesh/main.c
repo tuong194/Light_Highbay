@@ -40,9 +40,6 @@
 #include "../TUONG/RD_Type_Device.h"
 #include "../TUONG/MS58.h"
 
-
-
-
 extern void user_init();
 extern void main_loop ();
 void blc_pm_select_none();

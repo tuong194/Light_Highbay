@@ -229,7 +229,6 @@ static void RD_Handle_Config_Sensitive(uint8_t *par) {
 	lot[3] = Flash_Save_MS58.parMS58.lot[3];
 
 	RD_Mess_Config_MS58(gain, delta, lot);
-
 }
 static void RD_Handle_Min_Max_Lightness(uint8_t *par) {
 	Flash_Save_MS58.lightness_max = par[3] * 0xffff / 100;
@@ -245,7 +244,7 @@ static void RD_Handle_Select_Rada(uint8_t on_off_mess) {
 	Flash_Save_MS58.sw_select = on_off_mess;
 	RD_Write_Flash_MS58();
 
-#if 1//RD_LOG_UART
+#if RD_LOG_UART
 	RD_LOG("set select mode: 0x%02X\n", Flash_Save_MS58.sw_select);
 #endif
 }
@@ -254,7 +253,7 @@ static void RD_Handle_Set_Mode_Rada(uint8_t mode) {
 	Flash_Save_MS58.mode = mode;
 	RD_Write_Flash_MS58();
 
-#if 1//RD_LOG_UART
+#if RD_LOG_UART
 	RD_LOG("set mode rada: 0x%02X\n", Flash_Save_MS58.mode);
 #endif
 

@@ -32,7 +32,7 @@
 #include "lighting_model.h"
 
 #include "../TUONG/RD_Type_Device.h"
-
+#include "../TUONG/MS58.h"
 /** @addtogroup Mesh_Common
   * @{
   */
@@ -811,7 +811,8 @@ int mesh_cmd_sig_lightness_set(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 {
 	int err = 0;
 
-	if(Flash_Save_MS58.sw_select == 0x01){
+
+
 	    st_pub_list_t pub_list = {{0}};
 		#if LS_TEST_ENABLE
 		mesh_cmd_lightness_set_t *par_t = (mesh_cmd_lightness_set_t *)par;
@@ -829,7 +830,7 @@ int mesh_cmd_sig_lightness_set(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 
 		int linear = ((LIGHTNESS_LINEAR_SET == cb_par->op) || (LIGHTNESS_LINEAR_SET_NOACK == cb_par->op));
 	    model_pub_check_set_bind_all(&pub_list, cb_par, linear);
-	}
+
 	return err;
 }
 

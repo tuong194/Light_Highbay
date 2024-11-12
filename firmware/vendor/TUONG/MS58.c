@@ -14,6 +14,8 @@ unsigned long TimeNew, TimeOld;
 int vrs_count = 0;
 
 static u8 flag_check_motion = 0;
+static u8 flag_on_off_light = 0;
+
 
 u16 flag_check_rec_uart = 0;
 extern u16 uart_rx_irq;
@@ -122,34 +124,42 @@ void RD_set_lightness(u16 lightness){
 	if (TimeNew - TimeOld > 160000) { // 10ms
 		TimeOld = TimeNew;
 		vrs_count++;
-		if(vrs_count == 10){
+		if(vrs_count == 1){ // 100ms
 			p_set_light.lightness = lightness;
 			lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
-		}else if(vrs_count > 110) vrs_count = 0;
+		}else if(vrs_count > 101){
+			vrs_count = 0;
+			flag_on_off_light = 1;
+			//RD_LOG("flag_on_off_light: %d", flag_on_off_light);
+		}
 	}
 }
 
 void RD_on_light(void){
 	static u32 time_motion_ms = 0;
-	if(is_motion() && flag_check_motion == 0){
+	if(is_motion() && flag_check_motion == NO_MOTION){
 		uart_Csend("co chuyen dong\n");
 		time_motion_ms = clock_time_ms();
-		flag_check_motion = 1;
+		flag_check_motion = MOTION;
+		flag_on_off_light = 0;
 	}
-	if(clock_time_exceed_ms(time_motion_ms, 3000) && flag_check_motion == 1){
+	if(clock_time_exceed_ms(time_motion_ms, TIME_DELAY_ON) && flag_check_motion == MOTION && flag_on_off_light == 0){
 		RD_set_lightness(Flash_Save_MS58.lightness_max);
+
 	}
 }
 
 void RD_off_light(void){
 	static u32 time_no_motion_ms = 0;
-	if(is_motion() == 0 && flag_check_motion == 1){
+	if(is_motion() == 0 && flag_check_motion == MOTION){
 		uart_Csend("ko co chuyen dong\n");
 		time_no_motion_ms = clock_time_ms();
-		flag_check_motion = 0;
+		flag_check_motion = NO_MOTION;
+		flag_on_off_light = 0;
 	}
-	if(clock_time_exceed_ms(time_no_motion_ms, 1000) && flag_check_motion == 0){
+	if(clock_time_exceed_ms(time_no_motion_ms, TIME_DELAY_OFF) && flag_check_motion == NO_MOTION && flag_on_off_light == 0){
 		RD_set_lightness(Flash_Save_MS58.lightness_min);
+
 	}
 }
 
@@ -159,6 +169,7 @@ void loop_rada(void){
 		RD_off_light();
 	}
 }
+
 void RD_Init_Config_MS58(void){
 	uint8_t gain = 0x33;
 	uint8_t delta[2] = {Flash_Save_MS58.parMS58.delta[0], Flash_Save_MS58.parMS58.delta[1]};
