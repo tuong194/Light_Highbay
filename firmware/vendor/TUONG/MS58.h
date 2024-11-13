@@ -20,20 +20,30 @@
 #include "RD_Type_Device.h"
 #include"../mesh/RD_Lib.h"
 
+
+
 #define TIME_DELAY_ON     10  // ms
 #define TIME_DELAY_OFF	  10
+
+#define RD_RSP_STT_RADA   0x52
 
 #define LOG_MS58 			RD_LOG_UART
 #define PIN_MS58            GPIO_PB4
 //#define LED_OUT             GPIO_PC3
-//
 //#define ON_LED_RADA         gpio_write(LED_OUT,1)
 //#define OFF_LED_RADA        gpio_write(LED_OUT,0)
+
+typedef struct{
+	u8 flag_check_motion;
+	u8 flag_on_off_from_rada;
+	u8 flag_on_off_from_mesh;
+}flag_on_off_light_t;
+
+extern flag_on_off_light_t flag_on_off;
 
 typedef enum{
 	NO_MOTION 	= 0,
 	MOTION 		= 1,
-	//NO_MOTION 	= 2,
 }check_motion_e;
 typedef enum{
 	MANUAL 		= 0x00,

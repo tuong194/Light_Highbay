@@ -17,7 +17,7 @@
 #define FEATURE				0x02
 #else
 #define MAINTYPE			0x01
-#define FEATURE				0x60
+#define FEATURE				0x06
 #endif
 
 

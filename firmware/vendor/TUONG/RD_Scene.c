@@ -118,7 +118,7 @@ extern void scene_active_set(int idx, u16 scene_id, int trans_flag);
 
 int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *cb_par) {
 
-	cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
+	//cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
 
 	uint16_t Header = 0;
 	uint16_t GW_Addr_Buff = 0x0000;
@@ -334,7 +334,7 @@ uint8_t RD_K9B_ScanPress_K9BHC(u32 macDevice, u8 key, u32 par_signature) {  // k
 						 if(ButtonPos_Buff != -1) scene_id = dataFlashK9B.deviceK9B[i].Scene_ID_OnePress[ButtonPos_Buff];
 
 						 RD_MessK9BHc_Press(K9BHC_Add, key,1,scene_id); // send HC, log
-						 if(scene_id != 0x0000) RD_Call_Scene(scene_id, (uint8_t)(key+scene_id));
+						 if(scene_id != 0x0000) RD_Call_Scene(scene_id, (uint8_t)(key+scene_id)); // T_NOTE call scene
 
 						 signatureLast = par_signature;
 
@@ -411,19 +411,16 @@ uint8_t RD_Flash_Save_Scene(u16 K9BAdd, u8 ButtonID, u16 SceneID) {
 			int ButtonPos_buf = RD_CheckButton_Pos_K9BHC(&dataFlashK9B.deviceK9B[i].Button_ID[0], ButtonID);
 			if (ButtonPos_buf == -1) { // nut moi
 				int ButtonPos_new = RD_CheckButton_Pos_K9BHC(&dataFlashK9B.deviceK9B[i].Button_ID[0], 0x00);
-				dataFlashK9B.deviceK9B[i].Scene_ID_OnePress[ButtonPos_new]
-						= SceneID;
+				dataFlashK9B.deviceK9B[i].Scene_ID_OnePress[ButtonPos_new] = SceneID;
 				dataFlashK9B.deviceK9B[i].Button_ID[ButtonPos_new] = ButtonID;
 			} else { // duplicate click
 				if (SceneID == 0x0000) // id_scene = 0x0000 -> delete scene
 					ButtonID = 0x00;
-				dataFlashK9B.deviceK9B[i].Scene_ID_OnePress[ButtonPos_buf]
-						= SceneID;
+				dataFlashK9B.deviceK9B[i].Scene_ID_OnePress[ButtonPos_buf] = SceneID;
 				dataFlashK9B.deviceK9B[i].Button_ID[ButtonPos_buf] = ButtonID;
 			}
 			flash_erase_sector(RD_K9B_FLASH_AREA);
-			flash_write_page(RD_K9B_FLASH_AREA, sizeof(dataFlashK9B),
-					(uint8_t *) (&dataFlashK9B.Used[0]));
+			flash_write_page(RD_K9B_FLASH_AREA, sizeof(dataFlashK9B), (uint8_t *) (&dataFlashK9B.Used[0]));
 			return 1;
 		}
 	}

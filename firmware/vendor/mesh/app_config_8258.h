@@ -371,8 +371,8 @@ extern "C" {
 
 //---------------  LED / PWM
 #if(PCBA_8258_SEL == PCBA_8258_DONGLE_48PIN)
-#define PWM_R       GPIO_PC5 //GPIO_PC4	//red //RD: tuong config lai
-#define PWM_G       GPIO_PWM4B4// GPIO_PWM1C3		//green
+#define PWM_R       GPIO_PC5 //GPIO_PC4	//red
+#define PWM_G       GPIO_PWM4B4		//green
 #define PWM_B       GPIO_PWM0C2		//blue
 #define PWM_W       GPIO_PWM1C3		//white
 #define PWM_Y       GPIO_PWM5B5		//yellow  //RD_EDIT pin config

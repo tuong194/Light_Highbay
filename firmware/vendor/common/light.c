@@ -863,8 +863,11 @@ _USER_CAN_REDEFINE_ void light_dim_refresh(int idx) // idx: index of LIGHT_CNT.
     //light_dim_set_hw(idx, 0, get_pwm_smooth(lightness_65535, LIGHTNESS_AVERAGE_STEP));
 	if(lum_100 == 0){
 		light_dim_set_hw(idx, 0, get_pwm_cmp(0xff,0));
+	}else{
+		light_dim_set_hw(idx, 0, get_pwm_cmp(0xff,lum_100)); // RD_EDIT set dim hw
 	}
-    light_dim_set_hw(idx, 0, get_pwm_cmp(0xff,lum_100)); // RD_EDIT set dim hw
+
+
     #else
 	    #if (LIGHT_TYPE_CT_EN)
             #if (XIAOMI_MODULE_ENABLE&&!AIS_ENABLE)

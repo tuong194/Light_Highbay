@@ -78,7 +78,7 @@ void RD_Flash_Clean_MS58(void){
 	Flash_Save_MS58.lightness_min = 0x0000;
 	Flash_Save_MS58.parMS58.gain = 0x33;
 	Flash_Save_MS58.parMS58.delta[0] = 0x00;
-	Flash_Save_MS58.parMS58.delta[1] = 0x64;
+	Flash_Save_MS58.parMS58.delta[1] = 0x32;
 	Flash_Save_MS58.parMS58.lot[0] = 0x00;
 	Flash_Save_MS58.parMS58.lot[1] = 0x00;
 	Flash_Save_MS58.parMS58.lot[2] = 0x07;  //7D0: 2000 ms
@@ -112,8 +112,6 @@ void Init_Data_Rada(void){
 	RD_Flash_MS58_Init();
 	RD_Check_Startup_Rada();
 }
-
-
 
 //RD_EDIT LOG UART
 void RD_LOG(const char *format, ...){

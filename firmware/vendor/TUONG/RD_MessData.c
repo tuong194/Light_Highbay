@@ -32,6 +32,7 @@ static void RD_Handle_Min_Max_Lightness(uint8_t *par);
 static void RD_Handle_Config_Sensitive(uint8_t *par);
 static void RD_Handle_Set_Mode_Rada(uint8_t mode);
 static void RD_Handle_Set_Startup_Rada(uint8_t mode_start);
+static void RD_Handle_Set_On(uint8_t on_off);
 
 int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 	RD_Mess_Temp_Receive = (RD_Type_Device_Message *) (&par[0]);
@@ -43,8 +44,8 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 		RD_LOG("SET TYPE DEVICE Name: 0x%04X", NAME);
 		RD_Mess_Recevie.Header[0] = 0x01;
 		RD_Mess_Recevie.Header[1] = 0x00;
-		RD_Mess_Recevie.MainType = 0x01;
-		RD_Mess_Recevie.Feature = 0x02;
+		RD_Mess_Recevie.MainType = MAINTYPE;
+		RD_Mess_Recevie.Feature = FEATURE;
 		RD_Mess_Recevie.Name = NAME;
 		RD_Mess_Recevie.Future[0] = 0x00;
 		RD_Mess_Recevie.Future[1] = VERSION_MAIN;
@@ -91,12 +92,12 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 
 				RD_Mess_Recevie.Header[0] = 0x03;
 				RD_Mess_Recevie.Header[1] = 0x00;
-				RD_Mess_Recevie.MainType = 0x01;
-				RD_Mess_Recevie.Feature = 0x02;
+				RD_Mess_Recevie.MainType = MAINTYPE;
+				RD_Mess_Recevie.Feature = FEATURE;
 				RD_Mess_Recevie.Name = NAME; // NAME
 				RD_Mess_Recevie.Future[0] = 0x00;
-				RD_Mess_Recevie.Future[1] = 0x03;
-				RD_Mess_Recevie.Future[2] = 0x00;
+				RD_Mess_Recevie.Future[1] = VERSION_MAIN;
+				RD_Mess_Recevie.Future[2] = VERSION_SUB;
 
 				BuffRec = (uint8_t *) (&RD_Mess_Recevie.Header[0]);
 				mesh_tx_cmd2normal_primary(cb_par->op_rsp, BuffRec, 8,
@@ -129,7 +130,7 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 
 int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len,
 		mesh_cb_fun_par_t * cb_par) {
-	cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
+	//cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
 	packing_lot_addr = cb_par->adr_src;
 	op_rsp_packing_lot = cb_par->op_rsp;
 	uint8_t Header = 0;
@@ -152,6 +153,9 @@ int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len,
 		break;
 	case RD_SET_STARTUP_MODE:
 		RD_Handle_Set_Startup_Rada(par[3]);
+		break;
+	case RD_REC_SIGNAL:
+		RD_Handle_Set_On(par[3]);
 		break;
 	default:
 		uart_Csend("0x0582 wrong header\n");
@@ -265,6 +269,13 @@ static void RD_Handle_Set_Startup_Rada(uint8_t mode_start) {
 #if RD_LOG_UART
 	RD_LOG("set startup rada: 0x%02X\n", Flash_Save_MS58.start_status);
 #endif
+}
+
+static void RD_Handle_Set_On(uint8_t on_off){
+	if(on_off == 0x01){
+		flag_on_off.flag_on_off_from_mesh = 1;
+		uart_Csend("bat den cho tao \n");
+	}
 }
 
 void RD_Mess_Config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]) {
