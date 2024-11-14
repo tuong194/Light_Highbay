@@ -1405,8 +1405,6 @@ int mesh_cmd_sig_cfg_bind(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 	bind_rsp.st = ST_SUCCESS;
 	#endif
 
-	RD_LOG("bind stt: 0x%02X\n", bind_rsp.st);
-
     return mesh_tx_cmd_rsp_cfg_model(MODE_APP_STATUS, (u8 *)&bind_rsp, sizeof(bind_rsp)-FIX_SIZE(sig_model), cb_par->adr_src);
 }
 

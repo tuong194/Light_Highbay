@@ -32,7 +32,6 @@ static void RD_Handle_Min_Max_Lightness(uint8_t *par);
 static void RD_Handle_Config_Sensitive(uint8_t *par);
 static void RD_Handle_Set_Mode_Rada(uint8_t mode);
 static void RD_Handle_Set_Startup_Rada(uint8_t mode_start);
-static void RD_Handle_Set_On(uint8_t on_off);
 
 int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 	RD_Mess_Temp_Receive = (RD_Type_Device_Message *) (&par[0]);
@@ -154,9 +153,6 @@ int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len,
 	case RD_SET_STARTUP_MODE:
 		RD_Handle_Set_Startup_Rada(par[3]);
 		break;
-	case RD_REC_SIGNAL:
-		RD_Handle_Set_On(par[3]);
-		break;
 	default:
 		uart_Csend("0x0582 wrong header\n");
 		break;
@@ -271,12 +267,6 @@ static void RD_Handle_Set_Startup_Rada(uint8_t mode_start) {
 #endif
 }
 
-static void RD_Handle_Set_On(uint8_t on_off){
-	if(on_off == 0x01){
-		flag_on_off.flag_on_off_from_mesh = 1;
-		uart_Csend("bat den cho tao \n");
-	}
-}
 
 void RD_Mess_Config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]) {
 	RD_config_MS58(gain, delta, lot);

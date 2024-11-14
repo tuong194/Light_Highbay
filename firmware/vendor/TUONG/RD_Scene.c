@@ -112,6 +112,7 @@ static void RD_Handle_Delete_K9BHC(uint8_t par[8], uint16_t Gw_Add_Buff);
 static void RALI_Handle_Config_Sensitive(uint8_t *par);
 static void RALI_Handle_Config_LOT(uint8_t *par);
 static void RALI_Handle_Set_Mode_Rada(uint8_t mode);
+static void RALI_Handle_Set_Scene_Rada(u8 *par);
 
 void RD_rsp_hc(uint8_t *par, uint16_t GW_Addr);
 extern void scene_active_set(int idx, u16 scene_id, int trans_flag);
@@ -178,6 +179,9 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 	case RALI_SET_MODE_RADA:
 		RALI_Handle_Set_Mode_Rada(par[2]);
 		RD_rsp_hc(par, GW_Addr_Buff);
+		break;
+	case RALI_SET_SCENE:
+		RALI_Handle_Set_Scene_Rada(par);
 		break;
 	default:
 		uart_Csend("wrong header\n");
@@ -736,6 +740,18 @@ static void RALI_Handle_Set_Mode_Rada(uint8_t mode) {
 	RD_LOG("hc set mode rada: 0x%02X\n", Flash_Save_MS58.mode);
 #endif
 
+}
+
+static void RALI_Handle_Set_Scene_Rada(u8 *par){
+	if(par[4] == 0xA0){
+		Flash_Save_MS58.Call_Scene.on_off[1] = 1;
+		Flash_Save_MS58.Call_Scene.ID_Scene[1] = (par[3] << 8) | par[2];
+	}else if(par[4] == 0x20){
+		Flash_Save_MS58.Call_Scene.on_off[0] = 1;
+		Flash_Save_MS58.Call_Scene.ID_Scene[0] = (par[3] << 8) | par[2];
+	}
+	flash_erase_sector(RD_MS58_FLASH_AREA);
+	flash_write_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));
 }
 
 void RD_rsp_hc(uint8_t *par, uint16_t GW_Addr){

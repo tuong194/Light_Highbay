@@ -41,6 +41,7 @@ typedef struct{
 
 extern flag_on_off_light_t flag_on_off;
 
+
 typedef enum{
 	NO_MOTION 	= 0,
 	MOTION 		= 1,

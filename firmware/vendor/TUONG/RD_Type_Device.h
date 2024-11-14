@@ -29,6 +29,11 @@ typedef struct{
 }Par_MS58_t;
 
 typedef struct{
+	u8 on_off[2];
+	u16 ID_Scene[2];
+}Call_Scene_t;
+
+typedef struct{
 	uint8_t user[4];
 	uint8_t mode;
 	uint8_t start_status;
@@ -36,7 +41,13 @@ typedef struct{
 	uint16_t lightness_max;
 	uint16_t lightness_min;
 	Par_MS58_t parMS58;
+	Call_Scene_t Call_Scene;
 }Flash_Save_MS58_t;
+
+typedef enum{
+	NONE 	   = 0,
+	CALL_SCENE = 1,
+}call_scene_e;
 
 #define RD_FLASH_SIZE_MS58			sizeof(Flash_Save_MS58_t)
 #define RD_MS58_FLASH_AREA          (0x7c000)

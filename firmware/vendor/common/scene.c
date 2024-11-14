@@ -33,6 +33,8 @@
 #include "lighting_model_LC.h"
 #include "scene.h"
 
+#include "../TUONG/MS58.h"
+
 
 #if (MD_SCENE_EN)
 model_scene_t	model_sig_scene;
@@ -366,8 +368,9 @@ int mesh_cmd_sig_scene_recall(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 	if(SCENE_ID_INVALID == p_recall->id){  
 	    return -1;
 	}
-
 	
+	if(flag_on_off.flag_on_off_from_mesh != 1){
+
     tansition_forced_by_recall_flag = 1;
 	foreach(i,SCENE_CNT_MAX){
 		scene_data_t *p = &model_sig_scene.data[cb_par->model_idx][i];
@@ -460,7 +463,7 @@ int mesh_cmd_sig_scene_recall(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 		}
 	}
     tansition_forced_by_recall_flag = 0;
-
+	}else return -1;
     
 	if(cb_par->op_rsp != STATUS_NONE){
 		err = mesh_scene_st_rsp(cb_par, st);

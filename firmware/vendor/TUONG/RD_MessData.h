@@ -28,7 +28,7 @@
 #define RD_CONFIG_MS58_LOT					(0x07) // thoi gian giu chuyen dong
 #define RD_CONFIG_MIN_MAX					(0x08)
 #define RD_SET_MODE_RADA                 	(0x09) //auto / manual
-#define RD_REC_SIGNAL                       (0x06) // nhan tin hieu tu den khac
+
 
 
 #define RD_KICKOUT_ALL              (0xffff)

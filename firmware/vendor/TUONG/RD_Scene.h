@@ -48,6 +48,7 @@
 #define RALI_CONFIG_MS58_SENSITIVE          (0x0545) //do nhay
 #define RALI_CONFIG_MS58_LOT			    (0x0345) // thoi gian giu chuyen dong
 #define RALI_SET_MODE_RADA                 	(0x0445) //auto / manual
+#define RALI_SET_SCENE                      (0x0145)
 
 
 #define TIME_OUT_SCAN_K9B       10000

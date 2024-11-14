@@ -83,6 +83,10 @@ void RD_Flash_Clean_MS58(void){
 	Flash_Save_MS58.parMS58.lot[1] = 0x00;
 	Flash_Save_MS58.parMS58.lot[2] = 0x07;  //7D0: 2000 ms
 	Flash_Save_MS58.parMS58.lot[3] = 0xD0;
+	Flash_Save_MS58.Call_Scene.on_off[0] = 0;
+	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
+	Flash_Save_MS58.Call_Scene.ID_Scene[0] = 0x0000;
+	Flash_Save_MS58.Call_Scene.ID_Scene[1] = 0x0000;
 
 	flash_erase_sector(RD_MS58_FLASH_AREA);
 	flash_write_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));

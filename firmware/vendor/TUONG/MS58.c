@@ -7,6 +7,7 @@
 #include"MS58.h"
 #include "../common/lighting_model.h"
 #include "RD_Type_Device.h"
+#include "RD_Scene.h"
 
 st_pub_list_t pub_list = {{0}};
 mesh_cmd_lightness_set_t p_set_light;
@@ -143,6 +144,20 @@ void RD_send_mess_on_light(void){
 	mesh_tx_cmd2normal_primary(LIGHTNESS_LINEAR_SET, buff_send, 4, 0xffff, 0); // opcode 0x5082
 }
 
+void call_scene_from_rada(uint8_t is_motion){
+	u16 scene_id = 0x0000;
+	u8 tid = 0;
+	if(is_motion == 0){
+		scene_id = Flash_Save_MS58.Call_Scene.ID_Scene[0];
+		tid = (u8)(Flash_Save_MS58.Call_Scene.ID_Scene[0] + Flash_Save_MS58.Call_Scene.on_off[0]);
+	}else{
+		scene_id = Flash_Save_MS58.Call_Scene.ID_Scene[1];
+		tid = (u8)(Flash_Save_MS58.Call_Scene.ID_Scene[1] + Flash_Save_MS58.Call_Scene.on_off[1]);
+	}
+	RD_Call_Scene(scene_id, tid);
+
+}
+
 void RD_rsp_rada(uint8_t stt){
 	uint16_t GW_addr = 0x0001;
 	uint8_t BuffRec[8] = {0};
@@ -159,13 +174,12 @@ void RD_on_light(void){
 		time_motion_ms = clock_time_ms();
 		flag_on_off.flag_check_motion = MOTION;
 		flag_on_off.flag_on_off_from_rada = 0;
-		RD_send_mess_on_light();
-		RD_rsp_rada(1);
+		flag_on_off.flag_on_off_from_mesh = 1;
+		call_scene_from_rada(1);
 
 	}
 	if(clock_time_exceed_ms(time_motion_ms, TIME_DELAY_ON) && flag_on_off.flag_check_motion == MOTION && flag_on_off.flag_on_off_from_rada == 0){
 		RD_set_lightness(Flash_Save_MS58.lightness_max);
-
 	}
 }
 
@@ -176,7 +190,8 @@ void RD_off_light(void){
 		time_no_motion_ms = clock_time_ms();
 		flag_on_off.flag_check_motion = NO_MOTION;
 		flag_on_off.flag_on_off_from_rada = 0;
-		RD_rsp_rada(0);
+		flag_on_off.flag_on_off_from_mesh = 1;
+		call_scene_from_rada(0);
 	}
 	if(clock_time_exceed_ms(time_no_motion_ms, TIME_DELAY_OFF) && flag_on_off.flag_check_motion == NO_MOTION && flag_on_off.flag_on_off_from_rada == 0){
 		RD_set_lightness(Flash_Save_MS58.lightness_min);
@@ -184,18 +199,12 @@ void RD_off_light(void){
 	}
 }
 
-void RD_on_off_from_mesh(void){
-	if(flag_on_off.flag_on_off_from_mesh == 1){
-		RD_set_lightness(Flash_Save_MS58.lightness_max);
-	}
-}
 
 void loop_rada(void){
 	if(Flash_Save_MS58.mode == AUTO){
 		RD_on_light();
 		RD_off_light();
 	}
-	RD_on_off_from_mesh();
 }
 
 void RD_Init_Config_MS58(void){
