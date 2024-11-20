@@ -153,6 +153,7 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 			RD_Scene_Auto(ID_Scene, cb_par, SCENE_DEL_NOACK);
 		}
 		break;
+#if NAME != HIGHTBAY_RADA
 	case RD_HEADER_SW_PAIR_K9BREMOTE:
 		RD_Handle_ScanK9BHC(par, GW_Addr_Buff);
 		break;
@@ -168,6 +169,7 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 	case RD_HEADER_SW_DELETEK9BHC:
 		RD_Handle_Delete_K9BHC(par, GW_Addr_Buff);
 		break;
+#endif
 	case RALI_CONFIG_MS58_SENSITIVE:
 		RALI_Handle_Config_Sensitive(par);
 		RD_rsp_hc(par, GW_Addr_Buff);
@@ -703,8 +705,6 @@ static void RALI_Handle_Config_Sensitive(uint8_t *par) {
 	lot[3] = Flash_Save_MS58.parMS58.lot[3];
 
 	RD_Mess_Config_MS58(gain, delta, lot);
-
-
 }
 
 static void RALI_Handle_Config_LOT(uint8_t *par) {
@@ -743,10 +743,10 @@ static void RALI_Handle_Set_Mode_Rada(uint8_t mode) {
 }
 
 static void RALI_Handle_Set_Scene_Rada(u8 *par){
-	if(par[4] == 0xA0){
+	if(par[4] == 0xA0){ // co chuyen dong thi goi
 		Flash_Save_MS58.Call_Scene.on_off[1] = 1;
 		Flash_Save_MS58.Call_Scene.ID_Scene[1] = (par[3] << 8) | par[2];
-	}else if(par[4] == 0x20){
+	}else if(par[4] == 0x20){ // ko co chuyen dong thi goi
 		Flash_Save_MS58.Call_Scene.on_off[0] = 1;
 		Flash_Save_MS58.Call_Scene.ID_Scene[0] = (par[3] << 8) | par[2];
 	}

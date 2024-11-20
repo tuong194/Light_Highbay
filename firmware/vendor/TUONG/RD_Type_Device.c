@@ -8,6 +8,7 @@
 #include "RD_Type_Device.h"
 #include "RD_MessData.h"
 #include "MS58.h"
+#include "../mesh/RD_Lib.h"
 
 Flash_Save_Type_GW Flash_Save_Type_Val;
 Flash_Save_MS58_t  Flash_Save_MS58 = {{0}};
@@ -37,9 +38,9 @@ void RD_Clean_Flash_Type(void){
 
 	Flash_Save_Type_Val.GWID[1] = (uint8_t) (RD_GATEWAY_ADDR>>8 & 0xff);
 	Flash_Save_Type_Val.GWID[0] = (uint8_t) (RD_GATEWAY_ADDR & 0xff);
-	Flash_Save_Type_Val.MainType = 0x01;
-	Flash_Save_Type_Val.Feature = 0x02;
-	Flash_Save_Type_Val.Name = 0x01;
+	Flash_Save_Type_Val.MainType = MAINTYPE;
+	Flash_Save_Type_Val.Feature = FEATURE;
+	Flash_Save_Type_Val.Name = NAME;
 
 	flash_erase_sector(RD_GW_FLASH_AREA);
 	flash_write_page(RD_GW_FLASH_AREA, sizeof(Flash_Save_Type_Val), (uint8_t *) (&Flash_Save_Type_Val.Used[0]));
@@ -73,7 +74,6 @@ void RD_Flash_Clean_MS58(void){
 
 	Flash_Save_MS58.mode = AUTO;
 	Flash_Save_MS58.start_status = KEEP_STATUS;
-	Flash_Save_MS58.sw_select = 0x01; // co nhan ban tin dieu khien
 	Flash_Save_MS58.lightness_max = 0xffff;
 	Flash_Save_MS58.lightness_min = 0x0000;
 	Flash_Save_MS58.parMS58.gain = 0x33;
@@ -97,10 +97,12 @@ void RD_Flash_MS58_Init(void){
 	if(Flash_Save_MS58.user[0] != RD_CHECK_FLASH_H && Flash_Save_MS58.user[1] != RD_CHECK_FLASH_L &&
 	   Flash_Save_MS58.user[2] != RD_CHECK_FLASH_H && Flash_Save_MS58.user[3] != RD_CHECK_FLASH_L){
 		RD_Flash_Clean_MS58();
-		RD_Init_Config_MS58();
 	}
+	RD_Init_Config_MS58();
 
+#if RD_LOG_UART
 	log_par_flash_ms58();
+#endif
 }
 void RD_Check_Startup_Rada(void){
 	switch(Flash_Save_MS58.start_status){
@@ -115,6 +117,7 @@ void RD_Check_Startup_Rada(void){
 void Init_Data_Rada(void){
 	RD_Flash_MS58_Init();
 	RD_Check_Startup_Rada();
+	time_start_loop = clock_time_ms();
 }
 
 //RD_EDIT LOG UART

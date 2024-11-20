@@ -1400,6 +1400,12 @@ int mesh_cmd_sig_cfg_bind(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
         	//bind_rsp.st = ST_SUCCESS;	// always
         }
     }
+
+//    static u32 cnt = 0;
+//    if(bind_rsp.st == 0){
+//    	cnt++;
+//    }
+//    RD_LOG("count tesst bind: %d\n", cnt); // bind 16 lan ?
 	
 	#if 0 // PTS_TEST_MMDL_SR_MLTEL_BV_01
 	bind_rsp.st = ST_SUCCESS;
@@ -1413,6 +1419,7 @@ int mesh_cmd_sig_cfg_bind_status(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par
     int err = 0;
     if(cb_par->model){  // model may be Null for status message
     	mesh_app_bind_status_t *p_st = (mesh_app_bind_status_t *)par;
+
     	if(ST_SUCCESS == p_st->st){
     		mesh_kr_cfgcl_check_set_next_flag();
     	}

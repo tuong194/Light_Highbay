@@ -369,7 +369,7 @@ int mesh_cmd_sig_scene_recall(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 	    return -1;
 	}
 	
-	if(flag_on_off.flag_on_off_from_mesh != 1){
+	if(flag_on_off.flag_on_off_from_mesh != 1){ // RD_EDIT: not call scene myself
 
     tansition_forced_by_recall_flag = 1;
 	foreach(i,SCENE_CNT_MAX){

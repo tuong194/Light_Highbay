@@ -809,10 +809,9 @@ int lightness_set(mesh_cmd_lightness_set_t *p_set, int par_len, u16 op, int idx,
  */
 int mesh_cmd_sig_lightness_set(u8 *par, int par_len, mesh_cb_fun_par_t *cb_par)
 {
+
+	//flag_on_off.flag_on_off_from_rada = 0; // T_NOTE: flag_on_off set lightness
 	int err = 0;
-
-
-
 	    st_pub_list_t pub_list = {{0}};
 		#if LS_TEST_ENABLE
 		mesh_cmd_lightness_set_t *par_t = (mesh_cmd_lightness_set_t *)par;

@@ -63,15 +63,11 @@ void check_done_provision(void) {
 		flag_provision = TRUE;
 
 		if (flash_save_secure.flag_process_aes == ENCRYPT_ERR ) { // ma hoa sai
-			//RD_light_ev_with_sleep(2, 500 * 1000);
 			vrs_time_err_aes = clock_time_s();
 			RD_LOG("sai ma hoa r \n");
 		} else if (flash_save_secure.flag_process_aes == NO_MESS ) { // ko co ban tin ma hoa
-			//RD_light_ev_with_sleep(1, 500 * 1000);
 			vrs_time_bindall = clock_time_s();
-			RD_LOG("ko co ban tin\n");
 		} else if (flash_save_secure.flag_process_aes == ENCRYPT_OK ) { // ma hoa dung
-			//RD_light_ev_with_sleep(3, 500 * 1000); // T=1s, nhay 3 lan
 			RD_LOG("chuan RD nha\n");
 		}
 

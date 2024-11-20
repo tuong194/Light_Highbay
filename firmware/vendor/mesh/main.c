@@ -40,6 +40,12 @@
 #include "../TUONG/RD_Type_Device.h"
 #include "../TUONG/MS58.h"
 
+
+
+//define BIT_CHECK BIT
+
+
+
 extern void user_init();
 extern void main_loop ();
 void blc_pm_select_none();
@@ -236,11 +242,12 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		uart_init_baudrate(9600,CLOCK_SYS_CLOCK_HZ,PARITY_NONE, STOP_BIT_ONE);
 		uart_dma_enable(1,0);
 
+		//Init_Flash_K9B();
 		RD_config_pin_MS58();
-		Init_Flash_K9B();
 		Init_Flash_Secure();
 		RD_Flash_Type_Init();
 		Init_Data_Rada();
+
 	}
 
     irq_enable();
@@ -254,8 +261,16 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 
 		loop_rada();
 		check_done_provision();
-		RD_K9B_TimeOutScan_OnOff();
-		RD_Kickout_All();
+
+		//RD_Kickout_All();
+		//RD_K9B_TimeOutScan_OnOff();
+
+//		if(clock_time_exceed_ms(time_start_loop, 5000)){
+//			RD_get_data_MS58();
+//			sleep_ms(500);
+//			wd_clear();
+//			time_start_loop = clock_time_ms();
+//		}
 	}
 }
 #endif

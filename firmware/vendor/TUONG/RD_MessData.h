@@ -28,6 +28,7 @@
 #define RD_CONFIG_MS58_LOT					(0x07) // thoi gian giu chuyen dong
 #define RD_CONFIG_MIN_MAX					(0x08)
 #define RD_SET_MODE_RADA                 	(0x09) //auto / manual
+#define RD_GET_DIM_LIGHTNESS                (0x02)
 
 
 
@@ -60,7 +61,7 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par);
 int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par);
 uint16_t saveGatewayAddr(uint8_t *para, uint16_t srcAddr);
 void RD_Mess_Config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]);
-void RD_rsp_packing_lot(uint8_t *par);
+void RD_rsp_packing_lot(u8 *par);
 
 
 #endif /* RD_MESSDATA_H_ */

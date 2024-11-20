@@ -32,6 +32,7 @@ static void RD_Handle_Min_Max_Lightness(uint8_t *par);
 static void RD_Handle_Config_Sensitive(uint8_t *par);
 static void RD_Handle_Set_Mode_Rada(uint8_t mode);
 static void RD_Handle_Set_Startup_Rada(uint8_t mode_start);
+static void RD_Handle_Get_Dim_Lightness(void);
 
 int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 	RD_Mess_Temp_Receive = (RD_Type_Device_Message *) (&par[0]);
@@ -147,8 +148,8 @@ int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len,
 	case RD_SET_MODE_RADA:
 		RD_Handle_Set_Mode_Rada(par[3]);
 		break;
-	case RD_SW_SELECT_MODE_RADA:
-		RD_Handle_Select_Rada(par[3]);
+	case RD_GET_DIM_LIGHTNESS:
+		RD_Handle_Get_Dim_Lightness();
 		break;
 	case RD_SET_STARTUP_MODE:
 		RD_Handle_Set_Startup_Rada(par[3]);
@@ -157,7 +158,7 @@ int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len,
 		uart_Csend("0x0582 wrong header\n");
 		break;
 	}
-	RD_rsp_packing_lot(par);
+	RD_rsp_packing_lot(&par[0]);
 	return 0;
 }
 uint16_t saveGatewayAddr(uint8_t *para, uint16_t srcAddr) {
@@ -240,14 +241,7 @@ static void RD_Handle_Min_Max_Lightness(uint8_t *par) {
 	RD_LOG("light max: %d, light min: %d\n",Flash_Save_MS58.lightness_max,Flash_Save_MS58.lightness_min);
 #endif
 }
-static void RD_Handle_Select_Rada(uint8_t on_off_mess) {
-	Flash_Save_MS58.sw_select = on_off_mess;
-	RD_Write_Flash_MS58();
 
-#if RD_LOG_UART
-	RD_LOG("set select mode: 0x%02X\n", Flash_Save_MS58.sw_select);
-#endif
-}
 static void RD_Handle_Set_Mode_Rada(uint8_t mode) {
 
 	Flash_Save_MS58.mode = mode;
@@ -267,6 +261,25 @@ static void RD_Handle_Set_Startup_Rada(uint8_t mode_start) {
 #endif
 }
 
+static void RD_Handle_Get_Dim_Lightness(void){
+	u16 lightness = s16_to_u16(light_g_level_present_get(0,ST_TRANS_LIGHTNESS));
+	u8 on_off = light_res_sw_save[0].level[ST_TRANS_LIGHTNESS].onoff;
+	uint8_t mess_buff[8] = { 0 };
+	mess_buff[0] = 0x02;
+	mess_buff[1] = on_off;
+	mess_buff[2] = lightness & 0xff;
+	mess_buff[3] = (lightness >> 8) & 0xff;
+	mess_buff[4] = 0x00;
+	if(on_off == 0){
+		mess_buff[5] = 0x00;
+	}else{
+		mess_buff[5] = 0x01;
+	}
+	mess_buff[6] = 0x00;
+	mess_buff[7] = 0x01;
+	mesh_tx_cmd2normal_primary(op_rsp_packing_lot, mess_buff, 8, packing_lot_addr, 2);
+}
+
 
 void RD_Mess_Config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]) {
 	RD_config_MS58(gain, delta, lot);
@@ -280,7 +293,7 @@ void RD_Mess_Config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]) {
 	RD_Write_Flash_MS58();
 }
 
-void RD_rsp_packing_lot(uint8_t *par) {
+void RD_rsp_packing_lot(u8 *par) {
 	uint8_t mess_buff[8] = { 0 };
 	mess_buff[0] = MAINTYPE;
 	mess_buff[1] = FEATURE;

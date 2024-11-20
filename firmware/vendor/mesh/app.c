@@ -882,7 +882,7 @@ void user_init()
 	//bls_set_update_chn_cb(chn_conn_update_dispatch);
 	
 	bls_ota_registerStartCmdCb(entry_ota_mode);
-	bls_ota_registerResultIndicateCb(show_ota_result);
+	bls_ota_registerResultIndicateCb(show_ota_result); // T_NOTE register cb ota
 	#if !GATT_LPN_EN
 	app_enable_scan_all_device ();	// enable scan adv packet 
 	#endif

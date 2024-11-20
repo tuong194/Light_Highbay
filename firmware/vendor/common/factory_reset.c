@@ -380,7 +380,6 @@ void increase_reset_cnt ()
 #endif
 		mesh_cmd_lightness_set_t p_set_light;
 		p_set_light.lightness = 0xffff;
-
 		lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
 	}
 	if(reset_cnt == 10){

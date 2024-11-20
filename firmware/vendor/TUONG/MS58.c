@@ -15,6 +15,7 @@ unsigned long TimeNew, TimeOld;
 int vrs_count = 0;
 
 flag_on_off_light_t flag_on_off = {0};
+u32 time_start_loop = 0;
 
 u16 flag_check_rec_uart = 0;
 extern u16 uart_rx_irq;
@@ -49,9 +50,9 @@ void RD_config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]){
 		data_conf[11] += data_conf[i];
 	}
 	uart_send_data_arr(data_conf, sizeof(data_conf));
-	sleep_ms(5);
+	sleep_ms(100);
 	RD_save_data_MS58();
-	sleep_ms(5);
+	sleep_ms(50);
 #if LOG_MS58
 	uart_recbuff_init(&data_rec[0],128, &tx_buff[0]);
 	sleep_ms(5);
@@ -69,8 +70,7 @@ void RD_get_data_MS58(void){
 	uart_send_data_arr(data_send,5);
 	sleep_ms(500);
 	wd_clear();
-	sleep_ms(500);
-	wd_clear();
+
 #if LOG_MS58
 	uart_recbuff_init(&data_rec[0],128, &tx_buff[0]); //du lieu bat dau tu data_rec[4]
 	sleep_ms(5);
@@ -89,7 +89,7 @@ void RD_get_data_MS58(void){
 void RD_restore_MS58(void){
 	uint8_t data_send[5] = {0x55, 0x02, 0x13, 0x00, 0x6A};
 	uart_send_data_arr(data_send,5);
-	sleep_ms(500);
+	sleep_ms(50);
 	wd_clear();
 #if LOG_MS58
 	uart_recbuff_init(&data_rec[0],128, &tx_buff[0]);
@@ -158,12 +158,20 @@ void call_scene_from_rada(uint8_t is_motion){
 
 }
 
-void RD_rsp_rada(uint8_t stt){
+void RD_rada_rsp_gw(uint8_t stt){
 	uint16_t GW_addr = 0x0001;
 	uint8_t BuffRec[8] = {0};
-	BuffRec[0] = ele_adr_primary & 0xff;
-	BuffRec[1] = (ele_adr_primary >> 8) & 0xff;
+	BuffRec[0] = RD_HEADER_RSP_MOTION & 0xff;//ele_adr_primary & 0xff;
+	BuffRec[1] = (RD_HEADER_RSP_MOTION >> 8) & 0xff;//(ele_adr_primary >> 8) & 0xff;
 	BuffRec[2] = stt;
+	BuffRec[3] = 0x00;
+	if(stt == 0){
+		BuffRec[4] =  Flash_Save_MS58.Call_Scene.ID_Scene[0] & 0xff;
+		BuffRec[5] =  (Flash_Save_MS58.Call_Scene.ID_Scene[0] >> 8 ) & 0xff;
+	}else if(stt == 1){
+		BuffRec[4] =  Flash_Save_MS58.Call_Scene.ID_Scene[1] & 0xff;
+		BuffRec[5] =  (Flash_Save_MS58.Call_Scene.ID_Scene[1] >> 8 ) & 0xff;
+	}
 	mesh_tx_cmd2normal_primary(RD_RSP_STT_RADA, BuffRec, 8, GW_addr, 1);
 }
 
@@ -175,8 +183,10 @@ void RD_on_light(void){
 		flag_on_off.flag_check_motion = MOTION;
 		flag_on_off.flag_on_off_from_rada = 0;
 		flag_on_off.flag_on_off_from_mesh = 1;
-		call_scene_from_rada(1);
-
+		RD_rada_rsp_gw(1);
+		if(Flash_Save_MS58.Call_Scene.on_off[1] == 1){
+			call_scene_from_rada(1);
+		}
 	}
 	if(clock_time_exceed_ms(time_motion_ms, TIME_DELAY_ON) && flag_on_off.flag_check_motion == MOTION && flag_on_off.flag_on_off_from_rada == 0){
 		RD_set_lightness(Flash_Save_MS58.lightness_max);
@@ -191,7 +201,10 @@ void RD_off_light(void){
 		flag_on_off.flag_check_motion = NO_MOTION;
 		flag_on_off.flag_on_off_from_rada = 0;
 		flag_on_off.flag_on_off_from_mesh = 1;
-		call_scene_from_rada(0);
+		RD_rada_rsp_gw(0);
+		if(Flash_Save_MS58.Call_Scene.on_off[0] == 1){
+			call_scene_from_rada(0);
+		}
 	}
 	if(clock_time_exceed_ms(time_no_motion_ms, TIME_DELAY_OFF) && flag_on_off.flag_check_motion == NO_MOTION && flag_on_off.flag_on_off_from_rada == 0){
 		RD_set_lightness(Flash_Save_MS58.lightness_min);
@@ -201,7 +214,13 @@ void RD_off_light(void){
 
 
 void loop_rada(void){
-	if(Flash_Save_MS58.mode == AUTO){
+	static _Bool flag_loop_rada = FALSE;
+	static _Bool first_check_loop = FALSE;
+	if(clock_time_exceed_ms(time_start_loop, TIME_DELAY_START) && first_check_loop == FALSE){
+		flag_loop_rada = TRUE;
+		first_check_loop = TRUE;
+	}
+	if(Flash_Save_MS58.mode == AUTO && flag_loop_rada == TRUE){
 		RD_on_light();
 		RD_off_light();
 	}
@@ -219,11 +238,12 @@ void RD_Init_Config_MS58(void){
 
 void log_par_flash_ms58(void){
 	uart_Csend("data flash ms58: \n");
-	RD_LOG("mode: %d, start_status: %d, co nhan mess: %d, light max: %d, light min: %d\n",Flash_Save_MS58.mode,
-			Flash_Save_MS58.start_status, Flash_Save_MS58.sw_select, Flash_Save_MS58.lightness_max, Flash_Save_MS58.lightness_min);
+	RD_LOG("mode: %d, start_status: %d, light max: %d, light min: %d\n",Flash_Save_MS58.mode,
+			Flash_Save_MS58.start_status, Flash_Save_MS58.lightness_max, Flash_Save_MS58.lightness_min);
 	uint16_t delta = (Flash_Save_MS58.parMS58.delta[0]<<8) | Flash_Save_MS58.parMS58.delta[1];
 	uint32_t lot = (Flash_Save_MS58.parMS58.lot[0] << 24) | (Flash_Save_MS58.parMS58.lot[1] << 16) |
 			(Flash_Save_MS58.parMS58.lot[2] << 8) | Flash_Save_MS58.parMS58.lot[3];
 	RD_LOG("gain: 0x%02X, delta: %d, lot: %d\n", Flash_Save_MS58.parMS58.gain,delta, lot);
+
 }
 

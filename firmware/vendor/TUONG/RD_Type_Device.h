@@ -37,7 +37,7 @@ typedef struct{
 	uint8_t user[4];
 	uint8_t mode;
 	uint8_t start_status;
-	uint8_t sw_select;  // nhan hoac ko nhan message: 0x00 ko nhan, 0x01 co nhan
+	//uint8_t sw_select;  // nhan hoac ko nhan message: 0x00 ko nhan, 0x01 co nhan
 	uint16_t lightness_max;
 	uint16_t lightness_min;
 	Par_MS58_t parMS58;

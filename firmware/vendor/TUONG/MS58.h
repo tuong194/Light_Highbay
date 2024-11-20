@@ -24,8 +24,10 @@
 
 #define TIME_DELAY_ON     10  // ms
 #define TIME_DELAY_OFF	  10
+#define TIME_DELAY_START  10000
 
 #define RD_RSP_STT_RADA   0x52
+#define RD_HEADER_RSP_MOTION 0x0005
 
 #define LOG_MS58 			RD_LOG_UART
 #define PIN_MS58            GPIO_PB4
@@ -35,12 +37,12 @@
 
 typedef struct{
 	u8 flag_check_motion;
-	u8 flag_on_off_from_rada;
+	u8 flag_on_off_from_rada; // ralli
 	u8 flag_on_off_from_mesh;
 }flag_on_off_light_t;
 
 extern flag_on_off_light_t flag_on_off;
-
+extern u32 time_start_loop;
 
 typedef enum{
 	NO_MOTION 	= 0,

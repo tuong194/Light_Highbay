@@ -848,6 +848,7 @@ _USER_CAN_REDEFINE_ void light_dim_refresh(int idx) // idx: index of LIGHT_CNT.
 #if (LIGHT_TYPE_SEL != LIGHT_TYPE_HSL)
 	u32 lightness_65535 = s16_to_u16(p_trans_l->present);
 	u8 lum_100 = level2lum(p_trans_l->present);            // RD_EDIT lum_100
+	u16 vrs_lum = 0;
 #endif
 
     //LOG_MSG_INFO(DEBUG_SHOW_VC_SELF_EN ? TL_LOG_COMMON : TL_LOG_MESH,0,0,"present_lum %d", lum_100);
@@ -861,10 +862,13 @@ _USER_CAN_REDEFINE_ void light_dim_refresh(int idx) // idx: index of LIGHT_CNT.
 #else
     #if(!(LIGHT_TYPE_CT_EN || LIGHT_TYPE_HSL_EN))
     //light_dim_set_hw(idx, 0, get_pwm_smooth(lightness_65535, LIGHTNESS_AVERAGE_STEP));
+		#if (SELECT_DIM == RD_DIM_25)
+			vrs_lum = 25 + lum_100*0.75;
+		#endif
 	if(lum_100 == 0){
-		light_dim_set_hw(idx, 0, get_pwm_cmp(0xff,0));
+		light_dim_set_hw(idx, 0, get_pwm_cmp(0xff,0)); // RD_EDIT set dim hw
 	}else{
-		light_dim_set_hw(idx, 0, get_pwm_cmp(0xff,lum_100)); // RD_EDIT set dim hw
+		light_dim_set_hw(idx, 0, get_pwm_cmp(0xff,vrs_lum));
 	}
 
 
@@ -2189,13 +2193,13 @@ void RD_light_ev_with_sleep(u32 count, u32 half_cycle_us){ //RD_EDIT: nhay led
 		wd_clear();
 #endif
 		light_dim_set_hw(0, 0, get_pwm_cmp(0xff, 255));
-		light_dim_set_hw(0, 1, get_pwm_cmp(0xff,255));
+		//light_dim_set_hw(0, 1, get_pwm_cmp(0xff,255));
 		sleep_us(half_cycle_us);
 #if (MODULE_WATCHDOG_ENABLE)
 		wd_clear();
 #endif
 		light_dim_set_hw(0, 0, get_pwm_cmp(0xff, 0));
-		light_dim_set_hw(0, 1, get_pwm_cmp(0xff, 0));
+		//light_dim_set_hw(0, 1, get_pwm_cmp(0xff, 0));
 		sleep_us(half_cycle_us);
 	}
 }
@@ -2226,9 +2230,10 @@ _USER_CAN_REDEFINE_ void show_ota_result(int result)
 	if(result == OTA_REBOOT_NO_LED){
 		// nothing
 	}else if(result == OTA_SUCCESS){
-		light_ev_with_sleep(3, 1000*1000);	//0.5Hz shine for  6 second
+		//light_ev_with_sleep(3, 1000*1000);	//0.5Hz shine for  6 second
+		RD_light_ev_with_sleep(3, 500*1000); // RD_EDIT ota success nhay 3 lan
 	}else{
-		light_ev_with_sleep(30, 100*1000);	//5Hz shine for  6 second
+		//light_ev_with_sleep(30, 100*1000);	//5Hz shine for  6 second
 		//write_reg8(0x8000,result); ;while(1);  //debug which err lead to OTA fail
 	}
 	
