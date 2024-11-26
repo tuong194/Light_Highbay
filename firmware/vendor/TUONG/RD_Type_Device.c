@@ -104,6 +104,7 @@ void RD_Flash_MS58_Init(void){
 	log_par_flash_ms58();
 #endif
 }
+
 void RD_Check_Startup_Rada(void){
 	switch(Flash_Save_MS58.start_status){
 	case MANUAL:

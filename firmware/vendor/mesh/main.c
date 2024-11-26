@@ -265,12 +265,7 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		//RD_Kickout_All();
 		//RD_K9B_TimeOutScan_OnOff();
 
-//		if(clock_time_exceed_ms(time_start_loop, 5000)){
-//			RD_get_data_MS58();
-//			sleep_ms(500);
-//			wd_clear();
-//			time_start_loop = clock_time_ms();
-//		}
+
 	}
 }
 #endif

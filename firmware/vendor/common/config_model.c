@@ -824,7 +824,7 @@ u8 mesh_cmd_sig_cfg_model_sub_set2(u16 op, u16 sub_adr, u8 *uuid, model_common_t
 	    if(save_flash){
 		    mesh_model_store(sig_model, model_id);
 		}
-		rf_link_light_event_callback(LGT_CMD_SET_SUBSCRIPTION);
+		rf_link_light_event_callback(LGT_CMD_SET_SUBSCRIPTION); // T_NOTE: add group
 	}
 
     return st;

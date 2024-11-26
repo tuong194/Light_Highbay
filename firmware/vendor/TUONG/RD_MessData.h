@@ -22,13 +22,14 @@
 #define RD_PROVISION_AES         	(0x0003)
 
 #define RD_SET_STARTUP_MODE                 (0x0C)
-#define RD_SW_SELECT_MODE_RADA              (0x0B)  // nhan ban tin hoac ko nhan ban tin
+#define RD_SW_SELECT_MODE_RADA              (0x0B)  // nhan ban tin hoac ko nhan ban tin (not use)
 //#define RD_CONFIG_MS58_DISTANCE			  (0x0745) //khoang cach
 #define RD_CONFIG_MS58_SENSITIVE            (0x0A) //do nhay
 #define RD_CONFIG_MS58_LOT					(0x07) // thoi gian giu chuyen dong
 #define RD_CONFIG_MIN_MAX					(0x08)
 #define RD_SET_MODE_RADA                 	(0x09) //auto / manual
 #define RD_GET_DIM_LIGHTNESS                (0x02)
+#define RD_SET_LIGHT_FROM_RADA              (0x05)
 
 
 

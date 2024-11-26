@@ -37,12 +37,18 @@
 
 typedef struct{
 	u8 flag_check_motion;
-	u8 flag_on_off_from_rada; // ralli
+	u8 flag_on_off_from_rada; // ppacking lot
 	u8 flag_on_off_from_mesh;
 }flag_on_off_light_t;
 
 extern flag_on_off_light_t flag_on_off;
 extern u32 time_start_loop;
+
+enum{
+	NONEX  = 0,
+	ON    = 1,
+	OFF   = 2,
+};
 
 typedef enum{
 	NO_MOTION 	= 0,

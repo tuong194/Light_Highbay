@@ -8,6 +8,7 @@
 #include "../common/lighting_model.h"
 #include "RD_Type_Device.h"
 #include "RD_Scene.h"
+#include "RD_MessData.h"
 
 st_pub_list_t pub_list = {{0}};
 mesh_cmd_lightness_set_t p_set_light;
@@ -128,22 +129,30 @@ void RD_set_lightness(u16 lightness){
 			lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
 		}else if(vrs_count > 101){
 			vrs_count = 0;
-			flag_on_off.flag_on_off_from_rada = 1;
+			flag_on_off.flag_on_off_from_rada = NONEX;
 			flag_on_off.flag_on_off_from_mesh = 0;
 			//RD_LOG("flag_on_off_light: %d", flag_on_off_light);
 		}
 	}
 }
 
-void RD_send_mess_on_light(void){
+/*----------------------Packing lot------------------------------*/
+void Rada_send_onoff_light(uint8_t stt){
 	uint8_t buff_send[4] = {0};
-	buff_send[0] = 0x06;
+	buff_send[0] = RD_SET_LIGHT_FROM_RADA;
 	buff_send[1] = 0x00;
 	buff_send[2] = 0x00;
-	buff_send[3] = 0x01;
+	buff_send[3] = stt;
 	mesh_tx_cmd2normal_primary(LIGHTNESS_LINEAR_SET, buff_send, 4, 0xffff, 0); // opcode 0x5082
 }
-
+void loop_mess_rada(void){
+	if(flag_on_off.flag_on_off_from_rada == ON){
+		RD_set_lightness(Flash_Save_MS58.lightness_max);
+	}else if(flag_on_off.flag_on_off_from_rada == OFF){
+		RD_set_lightness(Flash_Save_MS58.lightness_min);
+	}
+}
+/*----------------------------------------------------------------*/
 void call_scene_from_rada(uint8_t is_motion){
 	u16 scene_id = 0x0000;
 	u8 tid = 0;
@@ -165,10 +174,10 @@ void RD_rada_rsp_gw(uint8_t stt){
 	BuffRec[1] = (RD_HEADER_RSP_MOTION >> 8) & 0xff;//(ele_adr_primary >> 8) & 0xff;
 	BuffRec[2] = stt;
 	BuffRec[3] = 0x00;
-	if(stt == 0){
+	if(stt == 0){ // scene off
 		BuffRec[4] =  Flash_Save_MS58.Call_Scene.ID_Scene[0] & 0xff;
 		BuffRec[5] =  (Flash_Save_MS58.Call_Scene.ID_Scene[0] >> 8 ) & 0xff;
-	}else if(stt == 1){
+	}else if(stt == 1){ // scene on
 		BuffRec[4] =  Flash_Save_MS58.Call_Scene.ID_Scene[1] & 0xff;
 		BuffRec[5] =  (Flash_Save_MS58.Call_Scene.ID_Scene[1] >> 8 ) & 0xff;
 	}
@@ -181,14 +190,14 @@ void RD_on_light(void){
 		uart_Csend("co chuyen dong\n");
 		time_motion_ms = clock_time_ms();
 		flag_on_off.flag_check_motion = MOTION;
-		flag_on_off.flag_on_off_from_rada = 0;
 		flag_on_off.flag_on_off_from_mesh = 1;
 		RD_rada_rsp_gw(1);
+		Rada_send_onoff_light(1); // packinglot
 		if(Flash_Save_MS58.Call_Scene.on_off[1] == 1){
 			call_scene_from_rada(1);
 		}
 	}
-	if(clock_time_exceed_ms(time_motion_ms, TIME_DELAY_ON) && flag_on_off.flag_check_motion == MOTION && flag_on_off.flag_on_off_from_rada == 0){
+	if(clock_time_exceed_ms(time_motion_ms, TIME_DELAY_ON) && flag_on_off.flag_check_motion == MOTION){
 		RD_set_lightness(Flash_Save_MS58.lightness_max);
 	}
 }
@@ -199,19 +208,18 @@ void RD_off_light(void){
 		uart_Csend("ko co chuyen dong\n");
 		time_no_motion_ms = clock_time_ms();
 		flag_on_off.flag_check_motion = NO_MOTION;
-		flag_on_off.flag_on_off_from_rada = 0;
 		flag_on_off.flag_on_off_from_mesh = 1;
 		RD_rada_rsp_gw(0);
+		Rada_send_onoff_light(0); // packinglot
 		if(Flash_Save_MS58.Call_Scene.on_off[0] == 1){
 			call_scene_from_rada(0);
 		}
 	}
-	if(clock_time_exceed_ms(time_no_motion_ms, TIME_DELAY_OFF) && flag_on_off.flag_check_motion == NO_MOTION && flag_on_off.flag_on_off_from_rada == 0){
+	if(clock_time_exceed_ms(time_no_motion_ms, TIME_DELAY_OFF) && flag_on_off.flag_check_motion == NO_MOTION){
 		RD_set_lightness(Flash_Save_MS58.lightness_min);
 
 	}
 }
-
 
 void loop_rada(void){
 	static _Bool flag_loop_rada = FALSE;
@@ -223,6 +231,7 @@ void loop_rada(void){
 	if(Flash_Save_MS58.mode == AUTO && flag_loop_rada == TRUE){
 		RD_on_light();
 		RD_off_light();
+		//loop_mess_rada();
 	}
 }
 
@@ -244,6 +253,5 @@ void log_par_flash_ms58(void){
 	uint32_t lot = (Flash_Save_MS58.parMS58.lot[0] << 24) | (Flash_Save_MS58.parMS58.lot[1] << 16) |
 			(Flash_Save_MS58.parMS58.lot[2] << 8) | Flash_Save_MS58.parMS58.lot[3];
 	RD_LOG("gain: 0x%02X, delta: %d, lot: %d\n", Flash_Save_MS58.parMS58.gain,delta, lot);
-
 }
 

@@ -60,7 +60,7 @@
     		#elif DU_ENABLE
 #define		MY_RF_POWER_INDEX		RF_POWER_P7p02dBm
 			#else
-#define		MY_RF_POWER_INDEX		RF_POWER_P3p01dBm	
+#define		MY_RF_POWER_INDEX		RF_POWER_P10p46dBm//RF_POWER_P3p01dBm	// RD_EDIT edit cong suat phat
     		#endif
 		#elif(MCU_CORE_TYPE == MCU_CORE_8278)
 #define		MY_RF_POWER_INDEX		RF_POWER_P3p50dBm

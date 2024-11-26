@@ -32,7 +32,9 @@ static void RD_Handle_Min_Max_Lightness(uint8_t *par);
 static void RD_Handle_Config_Sensitive(uint8_t *par);
 static void RD_Handle_Set_Mode_Rada(uint8_t mode);
 static void RD_Handle_Set_Startup_Rada(uint8_t mode_start);
+static void RD_Handle_SetLight_From_Rada(uint8_t stt);
 static void RD_Handle_Get_Dim_Lightness(void);
+
 
 int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 	RD_Mess_Temp_Receive = (RD_Type_Device_Message *) (&par[0]);
@@ -154,6 +156,9 @@ int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len,
 	case RD_SET_STARTUP_MODE:
 		RD_Handle_Set_Startup_Rada(par[3]);
 		break;
+	case RD_SET_LIGHT_FROM_RADA: //(packinglot)
+		RD_Handle_SetLight_From_Rada(par[3]);
+		break;
 	default:
 		uart_Csend("0x0582 wrong header\n");
 		break;
@@ -259,6 +264,14 @@ static void RD_Handle_Set_Startup_Rada(uint8_t mode_start) {
 #if RD_LOG_UART
 	RD_LOG("set startup rada: 0x%02X\n", Flash_Save_MS58.start_status);
 #endif
+}
+
+static void RD_Handle_SetLight_From_Rada(uint8_t stt) {
+	if(stt == 0){
+		flag_on_off.flag_on_off_from_rada = OFF;
+	}else if(stt == 1){
+		flag_on_off.flag_on_off_from_rada = ON;
+	}
 }
 
 static void RD_Handle_Get_Dim_Lightness(void){
