@@ -15,6 +15,7 @@ mesh_cmd_lightness_set_t p_set_light;
 unsigned long TimeNew, TimeOld;
 int vrs_count = 0;
 
+
 flag_on_off_light_t flag_on_off = {0};
 u32 time_start_loop = 0;
 
@@ -124,26 +125,26 @@ void RD_set_lightness(u16 lightness){
 	if (TimeNew - TimeOld > 160000) { // 10ms
 		TimeOld = TimeNew;
 		vrs_count++;
-		if(vrs_count == 1){ // 100ms
+		if(vrs_count == 1){ // 10ms
 			p_set_light.lightness = lightness;
 			lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
 		}else if(vrs_count > 101){
 			vrs_count = 0;
 			flag_on_off.flag_on_off_from_rada = NONEX;
 			flag_on_off.flag_on_off_from_mesh = 0;
-			//RD_LOG("flag_on_off_light: %d", flag_on_off_light);
 		}
 	}
 }
 
 /*----------------------Packing lot------------------------------*/
 void Rada_send_onoff_light(uint8_t stt){
+	u16 Group_Addr = Flash_Save_MS58.Call_Group.ID_Group;
 	uint8_t buff_send[4] = {0};
 	buff_send[0] = RD_SET_LIGHT_FROM_RADA;
 	buff_send[1] = 0x00;
 	buff_send[2] = 0x00;
 	buff_send[3] = stt;
-	mesh_tx_cmd2normal_primary(LIGHTNESS_LINEAR_SET, buff_send, 4, 0xffff, 0); // opcode 0x5082
+	mesh_tx_cmd2normal_primary(LIGHTNESS_LINEAR_SET, buff_send, 4, Group_Addr, 0); // opcode 0x5082
 }
 void loop_mess_rada(void){
 	if(flag_on_off.flag_on_off_from_rada == ON){
@@ -192,12 +193,14 @@ void RD_on_light(void){
 		flag_on_off.flag_check_motion = MOTION;
 		flag_on_off.flag_on_off_from_mesh = 1;
 		RD_rada_rsp_gw(1);
-		Rada_send_onoff_light(1); // packinglot
+		if(Flash_Save_MS58.Call_Group.flag_on_off_group == 1){
+			Rada_send_onoff_light(1); // packinglot
+		}
 		if(Flash_Save_MS58.Call_Scene.on_off[1] == 1){
-			call_scene_from_rada(1);
+			call_scene_from_rada(1); // Ralli
 		}
 	}
-	if(clock_time_exceed_ms(time_motion_ms, TIME_DELAY_ON) && flag_on_off.flag_check_motion == MOTION){
+	if(clock_time_exceed_ms(time_motion_ms, TIME_DELAY_ON) && flag_on_off.flag_check_motion == MOTION && flag_on_off.flag_on_off_from_mesh == 1){
 		RD_set_lightness(Flash_Save_MS58.lightness_max);
 	}
 }
@@ -215,7 +218,7 @@ void RD_off_light(void){
 			call_scene_from_rada(0);
 		}
 	}
-	if(clock_time_exceed_ms(time_no_motion_ms, TIME_DELAY_OFF) && flag_on_off.flag_check_motion == NO_MOTION){
+	if(clock_time_exceed_ms(time_no_motion_ms, TIME_DELAY_OFF) && flag_on_off.flag_check_motion == NO_MOTION && flag_on_off.flag_on_off_from_mesh == 1){
 		RD_set_lightness(Flash_Save_MS58.lightness_min);
 
 	}
@@ -231,7 +234,7 @@ void loop_rada(void){
 	if(Flash_Save_MS58.mode == AUTO && flag_loop_rada == TRUE){
 		RD_on_light();
 		RD_off_light();
-		//loop_mess_rada();
+		loop_mess_rada();
 	}
 }
 
@@ -253,5 +256,7 @@ void log_par_flash_ms58(void){
 	uint32_t lot = (Flash_Save_MS58.parMS58.lot[0] << 24) | (Flash_Save_MS58.parMS58.lot[1] << 16) |
 			(Flash_Save_MS58.parMS58.lot[2] << 8) | Flash_Save_MS58.parMS58.lot[3];
 	RD_LOG("gain: 0x%02X, delta: %d, lot: %d\n", Flash_Save_MS58.parMS58.gain,delta, lot);
+
+	RD_LOG("group id: %d\n", Flash_Save_MS58.Call_Group.ID_Group);
 }
 

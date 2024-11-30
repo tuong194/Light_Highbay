@@ -40,8 +40,6 @@
 #include "../TUONG/RD_Type_Device.h"
 #include "../TUONG/MS58.h"
 
-
-
 //define BIT_CHECK BIT
 
 
@@ -84,11 +82,13 @@ _attribute_ram_code_ void irq_uart_handle()
 _attribute_ram_code_ void irq_timer_handle()
 {
     u32 src = reg_irq_src;
-    static u32 A_debug_irq_cnt =0;
     if(src & FLD_IRQ_TMR1_EN){
-       A_debug_irq_cnt++;
        reg_tmr_sta = FLD_TMR_STA_TMR1;
-       gpio_write(GPIO_PA1,A_debug_irq_cnt%2);
+       time_s++;
+       if(time_s == 60 && flash_save_training.rd_flag_test_mode == 0 ){
+    	   time_s = 0;
+    	   flash_save_training.minute++;
+       }
     }
 }
 #endif
@@ -247,7 +247,7 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 		Init_Flash_Secure();
 		RD_Flash_Type_Init();
 		Init_Data_Rada();
-
+		Init_Flash_Training();
 	}
 
     irq_enable();
@@ -259,12 +259,15 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 
 		main_loop ();
 
-		loop_rada();
-		check_done_provision();
-
-		//RD_Kickout_All();
-		//RD_K9B_TimeOutScan_OnOff();
-
+		if(flash_save_training.rd_flag_test_mode == 1){
+			Start_Training();
+			RD_Training();
+		}else{
+			loop_rada();
+			check_done_provision();
+			//RD_Kickout_All();
+			//RD_K9B_TimeOutScan_OnOff();
+		}
 
 	}
 }

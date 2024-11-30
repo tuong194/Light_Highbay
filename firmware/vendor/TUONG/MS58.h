@@ -20,8 +20,6 @@
 #include "RD_Type_Device.h"
 #include"../mesh/RD_Lib.h"
 
-
-
 #define TIME_DELAY_ON     10  // ms
 #define TIME_DELAY_OFF	  10
 #define TIME_DELAY_START  10000
@@ -75,5 +73,6 @@ unsigned int is_motion(void);
 void loop_rada(void);
 void RD_Init_Config_MS58(void);
 void log_par_flash_ms58(void);
+void RD_set_lightness(u16 lightness);
 
 #endif /* MS58_H_ */

@@ -31,6 +31,7 @@
 #include "lighting_model.h"
 #include "../mesh/RD_Lib.h"
 #include "../TUONG/RD_Secure.h"
+#include "../TUONG/RD_Type_Device.h"
 
 extern void RD_LOG(const char *format, ...);
 
@@ -659,11 +660,18 @@ void kick_out(int led_en){
 #endif
 #else
 	factory_reset();
-	flash_save_secure.flag_process_aes = NO_MESS;
-	flash_save_secure.flag_check_mess = 0;
 
+	flash_save_secure.flag_process_aes = NO_MESS;  // RD_EDIT reset flag & group id
+	flash_save_secure.flag_check_mess = 0;
 	flash_erase_sector(RD_PROVISION_FLASH_AREA);
 	flash_write_page(RD_PROVISION_FLASH_AREA, RD_SIZE_FLASH_SECURE, (uint8_t *) (&flash_save_secure.Used[0]));
+
+	Flash_Save_MS58.Call_Group.flag_on_off_group = 0;
+	Flash_Save_MS58.Call_Group.ID_Group = 0x0000;
+	Flash_Save_MS58.Call_Scene.on_off[0] = 0;
+	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
+	RD_Write_Flash_MS58();
+
     #if !WIN32
     if(led_en){
         show_factory_reset();

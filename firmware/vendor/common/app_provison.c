@@ -3116,7 +3116,7 @@ void mesh_adv_prov_complete_rsp(pro_PB_ADV *p_adv)
 	#endif
     SET_RESULT_TESTCASE(0,0);
 }
-void mesh_adv_prov_link_close()
+void mesh_adv_prov_link_close() // RD_EDIT: close provision
 {
 #if GATEWAY_ENABLE
     set_gateway_provision_para_init();

@@ -10,8 +10,10 @@
 #include "MS58.h"
 #include "../mesh/RD_Lib.h"
 
+
 Flash_Save_Type_GW Flash_Save_Type_Val;
 Flash_Save_MS58_t  Flash_Save_MS58 = {{0}};
+Flash_Save_Training flash_save_training = {{0}};
 
 void RD_Flash_Save_GW(uint16_t GW_ADDR){
 	Flash_Save_Type_Val.GWID[1] = (uint8_t) (GW_ADDR>>8 & 0xff);
@@ -87,6 +89,8 @@ void RD_Flash_Clean_MS58(void){
 	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
 	Flash_Save_MS58.Call_Scene.ID_Scene[0] = 0x0000;
 	Flash_Save_MS58.Call_Scene.ID_Scene[1] = 0x0000;
+	Flash_Save_MS58.Call_Group.flag_on_off_group = 0;
+	Flash_Save_MS58.Call_Group.ID_Group = 0x0000;
 
 	flash_erase_sector(RD_MS58_FLASH_AREA);
 	flash_write_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));
@@ -99,7 +103,6 @@ void RD_Flash_MS58_Init(void){
 		RD_Flash_Clean_MS58();
 	}
 	RD_Init_Config_MS58();
-
 #if RD_LOG_UART
 	log_par_flash_ms58();
 #endif
@@ -113,12 +116,46 @@ void RD_Check_Startup_Rada(void){
 	case AUTO:
 		Flash_Save_MS58.mode = AUTO;
 		break;
+	default:
+		break;
 	}
 }
 void Init_Data_Rada(void){
 	RD_Flash_MS58_Init();
 	RD_Check_Startup_Rada();
 	time_start_loop = clock_time_ms();
+}
+
+void RD_Flash_Clean_Training(void){
+	flash_save_training.User[0] = RD_CHECK_FLASH_H;
+	flash_save_training.User[1] = RD_CHECK_FLASH_L;
+	flash_save_training.User[2] = RD_CHECK_FLASH_H;
+	flash_save_training.User[3] = RD_CHECK_FLASH_L;
+
+	flash_save_training.minute = 0;
+	flash_save_training.step = 1;
+	flash_save_training.rd_flag_test_mode = 1;
+
+	flash_erase_sector(RD_TRAINING_FLASH_AREA);
+	flash_write_page(RD_TRAINING_FLASH_AREA, RD_TRAINING_FLASH_SIZE, (unsigned char *)(&flash_save_training.User[0]));
+}
+
+void Init_Flash_Training(void){
+#if TRAINING_EN
+	flash_read_page(RD_TRAINING_FLASH_AREA, RD_TRAINING_FLASH_SIZE, (unsigned char *)(&flash_save_training.User[0]));
+	if(flash_save_training.User[0] != RD_CHECK_FLASH_H && flash_save_training.User[1] != RD_CHECK_FLASH_L &&
+		flash_save_training.User[2] != RD_CHECK_FLASH_H && flash_save_training.User[3] != RD_CHECK_FLASH_L){
+		RD_Flash_Clean_Training();
+	}
+	RD_LOG("time minute start: %d\n",flash_save_training.minute);
+#else
+	flash_save_training.rd_flag_test_mode = 0;
+#endif
+}
+
+void RD_Write_Flash_Training(void){
+	flash_erase_sector(RD_TRAINING_FLASH_AREA);
+	flash_write_page(RD_TRAINING_FLASH_AREA, RD_TRAINING_FLASH_SIZE, (unsigned char *)(&flash_save_training.User[0]));
 }
 
 //RD_EDIT LOG UART

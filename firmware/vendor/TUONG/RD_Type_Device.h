@@ -16,10 +16,12 @@
 #include "proj_lib/ble/blt_config.h"
 #include "proj_lib/ble/ll/ll.h"
 #include "proj_lib/sig_mesh/app_mesh.h"
+#include "RD_Training.h"
 
 #define RD_GW_FLASH_AREA   (0x78000)
 #define RD_CHECK_FLASH_H   (0x55)
 #define RD_CHECK_FLASH_L   (0xAA)
+
 
 typedef struct{
 	//uint8_t power;
@@ -34,6 +36,11 @@ typedef struct{
 }Call_Scene_t;
 
 typedef struct{
+	u8 flag_on_off_group;
+	u16 ID_Group;
+}Call_Group_t;
+
+typedef struct{
 	uint8_t user[4];
 	uint8_t mode;
 	uint8_t start_status;
@@ -42,6 +49,7 @@ typedef struct{
 	uint16_t lightness_min;
 	Par_MS58_t parMS58;
 	Call_Scene_t Call_Scene;
+	Call_Group_t Call_Group;
 }Flash_Save_MS58_t;
 
 typedef enum{
@@ -61,7 +69,16 @@ typedef struct{
 	uint8_t Future[7];
 }Flash_Save_Type_GW;
 
+typedef struct{
+	uint8_t User[4];
+	uint8_t minute;
+	uint8_t step;
+	uint8_t rd_flag_test_mode;
+}Flash_Save_Training;
+
 extern Flash_Save_MS58_t Flash_Save_MS58;
+extern Flash_Save_Training flash_save_training;
+
 
 void RD_Flash_Save_GW(uint16_t GW_ADDR);
 void RD_Flash_Save_Type(uint8_t MainType, uint8_t Feature, uint8_t Name);
@@ -69,6 +86,8 @@ void RD_Flash_Type_Init(void);
 void RD_Flash_MS58_Init(void);
 void Init_Data_Rada(void);
 void RD_Write_Flash_MS58(void);
+void Init_Flash_Training(void);
+void RD_Write_Flash_Training(void);
 
 
 void RD_LOG(const char *format, ...);

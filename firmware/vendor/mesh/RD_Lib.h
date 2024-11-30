@@ -9,6 +9,7 @@
 #define RD_LIB_H_
 
 #define RD_LOG_UART         0
+#define TRAINING_EN         0
 
 #define NAME				HIGHTBAY_RADA
 
@@ -122,7 +123,7 @@
 #elif(NAME == HIGHTBAY_RADA) // T_NOTE: TYPE_LIGHT
 	#define VERSION_MAIN        0x01		//RD_EDIT: SEC : .h VERSION_MAIN
 	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
-	#define TIME_RESET			TIME_DIM9
+	#define TIME_RESET			TIME_DIM10
 	#define SELECT_DIM			RD_DIM_25
 
 //-----------------------------------------------------------------------------------------
