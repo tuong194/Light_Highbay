@@ -40,6 +40,8 @@
 #endif
 
 #include "../mesh/RD_Lib.h"
+#include "../TUONG/RD_Type_Device.h"
+#include "../TUONG/MS58.h"
 
 /** @addtogroup Mesh_Common
   * @{
@@ -2225,14 +2227,21 @@ void RD_light_ev1(void){
  * @return      none
  * @note        
  */
+
 _USER_CAN_REDEFINE_ void show_ota_result(int result)
 {
+
 	if(result == OTA_REBOOT_NO_LED){
 		// nothing
 	}else if(result == OTA_SUCCESS){
 		//light_ev_with_sleep(3, 1000*1000);	//0.5Hz shine for  6 second
-		RD_light_ev_with_sleep(3, 500*1000); // RD_EDIT ota success nhay 3 lan
-	}else{
+		RD_light_ev_with_sleep(3, 600*1000); // RD_EDIT ota success nhay 3 lan
+		extern _Bool rd_check_ota;
+		rd_check_ota = FALSE;
+	}
+	else{
+
+		RD_light_ev_with_sleep(1, 500*1000); //
 		//light_ev_with_sleep(30, 100*1000);	//5Hz shine for  6 second
 		//write_reg8(0x8000,result); ;while(1);  //debug which err lead to OTA fail
 	}

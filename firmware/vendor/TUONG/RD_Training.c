@@ -11,6 +11,7 @@
 extern _Bool flag_kickout_all;
 unsigned long timeNew, timeOld;
 int count = 0;
+int temp_train = 0;
 _Bool flag_start_training = TRUE;
 
 
@@ -27,13 +28,16 @@ void RD_set_lightness_training(u8 lightness_100){
 
 void Start_Training(void){
 	if(flag_start_training == TRUE){
+		mesh_adv_prov_link_close();
 		if(flash_save_training.step == 1){
 			if(time_s <= 4){
 				if(time_s != time_s_old){
+
 					RD_set_lightness_training(100);
 					time_s_old = time_s;
 				}
 			}else {
+				//mesh_adv_prov_link_close();
 				flag_start_training = FALSE;
 				time_s = 0;
 			}
@@ -49,6 +53,7 @@ void Start_Training(void){
 				}else if(count == 4){
 					RD_set_lightness_training(0);
 				}else if(count == 5){
+					//mesh_adv_prov_link_close();
 					time_s = 0;
 					flag_start_training = FALSE;
 					time_m = 0;
@@ -60,39 +65,42 @@ void Start_Training(void){
 }
 
 void RD_Training(void){
+	mesh_adv_prov_link_close();
 	if(time_m != flash_save_training.minute && flag_start_training == FALSE){
-		if(flash_save_training.minute < 1){
+		if(flash_save_training.minute < 10){
 			flash_save_training.step = 1;
-		}else if(flash_save_training.minute >= 1 && flash_save_training.minute < 2){
+		}else if(flash_save_training.minute >= 10 && flash_save_training.minute < 20){
 			flash_save_training.step = 2;
 			RD_set_lightness_training(100);
-		}else if(flash_save_training.minute >= 2 && flash_save_training.minute < 3){
+		}else if(flash_save_training.minute >= 20 && flash_save_training.minute < 30){
 			flash_save_training.step = 3;
 			RD_set_lightness_training(50);
 		}else{
 			flash_save_training.step = 4;  // luyen xong
 			flash_save_training.rd_flag_test_mode = 0;
 			RD_set_lightness_training(15);
+			RD_LOG("luyen cong xong\n");
 		}
 		time_m = flash_save_training.minute;
-		RD_LOG("time minute: %d, step: %d\n", time_m, flash_save_training.step);
+		//RD_LOG("time minute: %d, step: %d\n", time_m, flash_save_training.step);
 		RD_Write_Flash_Training();
 	}
 	if(flash_save_training.step == 1 && flag_start_training == FALSE){
 		if(time_s_old != time_s){
 			time_s_old = time_s;
 			count++;
-			//RD_LOG("time second: %d, count %d\n", time_s, count);
-			if(count == 1){
-				RD_set_lightness_training(20);
-			}else if(count == 2){
+			//RD_LOG("time second: %d\n", time_s);
+			if(count == 2){
 				count = 0;
-				RD_set_lightness_training(100);
+				temp_train++;
+				if(temp_train == 1){
+					RD_set_lightness_training(20);
+				}else if(temp_train == 2){
+					temp_train = 0;
+					RD_set_lightness_training(100);
+				}
 			}
 		}
-	}
-	if(flash_save_training.rd_flag_test_mode == 0){
-		mesh_adv_prov_link_close();
 	}
 }
 

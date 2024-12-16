@@ -109,10 +109,12 @@ static void RD_Handle_K9B_SaveScene(uint8_t par[8], uint16_t Gw_Add_Buff);
 static void RD_Handle_K9B_DeleteScene(uint8_t par[8], uint16_t Gw_Add_Buff);
 static void RD_Handle_Delete_K9BHC(uint8_t par[8], uint16_t Gw_Add_Buff);
 
+static void RALI_Handle_Config_Distance(uint8_t par);
 static void RALI_Handle_Config_Sensitive(uint8_t *par);
 static void RALI_Handle_Config_LOT(uint8_t *par);
 static void RALI_Handle_Set_Mode_Rada(uint8_t mode);
 static void RALI_Handle_Set_Scene_Rada(u8 *par);
+static void RALI_Handle_Set_Startup_Rada(uint8_t mode_start);
 
 void RD_rsp_hc(uint8_t *par, uint16_t GW_Addr);
 extern void scene_active_set(int idx, u16 scene_id, int trans_flag);
@@ -170,6 +172,10 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 		RD_Handle_Delete_K9BHC(par, GW_Addr_Buff);
 		break;
 #endif
+	case RALI_CONFIG_MS58_DISTANCE:
+		RALI_Handle_Config_Distance(par[2]);
+		RD_rsp_hc(par, GW_Addr_Buff);
+		break;
 	case RALI_CONFIG_MS58_SENSITIVE:
 		RALI_Handle_Config_Sensitive(par);
 		RD_rsp_hc(par, GW_Addr_Buff);
@@ -185,13 +191,16 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 	case RALI_SET_SCENE:
 		RALI_Handle_Set_Scene_Rada(par);
 		break;
+	case RALI_SET_STARTUP_MODE:
+		RALI_Handle_Set_Startup_Rada(par[2]);
+		RD_rsp_hc(par, GW_Addr_Buff);
+		break;
 	default:
 		uart_Csend("wrong header\n");
 		break;
 	}
 	return 0;
 }
-
 
 /*----------------------------------------------------------------Handle Func-------------------------------------------------------------------------*/
 
@@ -674,10 +683,52 @@ void RD_Scene_Auto(uint16_t Scene_ID, mesh_cb_fun_par_t *cb_par, uint16_t Opcode
 }
 
 /*-------------------------------RALI CONTROL-----------------------------------*/
+static void RALI_Handle_Config_Distance(uint8_t par) {
+
+	uint8_t gain;
+	switch(par){
+	case 0x04:
+		gain = 0x93;
+		break;
+	case 0x05:
+		gain = 0x83;
+		break;
+	case 0x06:
+		gain = 0x73;
+		break;
+	case 0x07:
+		gain = 0x63;
+		break;
+	case 0x08:
+		gain = 0x53;
+		break;
+	case 0x09:
+		gain = 0x43;
+		break;
+	case 0x0A:
+		gain = 0x33;
+		break;
+	default:
+		break;
+	}
+
+	uint8_t delta[2] = { 0 };
+	uint8_t lot[4] = { 0 };
+
+	delta[0] = Flash_Save_MS58.parMS58.delta[0];
+	delta[1] = Flash_Save_MS58.parMS58.delta[1];
+
+	lot[0] = Flash_Save_MS58.parMS58.lot[0];
+	lot[1] = Flash_Save_MS58.parMS58.lot[1];
+	lot[2] = Flash_Save_MS58.parMS58.lot[2];
+	lot[3] = Flash_Save_MS58.parMS58.lot[3];
+
+	RD_Mess_Config_MS58(gain, delta, lot);
+}
 
 static void RALI_Handle_Config_Sensitive(uint8_t *par) {
 	//uart_Csend("hc config sensitive\n");
-	uint8_t gain = 0x33;
+	uint8_t gain = Flash_Save_MS58.parMS58.gain;
 	uint8_t delta[2] = { 0 };
 	uint8_t lot[4] = { 0 };
 
@@ -687,13 +738,13 @@ static void RALI_Handle_Config_Sensitive(uint8_t *par) {
 		delta[0] = 0x00;
 		delta[1] = 0x14;
 		break;
-	case MIDLE_SEN: // 50
+	case MIDLE_SEN: // 30
+		delta[0] = 0x00;
+		delta[1] = 0x1e;
+		break;
+	case LOW_SEN: // 50
 		delta[0] = 0x00;
 		delta[1] = 0x32;
-		break;
-	case LOW_SEN: // 100
-		delta[0] = 0x00;
-		delta[1] = 0x64;
 		break;
 	default:
 		//uart_Csend("delta wrong\n");
@@ -707,9 +758,26 @@ static void RALI_Handle_Config_Sensitive(uint8_t *par) {
 	RD_Mess_Config_MS58(gain, delta, lot);
 }
 
+//static void RALI_Handle_Config_Sensitive(uint8_t *par) {
+//	//uart_Csend("hc config sensitive\n");
+//	uint8_t gain = Flash_Save_MS58.parMS58.gain;
+//	uint8_t delta[2] = { 0 };
+//	uint8_t lot[4] = { 0 };
+//
+//	delta[0] = par[3];
+//	delta[1] = par[2];
+//
+//	lot[0] = Flash_Save_MS58.parMS58.lot[0];
+//	lot[1] = Flash_Save_MS58.parMS58.lot[1];
+//	lot[2] = Flash_Save_MS58.parMS58.lot[2];
+//	lot[3] = Flash_Save_MS58.parMS58.lot[3];
+//
+//	RD_Mess_Config_MS58(gain, delta, lot);
+//}
+
 static void RALI_Handle_Config_LOT(uint8_t *par) {
 
-	uint8_t gain = 0x33;
+	uint8_t gain = Flash_Save_MS58.parMS58.gain;
 	uint8_t delta[2] = { 0 };
 	uint8_t lot[4] = { 0 };
 
@@ -754,8 +822,17 @@ static void RALI_Handle_Set_Scene_Rada(u8 *par){
 	flash_write_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));
 }
 
+static void RALI_Handle_Set_Startup_Rada(uint8_t mode_start) {
+	Flash_Save_MS58.start_status = mode_start;
+	RD_Write_Flash_MS58();
+
+#if RD_LOG_UART
+	RD_LOG("set startup rada: 0x%02X\n", Flash_Save_MS58.start_status);
+#endif
+}
+
 void RD_rsp_hc(uint8_t *par, uint16_t GW_Addr){
-	mesh_tx_cmd2normal_primary(RD_OPCODE_SCENE_RSP, par, sizeof(par), GW_Addr, RD_MAXRESPONESEND);
+	mesh_tx_cmd2normal_primary(RD_OPCODE_SCENE_RSP, par, sizeof(par)/sizeof(par[0]), GW_Addr, RD_MAXRESPONESEND);
 }
 
 

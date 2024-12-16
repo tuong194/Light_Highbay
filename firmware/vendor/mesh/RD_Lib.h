@@ -8,6 +8,8 @@
 #ifndef RD_LIB_H_
 #define RD_LIB_H_
 
+
+
 #define RD_LOG_UART         0
 #define TRAINING_EN         0
 
@@ -20,7 +22,6 @@
 #define MAINTYPE			0x01
 #define FEATURE				0x06
 #endif
-
 
 #define RD_VID_TYPE         ((VERSION_MAIN << 8) | VERSION_SUB)
 #define RD_PID_TYPE			((MAINTYPE << 12) | (FEATURE << 8) | NAME)
@@ -123,7 +124,7 @@
 #elif(NAME == HIGHTBAY_RADA) // T_NOTE: TYPE_LIGHT
 	#define VERSION_MAIN        0x01		//RD_EDIT: SEC : .h VERSION_MAIN
 	#define VERSION_SUB         0x00		//RD_EDIT: SEC : .h VERSION_SUB
-	#define TIME_RESET			TIME_DIM10
+	#define TIME_RESET			TIME_DIM9
 	#define SELECT_DIM			RD_DIM_25
 
 //-----------------------------------------------------------------------------------------

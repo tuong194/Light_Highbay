@@ -15,6 +15,7 @@ mesh_cmd_lightness_set_t p_set_light;
 unsigned long TimeNew, TimeOld;
 int vrs_count = 0;
 
+extern _Bool rd_check_ota;
 
 flag_on_off_light_t flag_on_off = {0};
 u32 time_start_loop = 0;
@@ -125,7 +126,7 @@ void RD_set_lightness(u16 lightness){
 	if (TimeNew - TimeOld > 160000) { // 10ms
 		TimeOld = TimeNew;
 		vrs_count++;
-		if(vrs_count == 1){ // 10ms
+		if(vrs_count == 1 && Flash_Save_MS58.mode == AUTO){ // 10ms
 			p_set_light.lightness = lightness;
 			lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
 		}else if(vrs_count > 101){
@@ -144,13 +145,17 @@ void Rada_send_onoff_light(uint8_t stt){
 	buff_send[1] = 0x00;
 	buff_send[2] = 0x00;
 	buff_send[3] = stt;
-	mesh_tx_cmd2normal_primary(LIGHTNESS_LINEAR_SET, buff_send, 4, Group_Addr, 0); // opcode 0x5082
+	if(Flash_Save_MS58.mode == AUTO){
+		mesh_tx_cmd2normal_primary(LIGHTNESS_LINEAR_SET, buff_send, 4, Group_Addr, 0); // opcode 0x5082
+	}
 }
 void loop_mess_rada(void){
-	if(flag_on_off.flag_on_off_from_rada == ON){
-		RD_set_lightness(Flash_Save_MS58.lightness_max);
-	}else if(flag_on_off.flag_on_off_from_rada == OFF){
-		RD_set_lightness(Flash_Save_MS58.lightness_min);
+	if(Flash_Save_MS58.mode == AUTO){
+		if(flag_on_off.flag_on_off_from_rada == ON){
+			RD_set_lightness(Flash_Save_MS58.lightness_max);
+		}else if(flag_on_off.flag_on_off_from_rada == OFF){
+			RD_set_lightness(Flash_Save_MS58.lightness_min);
+		}
 	}
 }
 /*----------------------------------------------------------------*/
@@ -170,7 +175,7 @@ void call_scene_from_rada(uint8_t is_motion){
 
 void RD_rada_rsp_gw(uint8_t stt){
 	uint16_t GW_addr = 0x0001;
-	uint8_t BuffRec[8] = {0};
+	uint8_t BuffRec[6] = {0};
 	BuffRec[0] = RD_HEADER_RSP_MOTION & 0xff;//ele_adr_primary & 0xff;
 	BuffRec[1] = (RD_HEADER_RSP_MOTION >> 8) & 0xff;//(ele_adr_primary >> 8) & 0xff;
 	BuffRec[2] = stt;
@@ -182,13 +187,13 @@ void RD_rada_rsp_gw(uint8_t stt){
 		BuffRec[4] =  Flash_Save_MS58.Call_Scene.ID_Scene[1] & 0xff;
 		BuffRec[5] =  (Flash_Save_MS58.Call_Scene.ID_Scene[1] >> 8 ) & 0xff;
 	}
-	mesh_tx_cmd2normal_primary(RD_RSP_STT_RADA, BuffRec, 8, GW_addr, 1);
+	mesh_tx_cmd2normal_primary(RD_RSP_STT_RADA, BuffRec, 6, GW_addr, 1);
 }
 
 void RD_on_light(void){
 	static u32 time_motion_ms = 0;
 	if(is_motion() && flag_on_off.flag_check_motion == NO_MOTION){
-		uart_Csend("co chuyen dong\n");
+		//uart_Csend("co chuyen dong\n");
 		time_motion_ms = clock_time_ms();
 		flag_on_off.flag_check_motion = MOTION;
 		flag_on_off.flag_on_off_from_mesh = 1;
@@ -208,12 +213,14 @@ void RD_on_light(void){
 void RD_off_light(void){
 	static u32 time_no_motion_ms = 0;
 	if(is_motion() == 0 && flag_on_off.flag_check_motion == MOTION){
-		uart_Csend("ko co chuyen dong\n");
+		//uart_Csend("ko co chuyen dong\n");
 		time_no_motion_ms = clock_time_ms();
 		flag_on_off.flag_check_motion = NO_MOTION;
 		flag_on_off.flag_on_off_from_mesh = 1;
 		RD_rada_rsp_gw(0);
-		Rada_send_onoff_light(0); // packinglot
+		if(Flash_Save_MS58.Call_Group.flag_on_off_group == 1){
+			Rada_send_onoff_light(0); // packinglot
+		}
 		if(Flash_Save_MS58.Call_Scene.on_off[0] == 1){
 			call_scene_from_rada(0);
 		}
@@ -231,7 +238,7 @@ void loop_rada(void){
 		flag_loop_rada = TRUE;
 		first_check_loop = TRUE;
 	}
-	if(Flash_Save_MS58.mode == AUTO && flag_loop_rada == TRUE){
+	if(flag_loop_rada == TRUE && rd_check_ota == FALSE){
 		RD_on_light();
 		RD_off_light();
 		loop_mess_rada();
@@ -239,13 +246,21 @@ void loop_rada(void){
 }
 
 void RD_Init_Config_MS58(void){
-	uint8_t gain = 0x33;
+	uint8_t gain = Flash_Save_MS58.parMS58.gain;
 	uint8_t delta[2] = {Flash_Save_MS58.parMS58.delta[0], Flash_Save_MS58.parMS58.delta[1]};
 	uint8_t lot[4] = {0};
 	for(u8 i=0; i<4;i++){
 		lot[i] = Flash_Save_MS58.parMS58.lot[i];
 	}
 	RD_config_MS58(gain, delta, lot);
+}
+
+void RD_Rsp_Powerup(uint16 gw_addr, uint8_t mode){
+	uint8_t BuffSend[3] = {0};
+	BuffSend[0] = MY_HEADER_RSP_MODE & 0xff;
+	BuffSend[1] = (MY_HEADER_RSP_MODE>>8) & 0xff;
+	BuffSend[2] = mode;
+	mesh_tx_cmd2normal_primary(0xE1, BuffSend, 3, gw_addr, 1);
 }
 
 void log_par_flash_ms58(void){

@@ -325,6 +325,7 @@ void set_private_mesh_adv(rf_packet_adv_t * p)
 
 void mesh_provision_para_reset()
 {
+	//RD_LOG("tat co\n"); //RD_EDIT note
 	// test para init 
 #if FEATURE_PROV_EN
     #if MD_REMOTE_PROV

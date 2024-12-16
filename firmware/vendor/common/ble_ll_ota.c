@@ -45,6 +45,7 @@
 #include "../mesh_provision/app.h"
 #endif
 
+_Bool rd_check_ota = FALSE; // RD_EDIT flag check ota
 _attribute_data_retention_ int ota_adr_index = -1;
 _attribute_data_retention_ u32 blt_ota_start_tick;
 _attribute_data_retention_ u32 blt_ota_timeout_us = 30000000;  //default 30 second
@@ -230,6 +231,7 @@ void set_ota_reboot_flag(u8 flag)
 }
 #endif
 
+extern void RD_LOG(const char *format, ...);
 int otaWrite(void * p)
 {
 #if 0 // DUAL_VENDOR_EN	// confirm later
@@ -269,6 +271,8 @@ int otaWrite(void * p)
 		if(ota_reboot_flag)
 		#endif
 		{
+			//RD_LOG("start ota\n"); //RD_EDIT start ota
+			rd_check_ota = TRUE;
 			blcOta.ota_start_flag = 1;   //set flag
 			blt_ota_start_tick = clock_time()|1;  //mark time
 			if(otaStartCb){
@@ -285,6 +289,7 @@ int otaWrite(void * p)
 		#endif
 	}
 	else if(ota_adr == CMD_OTA_END){
+
 		//log_event(TR_T_ota_end);
 
 		u16 adrIndex_max	   = req->dat[2] | (req->dat[3]<<8);
@@ -304,6 +309,7 @@ int otaWrite(void * p)
 		blt_ota_finished_flag_set(err_flg);
 	}
 	else{
+
 		//log_task_begin(TR_T_ota_data);
 		if(ota_adr_index + 1 == ota_adr){   //correct OTA data index
 			blt_ota_start_tick = clock_time()|1;  //mark time
@@ -408,6 +414,7 @@ int otaWrite(void * p)
 	}
 
 	if(err_flg){
+		rd_check_ota = FALSE; //RD_EDIT ota fail
 		//log_event(TR_T_ota_err);
 		blt_ota_finished_flag_set(err_flg);
 	}

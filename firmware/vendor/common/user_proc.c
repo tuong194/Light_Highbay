@@ -161,7 +161,7 @@ void user_node_oob_set()
 
 
 #if MD_SERVER_EN
-void user_power_on_proc()
+void user_power_on_proc() // RD_EDIT power on rsp dim
 {
     #if ((MESH_USER_DEFINE_MODE != MESH_SPIRIT_ENABLE)&&(MESH_USER_DEFINE_MODE != MESH_TAIBAI_ENABLE)&&!MI_API_ENABLE)
     foreach(i,LIGHT_CNT){

@@ -57,6 +57,7 @@ typedef enum{
 	CALL_SCENE = 1,
 }call_scene_e;
 
+
 #define RD_FLASH_SIZE_MS58			sizeof(Flash_Save_MS58_t)
 #define RD_MS58_FLASH_AREA          (0x7c000)
 
@@ -86,9 +87,10 @@ void RD_Flash_Type_Init(void);
 void RD_Flash_MS58_Init(void);
 void Init_Data_Rada(void);
 void RD_Write_Flash_MS58(void);
+void RD_Flash_Reset_Config_MS58(void);
+void RD_Flash_Clean_MS58(void);
 void Init_Flash_Training(void);
 void RD_Write_Flash_Training(void);
-
 
 void RD_LOG(const char *format, ...);
 #endif /* RD_TYPE_DEVICE_H_ */

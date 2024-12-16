@@ -32,6 +32,7 @@ extern "C" {
 #include "../user_app/user_app_config.h"
 
 #include "../mesh/RD_Lib.h" //T_NOTE include RD_lib.h
+//#include "../TUONG/RD_Type_Device.h"
 
 //------------hardware parameters
 // HCI Select
@@ -1163,7 +1164,7 @@ extern "C" {
 #define FEATURE_FRIEND_EN 		1   // WIN 32 should be support disable: model_sig_cfg_s.frid
 	#endif
 #define FEATURE_LOWPOWER_EN		0
-#define FEATURE_PROV_EN 		1
+#define FEATURE_PROV_EN 		1 //!TRAINING_EN    // RD_EDIT provision feature
     #if (0 == NODE_CAN_SEND_ADV_FLAG)
 #define FEATURE_RELAY_EN		0	// must 0, because it must be proxyed by another node. and messages have been relay by this node.
 #define FEATURE_PROXY_EN 		0	// must 0, 
@@ -1253,7 +1254,7 @@ extern "C" {
 #define			LGT_CMD_LEFT_KEY				0x14//internal use
 #define			LGT_CMD_RIGHT_KEY				0x15//internal use
 
-#define			IRQ_TIMER1_ENABLE  			    TRAINING_EN // RD_EDIT timer_irq_enable
+#define			IRQ_TIMER1_ENABLE  	 		    TRAINING_EN // RD_EDIT timer_irq_enable
 #define			IRQ_TIME1_INTERVAL			    (1000000) // unit us // RD_EDIT: 1s timer
 #define			IRQ_GPIO_ENABLE  			    0
 

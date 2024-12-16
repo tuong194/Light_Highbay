@@ -661,15 +661,12 @@ void kick_out(int led_en){
 #else
 	factory_reset();
 
-	flash_save_secure.flag_process_aes = NO_MESS;  // RD_EDIT reset flag & group id
+	flash_save_secure.flag_process_aes = NO_MESS;  // RD_EDIT reset flag
 	flash_save_secure.flag_check_mess = 0;
 	flash_erase_sector(RD_PROVISION_FLASH_AREA);
 	flash_write_page(RD_PROVISION_FLASH_AREA, RD_SIZE_FLASH_SECURE, (uint8_t *) (&flash_save_secure.Used[0]));
 
-	Flash_Save_MS58.Call_Group.flag_on_off_group = 0;
-	Flash_Save_MS58.Call_Group.ID_Group = 0x0000;
-	Flash_Save_MS58.Call_Scene.on_off[0] = 0;
-	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
+	RD_Flash_Reset_Config_MS58(); // reset rada
 	RD_Write_Flash_MS58();
 
     #if !WIN32

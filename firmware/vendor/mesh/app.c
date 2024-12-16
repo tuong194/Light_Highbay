@@ -78,6 +78,7 @@
 #endif
 
 #include "../TUONG/RD_Scene.h"
+#include "../TUONG/RD_Type_Device.h"
 extern void RD_LOG(const char *format, ...);
 
 #define BLT_RX_FIFO_SIZE        (MESH_DLE_MODE ? DLE_RX_FIFO_SIZE : 64)
@@ -542,6 +543,7 @@ void main_loop ()
 	} 
 	#else
 	mesh_loop_process();
+
 	#endif
 	#if MI_API_ENABLE
 	ev_main();

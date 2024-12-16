@@ -44,6 +44,7 @@
 
 
 
+
 extern void user_init();
 extern void main_loop ();
 void blc_pm_select_none();
@@ -85,7 +86,7 @@ _attribute_ram_code_ void irq_timer_handle()
     if(src & FLD_IRQ_TMR1_EN){
        reg_tmr_sta = FLD_TMR_STA_TMR1;
        time_s++;
-       if(time_s == 60 && flash_save_training.rd_flag_test_mode == 0 ){
+       if(time_s == 60 && flash_save_training.rd_flag_test_mode == 1){
     	   time_s = 0;
     	   flash_save_training.minute++;
        }

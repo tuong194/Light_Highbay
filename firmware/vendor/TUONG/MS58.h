@@ -24,8 +24,9 @@
 #define TIME_DELAY_OFF	  10
 #define TIME_DELAY_START  10000
 
-#define RD_RSP_STT_RADA   0x52
-#define RD_HEADER_RSP_MOTION 0x0005
+#define RD_RSP_STT_RADA   		0x52
+#define RD_HEADER_RSP_MOTION 	0x0005
+#define MY_HEADER_RSP_MODE    	0x0445
 
 #define LOG_MS58 			RD_LOG_UART
 #define PIN_MS58            GPIO_PB4
@@ -42,6 +43,7 @@ typedef struct{
 extern flag_on_off_light_t flag_on_off;
 extern u32 time_start_loop;
 
+
 enum{
 	NONEX  = 0,
 	ON    = 1,
@@ -53,8 +55,8 @@ typedef enum{
 	MOTION 		= 1,
 }check_motion_e;
 typedef enum{
-	MANUAL 		= 0x00,
-	AUTO	    = 0x01,
+	AUTO 		= 0x00,
+	MANUAL	    = 0x01,
 	KEEP_STATUS = 0x02,
 }startup_status_e;
 
@@ -74,5 +76,6 @@ void loop_rada(void);
 void RD_Init_Config_MS58(void);
 void log_par_flash_ms58(void);
 void RD_set_lightness(u16 lightness);
+void RD_Rsp_Powerup(uint16 gw_addr, uint8_t mode);
 
 #endif /* MS58_H_ */

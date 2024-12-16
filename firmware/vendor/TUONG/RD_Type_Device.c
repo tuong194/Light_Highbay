@@ -55,6 +55,7 @@ void RD_Flash_Type_Init(void){
 		RD_Clean_Flash_Type();
 	}else{
 		RD_GATEWAY_ADDR = Flash_Save_Type_Val.GWID[1] << 8 | Flash_Save_Type_Val.GWID[0];
+
 	}
 }
 
@@ -67,7 +68,23 @@ void RD_Write_Flash_MS58(void){
 	flash_write_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));
 }
 
-
+void RD_Flash_Reset_Config_MS58(void){
+	Flash_Save_MS58.mode = AUTO;
+	Flash_Save_MS58.start_status = KEEP_STATUS;
+	Flash_Save_MS58.lightness_max = 0xffff;
+	Flash_Save_MS58.lightness_min = 0x4cc2;
+	Flash_Save_MS58.parMS58.gain = 0x33;
+	Flash_Save_MS58.parMS58.delta[0] = 0x00;
+	Flash_Save_MS58.parMS58.delta[1] = 0x14;
+	Flash_Save_MS58.parMS58.lot[0] = 0x00;
+	Flash_Save_MS58.parMS58.lot[1] = 0x00;
+	Flash_Save_MS58.parMS58.lot[2] = 0x75;  //0x7530: 30000 ms
+	Flash_Save_MS58.parMS58.lot[3] = 0x30;
+	Flash_Save_MS58.Call_Group.flag_on_off_group = 0;
+	Flash_Save_MS58.Call_Group.ID_Group = 0x0000;
+	Flash_Save_MS58.Call_Scene.on_off[0] = 0;
+	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
+}
 void RD_Flash_Clean_MS58(void){
 	Flash_Save_MS58.user[0] = RD_CHECK_FLASH_H;
 	Flash_Save_MS58.user[1] = RD_CHECK_FLASH_L;
@@ -77,14 +94,14 @@ void RD_Flash_Clean_MS58(void){
 	Flash_Save_MS58.mode = AUTO;
 	Flash_Save_MS58.start_status = KEEP_STATUS;
 	Flash_Save_MS58.lightness_max = 0xffff;
-	Flash_Save_MS58.lightness_min = 0x0000;
+	Flash_Save_MS58.lightness_min = 0x4cc2;
 	Flash_Save_MS58.parMS58.gain = 0x33;
 	Flash_Save_MS58.parMS58.delta[0] = 0x00;
-	Flash_Save_MS58.parMS58.delta[1] = 0x32;
+	Flash_Save_MS58.parMS58.delta[1] = 0x14;
 	Flash_Save_MS58.parMS58.lot[0] = 0x00;
 	Flash_Save_MS58.parMS58.lot[1] = 0x00;
-	Flash_Save_MS58.parMS58.lot[2] = 0x07;  //7D0: 2000 ms
-	Flash_Save_MS58.parMS58.lot[3] = 0xD0;
+	Flash_Save_MS58.parMS58.lot[2] = 0x75;  //7D0: 2000 ms
+	Flash_Save_MS58.parMS58.lot[3] = 0x30;
 	Flash_Save_MS58.Call_Scene.on_off[0] = 0;
 	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
 	Flash_Save_MS58.Call_Scene.ID_Scene[0] = 0x0000;
@@ -123,6 +140,7 @@ void RD_Check_Startup_Rada(void){
 void Init_Data_Rada(void){
 	RD_Flash_MS58_Init();
 	RD_Check_Startup_Rada();
+	RD_Rsp_Powerup(RD_GATEWAY_ADDR, Flash_Save_MS58.mode); // T_NOTE: rsp mode rada
 	time_start_loop = clock_time_ms();
 }
 
@@ -147,10 +165,12 @@ void Init_Flash_Training(void){
 		flash_save_training.User[2] != RD_CHECK_FLASH_H && flash_save_training.User[3] != RD_CHECK_FLASH_L){
 		RD_Flash_Clean_Training();
 	}
+
 	RD_LOG("time minute start: %d\n",flash_save_training.minute);
 #else
 	flash_save_training.rd_flag_test_mode = 0;
 #endif
+
 }
 
 void RD_Write_Flash_Training(void){

@@ -26,7 +26,7 @@ uint16_t RD_GATEWAY_ADDR = 0x0001;
 
 _Bool flag_kickout_all = FALSE;
 
-static void RD_Handle_Select_Rada(uint8_t on_off_mess);
+//static void RD_Handle_Select_Rada(uint8_t on_off_mess);
 static void RD_Handle_Config_LOT(uint8_t *par);
 static void RD_Handle_Min_Max_Lightness(uint8_t *par);
 static void RD_Handle_Config_Sensitive(uint8_t *par);
@@ -34,6 +34,7 @@ static void RD_Handle_Set_Mode_Rada(uint8_t mode);
 static void RD_Handle_Set_Startup_Rada(uint8_t mode_start);
 static void RD_Handle_SetLight_From_Rada(uint8_t stt);
 static void RD_Handle_Get_Dim_Lightness(void);
+static void RD_Handle_Set_Group(uint8_t *par, mesh_cb_fun_par_t *cb_par);
 
 
 int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
@@ -140,30 +141,40 @@ int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len,
 	switch (Header) {
 	case RD_CONFIG_MS58_LOT:
 		RD_Handle_Config_LOT(par);
+		RD_rsp_packing_lot(&par[0]);
+		break;
+	case RD_SET_GROUP:
+		RD_Handle_Set_Group(par, cb_par);
+		RD_rsp_packing_lot(&par[0]);
 		break;
 	case RD_CONFIG_MS58_SENSITIVE:
 		RD_Handle_Config_Sensitive(par);
+		RD_rsp_packing_lot(&par[0]);
 		break;
 	case RD_CONFIG_MIN_MAX:
 		RD_Handle_Min_Max_Lightness(par);
+
 		break;
 	case RD_SET_MODE_RADA:
 		RD_Handle_Set_Mode_Rada(par[3]);
+		RD_rsp_packing_lot(&par[0]);
 		break;
 	case RD_GET_DIM_LIGHTNESS:
 		RD_Handle_Get_Dim_Lightness();
 		break;
 	case RD_SET_STARTUP_MODE:
 		RD_Handle_Set_Startup_Rada(par[3]);
+		RD_rsp_packing_lot(&par[0]);
 		break;
 	case RD_SET_LIGHT_FROM_RADA: //(packinglot)
 		RD_Handle_SetLight_From_Rada(par[3]);
+		//RD_rsp_packing_lot(&par[0]);
 		break;
 	default:
 		uart_Csend("0x0582 wrong header\n");
 		break;
 	}
-	RD_rsp_packing_lot(&par[0]);
+
 	return 0;
 }
 uint16_t saveGatewayAddr(uint8_t *para, uint16_t srcAddr) {
@@ -207,7 +218,7 @@ static void RD_Handle_Config_LOT(uint8_t *par) {
 
 static void RD_Handle_Config_Sensitive(uint8_t *par) {
 	//uart_Csend("config sensitive\n");
-	uint8_t gain = 0x33;
+	uint8_t gain = Flash_Save_MS58.parMS58.gain;
 	uint8_t delta[2] = { 0 };
 	uint8_t lot[4] = { 0 };
 
@@ -241,6 +252,10 @@ static void RD_Handle_Min_Max_Lightness(uint8_t *par) {
 	Flash_Save_MS58.lightness_min = par[4] * 0xffff / 100;
 	RD_Write_Flash_MS58();
 
+	RD_rsp_packing_lot(&par[0]);
+	mesh_tx_cmd2normal_primary(op_rsp_packing_lot, par, 5,
+			packing_lot_addr, 2);
+
 #if RD_LOG_UART
 	uart_Csend("config min max\n");
 	RD_LOG("light max: %d, light min: %d\n",Flash_Save_MS58.lightness_max,Flash_Save_MS58.lightness_min);
@@ -273,24 +288,63 @@ static void RD_Handle_SetLight_From_Rada(uint8_t stt) {
 		flag_on_off.flag_on_off_from_rada = ON;
 	}
 }
+static void RD_Handle_Set_Group(uint8_t *par, mesh_cb_fun_par_t *cb_par){
+	uint16_t Group_ID = (par[4]<<8) | par[3];
+	uint16_t Opcode_Group = (par[6]<<8) | par[5];
+
+	uint8_t parGroup[6] = {0};
+	mesh_cb_fun_par_t *cb_par_g = cb_par;
+	cb_par_g->op = Opcode_Group;
+	cb_par_g->op_rsp = CFG_MODEL_SUB_STATUS;
+	cb_par_g->model_idx = 0;
+	if(cb_par_g->adr_dst == 0xFFFF){ // all node
+		cb_par_g->adr_dst = ele_adr_primary;
+	}
+
+	if(Opcode_Group == CFG_MODEL_SUB_ADD){
+		Flash_Save_MS58.Call_Group.flag_on_off_group = 1; //RD_EDIT:get ID group
+		Flash_Save_MS58.Call_Group.ID_Group = Group_ID;
+		RD_Write_Flash_MS58();
+		RD_LOG("set group id: %d\n", Flash_Save_MS58.Call_Group.ID_Group);
+
+		parGroup[0] = cb_par_g->adr_dst & 0xff;
+		parGroup[1] = cb_par_g->adr_dst >>8 & 0xff;
+		parGroup[2] = Group_ID & 0xff;
+		parGroup[3] = Group_ID>>8 & 0xff;
+		parGroup[4] = 0x00;
+		parGroup[5] = 0x10;
+
+		mesh_cmd_sig_cfg_model_sub_set(parGroup,6,cb_par_g);
+	}else if(Opcode_Group == CFG_MODEL_SUB_DEL_ALL){
+		Flash_Save_MS58.Call_Group.flag_on_off_group = 0; //RD_EDIT:delete ID group
+		Flash_Save_MS58.Call_Group.ID_Group = 0x0000;
+		RD_Write_Flash_MS58();
+		RD_LOG("delete group id: %d\n", Flash_Save_MS58.Call_Group.ID_Group);
+
+		parGroup[0] = cb_par_g->adr_dst & 0xff;
+		parGroup[1] = cb_par_g->adr_dst >>8 & 0xff;
+		parGroup[2] = 0x00;
+		parGroup[3] = 0x10;
+
+		mesh_cmd_sig_cfg_model_sub_set(parGroup,4,cb_par_g);
+	}
+
+}
 
 static void RD_Handle_Get_Dim_Lightness(void){
-	u16 lightness = s16_to_u16(light_g_level_present_get(0,ST_TRANS_LIGHTNESS));
+	u16 lightness = s16_to_u16(light_g_level_present_get(0,ST_TRANS_LIGHTNESS));//
 	u8 on_off = light_res_sw_save[0].level[ST_TRANS_LIGHTNESS].onoff;
-	uint8_t mess_buff[8] = { 0 };
+	uint8_t mess_buff[4] = { 0 };
 	mess_buff[0] = 0x02;
-	mess_buff[1] = on_off;
+	if(on_off == 0){
+		mess_buff[1] = 0x11;
+	}else{
+		mess_buff[1] = 0x01;
+	}
 	mess_buff[2] = lightness & 0xff;
 	mess_buff[3] = (lightness >> 8) & 0xff;
-	mess_buff[4] = 0x00;
-	if(on_off == 0){
-		mess_buff[5] = 0x00;
-	}else{
-		mess_buff[5] = 0x01;
-	}
-	mess_buff[6] = 0x00;
-	mess_buff[7] = 0x01;
-	mesh_tx_cmd2normal_primary(op_rsp_packing_lot, mess_buff, 8, packing_lot_addr, 2);
+
+	mesh_tx_cmd2normal_primary(op_rsp_packing_lot, mess_buff, 4, packing_lot_addr, 2);
 }
 
 
