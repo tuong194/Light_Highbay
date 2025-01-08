@@ -212,7 +212,7 @@ int app_event_handler (u32 h, u8 *p, int n)
 		telink_ble_mi_app_event(subcode,p,n);
 		#endif
 
-		uint8_t data_log[sizeof(switchKP9_proxy_t)] = {0};
+		//uint8_t data_log[sizeof(switchKP9_proxy_t)] = {0};
 
 	//------------ ADV packet --------------------------------------------
 		if (subcode == HCI_SUB_EVT_LE_ADVERTISING_REPORT)	// ADV packet

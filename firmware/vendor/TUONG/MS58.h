@@ -20,8 +20,8 @@
 #include "RD_Type_Device.h"
 #include"../mesh/RD_Lib.h"
 
-#define TIME_DELAY_ON     10  // ms
-#define TIME_DELAY_OFF	  10
+#define TIME_DELAY_ON     500  // ms
+#define TIME_DELAY_OFF	  500
 #define TIME_DELAY_START  10000
 
 #define RD_RSP_STT_RADA   		0x52
@@ -42,6 +42,9 @@ typedef struct{
 
 extern flag_on_off_light_t flag_on_off;
 extern u32 time_start_loop;
+extern u32 TIMEOUT_MOTION_GROUP;   //second
+extern u32 time_start_motion_by_gr; // ms
+extern _Bool motion_detect;
 
 
 enum{

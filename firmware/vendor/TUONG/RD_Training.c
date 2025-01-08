@@ -32,7 +32,6 @@ void Start_Training(void){
 		if(flash_save_training.step == 1){
 			if(time_s <= 4){
 				if(time_s != time_s_old){
-
 					RD_set_lightness_training(100);
 					time_s_old = time_s;
 				}
@@ -44,19 +43,25 @@ void Start_Training(void){
 		}else{
 			if(time_s != time_s_old){
 				count++;
-				if(count == 1){
-					RD_set_lightness_training(100);
-				}else if(count == 2){
-					RD_set_lightness_training(0);
-				}else if(count == 3){
-					RD_set_lightness_training(100);
-				}else if(count == 4){
-					RD_set_lightness_training(0);
-				}else if(count == 5){
-					//mesh_adv_prov_link_close();
-					time_s = 0;
-					flag_start_training = FALSE;
-					time_m = 0;
+				if(count == 2){
+					count = 0;
+					temp_train++;
+					if(temp_train == 1){
+						RD_set_lightness_training(100);
+					}else if(temp_train == 2){
+						RD_set_lightness_training(15);
+					}else if(temp_train == 3){
+						RD_set_lightness_training(100);
+					}else if(temp_train == 4){
+						RD_set_lightness_training(15);
+					}else if(temp_train == 5){
+						//mesh_adv_prov_link_close();
+						time_s = 0;
+						flag_start_training = FALSE;
+						time_m = 0;
+						temp_train = 0;
+						count = 0;
+					}
 				}
 				time_s_old = time_s;
 			}
@@ -77,9 +82,10 @@ void RD_Training(void){
 			RD_set_lightness_training(50);
 		}else{
 			flash_save_training.step = 4;  // luyen xong
-			flash_save_training.rd_flag_test_mode = 0;
+			//flash_save_training.rd_flag_test_mode = 0;
 			RD_set_lightness_training(15);
-			RD_LOG("luyen cong xong\n");
+			flash_save_training.minute = 30;
+
 		}
 		time_m = flash_save_training.minute;
 		//RD_LOG("time minute: %d, step: %d\n", time_m, flash_save_training.step);

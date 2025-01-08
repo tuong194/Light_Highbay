@@ -370,7 +370,7 @@ void increase_reset_cnt ()
 	
 	reset_cnt++;
 
-	RD_LOG("reset count: %d\n", reset_cnt);
+	//RD_LOG("reset count: %d\n", reset_cnt);
 	//RD_EDIT reset cung
 	if(reset_cnt > 2 && reset_cnt <10){
 		st_pub_list_t pub_list = {{0}};
@@ -661,6 +661,7 @@ void kick_out(int led_en){
 #else
 	factory_reset();
 
+	//RD_LOG("kick out\n");
 	flash_save_secure.flag_process_aes = NO_MESS;  // RD_EDIT reset flag
 	flash_save_secure.flag_check_mess = 0;
 	flash_erase_sector(RD_PROVISION_FLASH_AREA);

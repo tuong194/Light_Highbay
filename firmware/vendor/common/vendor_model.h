@@ -150,6 +150,7 @@ extern u8 max_time_10ms;
 #define RD_OPCDOE_TYPE_RSP             (0xE1)
 #define RD_OPCODE_FAST_CREATE_ROOM     (0xE2)
 #define RD_OPCODE_RSP_FOR_E2           (0xE3)
+#define RD_OPCODE_CALL_GROUP           (0xE4)
 
 //------op parameters
 typedef struct{

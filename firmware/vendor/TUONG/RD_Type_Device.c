@@ -78,10 +78,12 @@ void RD_Flash_Reset_Config_MS58(void){
 	Flash_Save_MS58.parMS58.delta[1] = 0x14;
 	Flash_Save_MS58.parMS58.lot[0] = 0x00;
 	Flash_Save_MS58.parMS58.lot[1] = 0x00;
-	Flash_Save_MS58.parMS58.lot[2] = 0x75;  //0x7530: 30000 ms
-	Flash_Save_MS58.parMS58.lot[3] = 0x30;
+	Flash_Save_MS58.parMS58.lot[2] = 0xEA;  //
+	Flash_Save_MS58.parMS58.lot[3] = 0x60;
 	Flash_Save_MS58.Call_Group.flag_on_off_group = 0;
-	Flash_Save_MS58.Call_Group.ID_Group = 0x0000;
+	for(u8 i=0; i< RD_MAX_NUM_GROUP; i++){
+		Flash_Save_MS58.Call_Group.ID_Group[i] = 0xff;
+	}
 	Flash_Save_MS58.Call_Scene.on_off[0] = 0;
 	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
 }
@@ -100,14 +102,17 @@ void RD_Flash_Clean_MS58(void){
 	Flash_Save_MS58.parMS58.delta[1] = 0x14;
 	Flash_Save_MS58.parMS58.lot[0] = 0x00;
 	Flash_Save_MS58.parMS58.lot[1] = 0x00;
-	Flash_Save_MS58.parMS58.lot[2] = 0x75;  //7D0: 2000 ms
-	Flash_Save_MS58.parMS58.lot[3] = 0x30;
+	Flash_Save_MS58.parMS58.lot[2] = 0xEA;  // 60s
+	Flash_Save_MS58.parMS58.lot[3] = 0x60;
 	Flash_Save_MS58.Call_Scene.on_off[0] = 0;
 	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
 	Flash_Save_MS58.Call_Scene.ID_Scene[0] = 0x0000;
 	Flash_Save_MS58.Call_Scene.ID_Scene[1] = 0x0000;
 	Flash_Save_MS58.Call_Group.flag_on_off_group = 0;
-	Flash_Save_MS58.Call_Group.ID_Group = 0x0000;
+	for(u8 i=0; i< RD_MAX_NUM_GROUP; i++){
+		Flash_Save_MS58.Call_Group.ID_Group[i] = 0xff;
+	}
+
 
 	flash_erase_sector(RD_MS58_FLASH_AREA);
 	flash_write_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));
@@ -141,6 +146,10 @@ void Init_Data_Rada(void){
 	RD_Flash_MS58_Init();
 	RD_Check_Startup_Rada();
 	RD_Rsp_Powerup(RD_GATEWAY_ADDR, Flash_Save_MS58.mode); // T_NOTE: rsp mode rada
+	uint32_t lot = (Flash_Save_MS58.parMS58.lot[0] << 24) | (Flash_Save_MS58.parMS58.lot[1] << 16) |
+			(Flash_Save_MS58.parMS58.lot[2] << 8) | Flash_Save_MS58.parMS58.lot[3];
+	TIMEOUT_MOTION_GROUP = lot/1000;
+	RD_LOG("timeout motion init: %d\n", TIMEOUT_MOTION_GROUP);
 	time_start_loop = clock_time_ms();
 }
 
@@ -161,12 +170,15 @@ void RD_Flash_Clean_Training(void){
 void Init_Flash_Training(void){
 #if TRAINING_EN
 	flash_read_page(RD_TRAINING_FLASH_AREA, RD_TRAINING_FLASH_SIZE, (unsigned char *)(&flash_save_training.User[0]));
+	if(flash_save_training.step == 4){
+		flash_save_training.rd_flag_test_mode = 0;
+	}
 	if(flash_save_training.User[0] != RD_CHECK_FLASH_H && flash_save_training.User[1] != RD_CHECK_FLASH_L &&
 		flash_save_training.User[2] != RD_CHECK_FLASH_H && flash_save_training.User[3] != RD_CHECK_FLASH_L){
 		RD_Flash_Clean_Training();
 	}
 
-	RD_LOG("time minute start: %d\n",flash_save_training.minute);
+	//RD_LOG("time minute start: %d\n",flash_save_training.minute);
 #else
 	flash_save_training.rd_flag_test_mode = 0;
 #endif
@@ -180,10 +192,12 @@ void RD_Write_Flash_Training(void){
 
 //RD_EDIT LOG UART
 void RD_LOG(const char *format, ...){
+#if 1//RD_LOG_UART
 	char out[256];
 	char *p = &out[0];
 	va_list args;
 	va_start( args, format );
 	print(&p, format, args);
 	uart_Csend(out);
+#endif
 }

@@ -132,12 +132,12 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 	Header = par[1] << 8 | par[0];
 	GW_Addr_Buff = cb_par->adr_src;
 
-	RD_LOG("header: %d\n",Header);
+	//RD_LOG("header: %d\n",Header);
 
 	switch (Header) {
 
 	case RD_AUTO_CREATE_GROUP_SCENE:
-		uart_Csend("set group va scene\n");
+		//uart_Csend("set group va scene\n");
 		if(is_provision_success()){
 
 			ID_Group = par[3] << 8 | par[2];
@@ -196,7 +196,7 @@ int RD_mesh_cmd_sig_cfg_model_sub_net(u8 *par, int par_len,	mesh_cb_fun_par_t *c
 		RD_rsp_hc(par, GW_Addr_Buff);
 		break;
 	default:
-		uart_Csend("wrong header\n");
+		//uart_Csend("wrong header\n");
 		break;
 	}
 	return 0;
@@ -686,37 +686,41 @@ void RD_Scene_Auto(uint16_t Scene_ID, mesh_cb_fun_par_t *cb_par, uint16_t Opcode
 static void RALI_Handle_Config_Distance(uint8_t par) {
 
 	uint8_t gain;
+	uint8_t delta[2] = { 0 };
+	uint8_t lot[4] = { 0 };
 	switch(par){
-	case 0x04:
-		gain = 0x93;
-		break;
-	case 0x05:
-		gain = 0x83;
-		break;
-	case 0x06:
-		gain = 0x73;
-		break;
-	case 0x07:
-		gain = 0x63;
-		break;
+	// case 0x04:
+	// 	gain = 0x93;
+	// 	break;
+	// case 0x05:
+	// 	gain = 0x83;
+	// 	break;
+	// case 0x06:
+	// 	gain = 0x73;
+	// 	break;
+	// case 0x07:
+	// 	gain = 0x63;
+	// 	break;
 	case 0x08:
 		gain = 0x53;
+		delta[0] = 0x00;
+		delta[1] = 0x17;
 		break;
 	case 0x09:
 		gain = 0x43;
+		delta[0] = 0x00;
+		delta[1] = 0x16;
 		break;
 	case 0x0A:
 		gain = 0x33;
+		delta[0] = 0x00;
+		delta[1] = 0x14;
 		break;
 	default:
 		break;
 	}
-
-	uint8_t delta[2] = { 0 };
-	uint8_t lot[4] = { 0 };
-
-	delta[0] = Flash_Save_MS58.parMS58.delta[0];
-	delta[1] = Flash_Save_MS58.parMS58.delta[1];
+//	delta[0] = Flash_Save_MS58.parMS58.delta[0];
+//	delta[1] = Flash_Save_MS58.parMS58.delta[1];
 
 	lot[0] = Flash_Save_MS58.parMS58.lot[0];
 	lot[1] = Flash_Save_MS58.parMS58.lot[1];

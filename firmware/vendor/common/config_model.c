@@ -712,7 +712,7 @@ u8 mesh_cmd_sig_cfg_model_sub_set2(u16 op, u16 sub_adr, u8 *uuid, model_common_t
 {
 	count_check_sub_gr++;
 	if(count_check_sub_gr >= 10) count_check_sub_gr = 0;
-	RD_LOG("cnt check %d\n", count_check_sub_gr);
+	//RD_LOG("cnt check %d\n", count_check_sub_gr);
 
 	if(is_use_device_key(model_id, sig_model)){
 		return ST_NOT_SUB_MODEL;

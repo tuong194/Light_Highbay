@@ -3134,7 +3134,7 @@ _USER_CAN_REDEFINE_ void mesh_scan_rsp_init()
 	tbl_scanRsp.adr_primary = ele_adr_primary;
 	memcpy(tbl_scanRsp.mac_adr, tbl_mac, sizeof(tbl_scanRsp.mac_adr));
 
-	//RD_EDIT provider scan
+	//RD_EDIT provider scan (parkinglot)
 	uint8_t user_scan[11]={0};
 
 	user_scan[0] = MAINTYPE;

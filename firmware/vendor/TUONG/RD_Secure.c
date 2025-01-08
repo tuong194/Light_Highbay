@@ -6,6 +6,7 @@
  */
 
 #include "RD_Secure.h"
+#include "RD_Type_Device.h"
 #include "../common/lighting_model.h"
 #include "../mesh/RD_Lib.h"
 
@@ -16,6 +17,7 @@ unsigned char aesEncrypt[16] = { 0 };
 
 extern u32 get_pwm_cmp(u8 val, u8 lum);
 extern void light_dim_set_hw(int idx, int idx2, u16 val);
+extern _Bool rd_check_ota;
 
 RD_Flash_Save_Secure flash_save_secure = {{0}};
 
@@ -54,7 +56,7 @@ void check_done_provision(void) {
 	static u8 first = 0;
 
 	if(get_provision_state() == STATE_DEV_PROVED && flash_save_secure.flag_check_mess == 1 && first == 0){
-		uart_Csend("provision sucess\n");
+		//uart_Csend("provision sucess\n");
 		RD_light_ev_with_sleep(3, 500 * 1000);
 		first = 1;
 	}
@@ -64,11 +66,13 @@ void check_done_provision(void) {
 
 		if (flash_save_secure.flag_process_aes == ENCRYPT_ERR ) { // ma hoa sai
 			vrs_time_err_aes = clock_time_s();
-			RD_LOG("sai ma hoa r \n");
+			if(vrs_time_err_aes >= 0xfffffffe) vrs_time_err_aes = 0;
+			//RD_LOG("sai ma hoa r \n");
 		} else if (flash_save_secure.flag_process_aes == NO_MESS ) { // ko co ban tin ma hoa
 			vrs_time_bindall = clock_time_s();
+			if(vrs_time_bindall >= 0xfffffffe) vrs_time_bindall = 0;
 		} else if (flash_save_secure.flag_process_aes == ENCRYPT_OK ) { // ma hoa dung
-			RD_LOG("chuan RD nha\n");
+			//RD_LOG("chuan key Rang Dong nha\n");
 		}
 
 		sleep_ms(100);
@@ -95,12 +99,17 @@ void check_done_provision(void) {
 }
 
 void Kickout_Security(void) {
-	if (flag_provision == TRUE) {
+//	if(rd_check_ota == TRUE){
+//		vrs_time_bindall = clock_time_s();
+//		if(vrs_time_bindall >= 0xfffffffe) vrs_time_bindall = 0;
+//	}
+
+	if (flag_provision == TRUE && rd_check_ota == FALSE) { // OTA not kickout
 		if (flash_save_secure.flag_process_aes == NO_MESS && clock_time_s() - vrs_time_bindall > 120) { // ko co ban tin
 			flag_provision = FALSE;
 			flash_save_secure.flag_process_aes = NO_MESS;
 			kick_out(1);
-		} else if (flash_save_secure.flag_process_aes == ENCRYPT_ERR && clock_time_s() - vrs_time_err_aes > 60) { // ma hoa sai
+		} else if (flash_save_secure.flag_process_aes == ENCRYPT_ERR && clock_time_s() - vrs_time_err_aes > 10) { // ma hoa sai
 			flag_provision = FALSE;
 			flash_save_secure.flag_process_aes = NO_MESS;
 			 kick_out(1);
@@ -126,11 +135,11 @@ void Init_Flash_Secure(void){
 
 	if(flash_save_secure.Used[0] != RD_CHECK_FLASH_H && flash_save_secure.Used[1] != RD_CHECK_FLASH_L
 		&& flash_save_secure.Used[2] != RD_CHECK_FLASH_H && flash_save_secure.Used[3] != RD_CHECK_FLASH_L){
-		RD_LOG("init flash secure err\n");
+		//RD_LOG("init flash secure err\n");
 		Flash_Clean_Secure();
 	}
-	RD_LOG("start flag_secure: %d\n",flash_save_secure.flag_process_aes);
-	RD_LOG("start flag_check_mess: %d\n",flash_save_secure.flag_check_mess);
+	//RD_LOG("start flag_secure: %d\n",flash_save_secure.flag_process_aes);
+	//RD_LOG("start flag_check_mess: %d\n",flash_save_secure.flag_check_mess);
 	//Read_val_kick_out();
 #if EN_SECURE
 	if(is_provision_success()){

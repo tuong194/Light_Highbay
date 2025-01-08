@@ -892,7 +892,7 @@ static inline void blc_app_loadCustomizedParameters(void)
 #if __TLSR_RISCV_EN__
 #define OTA_CMD_INTER_TIMEOUT_S		1000	// this is total timeout. blc_ota_setOtaDataPacketTimeout_(4s) is packet timeout.
 #else
-#define OTA_CMD_INTER_TIMEOUT_S		30
+#define OTA_CMD_INTER_TIMEOUT_S		30   // RD_EDIT OTA timeout, default 30s
 #endif
 #define OTA_KMADONGLE_PAUSE_TIMEOUT_S   OTA_CMD_INTER_TIMEOUT_S
 

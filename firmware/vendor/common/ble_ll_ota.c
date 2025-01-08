@@ -232,6 +232,8 @@ void set_ota_reboot_flag(u8 flag)
 #endif
 
 extern void RD_LOG(const char *format, ...);
+extern int vrs_time_bindall;
+
 int otaWrite(void * p)
 {
 #if 0 // DUAL_VENDOR_EN	// confirm later
@@ -414,7 +416,11 @@ int otaWrite(void * p)
 	}
 
 	if(err_flg){
-		rd_check_ota = FALSE; //RD_EDIT ota fail
+//		rd_check_ota = FALSE; //RD_EDIT ota fail, update time kickout secure
+//		vrs_time_bindall = clock_time_s();
+//		if(vrs_time_bindall >= 0xfffffffe) vrs_time_bindall = 0;
+//		RD_LOG("OTA fail, time bindall %d\n", vrs_time_bindall);
+
 		//log_event(TR_T_ota_err);
 		blt_ota_finished_flag_set(err_flg);
 	}
@@ -526,8 +532,13 @@ void bls_ota_procTimeout(void)
 #endif
 }
 
-void blt_ota_finished_flag_set(u8 reset_flag)
+void blt_ota_finished_flag_set(u8 reset_flag)  // RD_EDIT ota finished
 {
+//	rd_check_ota = FALSE;
+//	vrs_time_bindall = clock_time_s();
+//	if(vrs_time_bindall >= 0xfffffffe) vrs_time_bindall = 0;
+//	RD_LOG("OTA fail\n");
+
 	if(blcOta.ota_start_flag && (blt_ota_finished_time == 0)){
 		blt_ota_finished_flag = reset_flag;
 		blt_ota_finished_time = clock_time()|1;
@@ -548,11 +559,21 @@ void blt_ota_finished_flag_set(u8 reset_flag)
 void rf_link_slave_ota_finish_led_and_reboot(u8 st)
 {
 	if(OTA_SUCCESS == st){
+		vrs_time_bindall = clock_time_s();  // RD_EDIT update time secure
+		if(vrs_time_bindall >= 0xfffffffe) vrs_time_bindall = 0;
+		rd_check_ota = FALSE;
+
         ota_set_flag ();
     }
     else{
+
        if(ota_adr_index>=0){
-			irq_disable();
+   		   vrs_time_bindall = clock_time_s();
+   		   if(vrs_time_bindall >= 0xfffffffe) vrs_time_bindall = 0;
+    	   rd_check_ota = FALSE;  //RD_EDIT OTA fail, start reboot after 30s
+    	   //RD_LOG("OTA fail\n");
+
+		   irq_disable();
 
 			//for(int i=0;i<=ota_adr_index;i+=256)
 			for(int i=(ota_adr_index&0x3ff00); i>=0; i-=256) //erase from end to head
@@ -572,7 +593,8 @@ void rf_link_slave_ota_finish_led_and_reboot(u8 st)
 		otaResIndicateCb(st);   // should be better at last.
 	}
     irq_disable ();
-    start_reboot();
+    start_reboot();  // RD_EDIT reboot after OTA
+
 }
 
 void blt_slave_ota_finish_handle()		

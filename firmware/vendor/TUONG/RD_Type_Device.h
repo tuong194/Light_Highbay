@@ -22,6 +22,8 @@
 #define RD_CHECK_FLASH_H   (0x55)
 #define RD_CHECK_FLASH_L   (0xAA)
 
+#define RD_MAX_NUM_GROUP    8
+
 
 typedef struct{
 	//uint8_t power;
@@ -37,7 +39,7 @@ typedef struct{
 
 typedef struct{
 	u8 flag_on_off_group;
-	u16 ID_Group;
+	u8 ID_Group[RD_MAX_NUM_GROUP];
 }Call_Group_t;
 
 typedef struct{
