@@ -128,7 +128,7 @@ void RD_set_lightness(u16 lightness){
 	if (TimeNew - TimeOld > 160000) { // 10ms
 		TimeOld = TimeNew;
 		vrs_count++;
-		if(vrs_count == 1 && Flash_Save_MS58.mode == AUTO){ // 10ms
+		if(vrs_count == 1 && Flash_Save_MS58. mode == AUTO){ // 10ms
 			p_set_light.lightness = lightness;
 			lightness_set(&p_set_light, 3, 0, 0, 0, &pub_list);
 		}else if(vrs_count > 101){
@@ -144,33 +144,31 @@ void RD_set_lightness(u16 lightness){
 void Rada_send_onoff_light(void){
 	uint8_t buff_send[8] = {0};
 	memcpy(buff_send, Flash_Save_MS58.Call_Group.ID_Group, 8);
-
 	if(Flash_Save_MS58.mode == AUTO){
-		mesh_tx_cmd2normal_primary(0xE4, buff_send, 8, 0xffff, 2); // opcode 0x5082
+		mesh_tx_cmd2normal_primary(0xE4, buff_send, 8, 0xffff, 2);
+		//mesh_tx_cmd2normal_primary(0x52, buff_send, 8, 0x0001, 2);
 	}
 }
 
-
 void loop_mess_rada(void){
-	static _Bool flag_check_start_on = TRUE;
+	static _Bool flag_start_on = TRUE;
 	if(Flash_Save_MS58.mode == AUTO){
 		if(motion_detect){
-			if(flag_check_start_on){
-				flag_on_off.flag_on_off_from_rada = ON;
-				flag_check_start_on = FALSE;
-			}
-
-			if(clock_time_exceed_ms(time_start_motion_by_gr, TIMEOUT_MOTION_GROUP * 1000)){
-				flag_on_off.flag_on_off_from_rada = OFF;
-				motion_detect = FALSE;
-				flag_check_start_on = TRUE;
-			}
+			flag_on_off.flag_on_off_from_rada = ON;
+			flag_start_on = FALSE;
+			motion_detect = FALSE;
 		}
+		if(clock_time_exceed_ms(time_start_motion_by_gr, TIMEOUT_MOTION_GROUP * 1000) && flag_start_on == FALSE){
+			if(!is_motion()){
+				flag_on_off.flag_on_off_from_rada = OFF;
+			}
+			flag_start_on = TRUE;
+		}
+
+
 		if(flag_on_off.flag_on_off_from_rada == ON){
-			RD_LOG("on \n");
 			RD_set_lightness(Flash_Save_MS58.lightness_max);
 		}else if(flag_on_off.flag_on_off_from_rada == OFF){
-			RD_LOG("off \n");
 			RD_set_lightness(Flash_Save_MS58.lightness_min);
 		}
 	}
@@ -216,9 +214,9 @@ void RD_on_light(void){
 		flag_on_off.flag_check_motion = MOTION;
 		flag_on_off.flag_on_off_from_mesh = 1;
 		RD_rada_rsp_gw(1);
-		if(Flash_Save_MS58.Call_Group.flag_on_off_group == 1){
-			Rada_send_onoff_light(); // packinglot
-		}
+
+		Rada_send_onoff_light(); // packinglot call group
+
 		if(Flash_Save_MS58.Call_Scene.on_off[1] == 1){
 			call_scene_from_rada(1); // Ralli
 		}
@@ -243,9 +241,7 @@ void RD_off_light(void){
 		flag_on_off.flag_check_motion = NO_MOTION;
 		flag_on_off.flag_on_off_from_mesh = 1;
 		RD_rada_rsp_gw(0);
-//		if(Flash_Save_MS58.Call_Group.flag_on_off_group == 1){
-//			Rada_send_onoff_light(); // packinglot
-//		}
+
 		if(Flash_Save_MS58.Call_Scene.on_off[0] == 1){
 			call_scene_from_rada(0);
 		}

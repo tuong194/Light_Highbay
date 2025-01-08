@@ -666,7 +666,7 @@ void kick_out(int led_en){
 	flash_save_secure.flag_check_mess = 0;
 	flash_erase_sector(RD_PROVISION_FLASH_AREA);
 	flash_write_page(RD_PROVISION_FLASH_AREA, RD_SIZE_FLASH_SECURE, (uint8_t *) (&flash_save_secure.Used[0]));
-
+	RD_Clean_Flash_Type();
 	RD_Flash_Reset_Config_MS58(); // reset rada
 	RD_Write_Flash_MS58();
 

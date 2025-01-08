@@ -73,6 +73,18 @@ model_g_onoff_level_t	model_sig_g_onoff_level;
 model_g_power_onoff_trans_time_t   model_sig_g_power_onoff;
 u32 mesh_md_g_power_onoff_addr = FLASH_ADR_MD_G_POWER_ONOFF;	// share with default transition time model
 
+int RD_mesh_cmd_sig_cfg_model_sub_set(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par){
+	if(rd_flag_set_gr == FALSE){
+		uint8_t ID_Group = par[2];
+		uint16_t op = cb_par->op;
+		RD_Sub_Del_ID_Group(op, ID_Group);
+		time_reset_flag_gr = clock_time_ms();
+		if(time_reset_flag_gr >= 0xfffffff0) time_reset_flag_gr = 0;
+		rd_flag_set_gr = TRUE;
+	}
+	return mesh_cmd_sig_cfg_model_sub_set(par, par_len, cb_par);
+}
+
 #if (1)
 #if MD_SERVER_EN
 //-------- sig generic model
@@ -1334,8 +1346,8 @@ const mesh_cmd_sig_func_t mesh_cmd_sig_func[] = {
     CMD_NO_STR(CFG_MODEL_PUB_GET, 0, SIG_MD_CFG_CLIENT, SIG_MD_CFG_SERVER, mesh_cmd_sig_cfg_model_pub_get, CFG_MODEL_PUB_STATUS),
     CMD_NO_STR(CFG_MODEL_PUB_STATUS, 1, SIG_MD_CFG_SERVER, SIG_MD_CFG_CLIENT, mesh_cmd_sig_cfg_model_pub_status, STATUS_NONE),
 	CMD_NO_STR(CFG_MODEL_PUB_VIRTUAL_ADR_SET, 0, SIG_MD_CFG_CLIENT, SIG_MD_CFG_SERVER, mesh_cmd_sig_cfg_model_pub_set_vr, CFG_MODEL_PUB_STATUS),
-    CMD_NO_STR(CFG_MODEL_SUB_ADD, 0, SIG_MD_CFG_CLIENT, SIG_MD_CFG_SERVER, mesh_cmd_sig_cfg_model_sub_set, CFG_MODEL_SUB_STATUS),
-    CMD_NO_STR(CFG_MODEL_SUB_DEL, 0, SIG_MD_CFG_CLIENT, SIG_MD_CFG_SERVER, mesh_cmd_sig_cfg_model_sub_set, CFG_MODEL_SUB_STATUS),
+    CMD_NO_STR(CFG_MODEL_SUB_ADD, 0, SIG_MD_CFG_CLIENT, SIG_MD_CFG_SERVER, RD_mesh_cmd_sig_cfg_model_sub_set, CFG_MODEL_SUB_STATUS),  // RD_EDIT add group
+    CMD_NO_STR(CFG_MODEL_SUB_DEL, 0, SIG_MD_CFG_CLIENT, SIG_MD_CFG_SERVER, RD_mesh_cmd_sig_cfg_model_sub_set, CFG_MODEL_SUB_STATUS),
     CMD_NO_STR(CFG_MODEL_SUB_OVER_WRITE, 0, SIG_MD_CFG_CLIENT, SIG_MD_CFG_SERVER, mesh_cmd_sig_cfg_model_sub_set, CFG_MODEL_SUB_STATUS),
     CMD_NO_STR(CFG_MODEL_SUB_DEL_ALL, 0, SIG_MD_CFG_CLIENT, SIG_MD_CFG_SERVER, mesh_cmd_sig_cfg_model_sub_set, CFG_MODEL_SUB_STATUS),
     CMD_NO_STR(CFG_MODEL_SUB_STATUS, 1, SIG_MD_CFG_SERVER, SIG_MD_CFG_CLIENT, mesh_cmd_sig_cfg_model_sub_status, STATUS_NONE),

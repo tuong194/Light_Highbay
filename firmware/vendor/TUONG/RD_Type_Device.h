@@ -38,7 +38,6 @@ typedef struct{
 }Call_Scene_t;
 
 typedef struct{
-	u8 flag_on_off_group;
 	u8 ID_Group[RD_MAX_NUM_GROUP];
 }Call_Group_t;
 
@@ -91,6 +90,7 @@ void Init_Data_Rada(void);
 void RD_Write_Flash_MS58(void);
 void RD_Flash_Reset_Config_MS58(void);
 void RD_Flash_Clean_MS58(void);
+void RD_Clean_Flash_Type(void);
 void Init_Flash_Training(void);
 void RD_Write_Flash_Training(void);
 

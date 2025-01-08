@@ -21,6 +21,9 @@ RD_Rsp_GW_Address RD_Rsp_GW_Addr;
 uint16_t packing_lot_addr = 0;
 uint32_t op_rsp_packing_lot = 0;
 
+_Bool rd_flag_set_gr = FALSE;
+u32 time_reset_flag_gr = 0;
+
 uint8_t *BuffRec;
 uint16_t RD_GATEWAY_ADDR = 0x0001;
 
@@ -133,7 +136,7 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 
 int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len,
 		mesh_cb_fun_par_t * cb_par) {
-	//cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
+
 	packing_lot_addr = cb_par->adr_src;
 	op_rsp_packing_lot = cb_par->op_rsp;
 	uint8_t Header = 0;
@@ -170,6 +173,7 @@ int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len,
 		//uart_Csend("0x0582 wrong header\n");
 		break;
 	}
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
 
 	return 0;
 }
@@ -300,12 +304,12 @@ static void RD_Handle_Set_Group(uint8_t *par, mesh_cb_fun_par_t *cb_par){
 	}
 
 	if(Opcode_Group == CFG_MODEL_SUB_ADD){
-		Flash_Save_MS58.Call_Group.flag_on_off_group = 1; //RD_EDIT:get ID group
 		for(u8 i = 0; i< RD_MAX_NUM_GROUP; i++){
+			if(Flash_Save_MS58.Call_Group.ID_Group[i] == (Group_ID & 0xff)) break;
 			Flash_Save_MS58.Call_Group.ID_Group[i] = Group_ID & 0xff;
 		}
 		RD_Write_Flash_MS58();
-		RD_LOG("set group id: 0x%02X\n", Group_ID & 0xff);
+		//RD_LOG("set group id: 0x%02X\n", Group_ID & 0xff);
 
 		parGroup[0] = cb_par_g->adr_dst & 0xff;
 		parGroup[1] = cb_par_g->adr_dst >>8 & 0xff;
@@ -316,14 +320,13 @@ static void RD_Handle_Set_Group(uint8_t *par, mesh_cb_fun_par_t *cb_par){
 
 		mesh_cmd_sig_cfg_model_sub_set(parGroup,6,cb_par_g);
 	}else if(Opcode_Group == CFG_MODEL_SUB_DEL_ALL){
-		//Flash_Save_MS58.Call_Group.flag_on_off_group = 0; //RD_EDIT:delete ID group
+		//RD_EDIT:delete ID group
 		for(u8 i = 0; i< RD_MAX_NUM_GROUP; i++){
 			if(Flash_Save_MS58.Call_Group.ID_Group[i] == (Group_ID & 0xff)){
 				Flash_Save_MS58.Call_Group.ID_Group[i] = 0xff;
 			}
 		}
 		RD_Write_Flash_MS58();
-		RD_LOG("delete group id: %d\n", Group_ID & 0xff);
 
 		parGroup[0] = cb_par_g->adr_dst & 0xff;
 		parGroup[1] = cb_par_g->adr_dst >>8 & 0xff;
@@ -387,13 +390,46 @@ int RD_Control_Group_By_SENSOR(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par)
 			for(u8 j =0; j < RD_MAX_NUM_GROUP; j++){
 				if(Flash_Save_MS58.Call_Group.ID_Group[j] == par[i]){
 					// ton tai group
-					RD_LOG("co group\n");
 					time_start_motion_by_gr = clock_time_ms();
 					if(time_start_motion_by_gr >= 0xfffffff0) time_start_motion_by_gr = 0;
 					motion_detect = TRUE;
+					return 1;
 				}
 			}
 		}
 	}
 	return 0;
+}
+
+void RD_Sub_Del_ID_Group(uint16_t op, uint8_t ID_group){
+	// ADD GROUP
+	if(op == 0x1B80){
+		//Flash_Save_MS58.Call_Group.flag_on_off_group = 1;
+		for(u8 i = 0; i< RD_MAX_NUM_GROUP; i++){
+			if(Flash_Save_MS58.Call_Group.ID_Group[i] == ID_group)
+				return;
+			else if(Flash_Save_MS58.Call_Group.ID_Group[i] == 0xff){
+				Flash_Save_MS58.Call_Group.ID_Group[i] = ID_group;
+				RD_Write_Flash_MS58();
+				//RD_LOG("set group id: 0x%02X\n", ID_group);
+				break;
+			}
+		}
+	}
+	// DEL GROUP
+	else if(op == 0x1C80){
+		for(u8 i = 0; i< RD_MAX_NUM_GROUP; i++){
+			if(Flash_Save_MS58.Call_Group.ID_Group[i] == ID_group){
+				Flash_Save_MS58.Call_Group.ID_Group[i] = 0xff;
+				RD_Write_Flash_MS58();
+				//RD_LOG("delete group id: 0x%02X\n", ID_group);
+			}
+		}
+	}
+}
+
+void RD_Clear_Flag_Group(void){
+	if(clock_time_exceed_ms(time_reset_flag_gr, 800)){
+		rd_flag_set_gr = FALSE;
+	}
 }

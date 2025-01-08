@@ -80,7 +80,6 @@ void RD_Flash_Reset_Config_MS58(void){
 	Flash_Save_MS58.parMS58.lot[1] = 0x00;
 	Flash_Save_MS58.parMS58.lot[2] = 0xEA;  //
 	Flash_Save_MS58.parMS58.lot[3] = 0x60;
-	Flash_Save_MS58.Call_Group.flag_on_off_group = 0;
 	for(u8 i=0; i< RD_MAX_NUM_GROUP; i++){
 		Flash_Save_MS58.Call_Group.ID_Group[i] = 0xff;
 	}
@@ -108,7 +107,6 @@ void RD_Flash_Clean_MS58(void){
 	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
 	Flash_Save_MS58.Call_Scene.ID_Scene[0] = 0x0000;
 	Flash_Save_MS58.Call_Scene.ID_Scene[1] = 0x0000;
-	Flash_Save_MS58.Call_Group.flag_on_off_group = 0;
 	for(u8 i=0; i< RD_MAX_NUM_GROUP; i++){
 		Flash_Save_MS58.Call_Group.ID_Group[i] = 0xff;
 	}
@@ -149,7 +147,6 @@ void Init_Data_Rada(void){
 	uint32_t lot = (Flash_Save_MS58.parMS58.lot[0] << 24) | (Flash_Save_MS58.parMS58.lot[1] << 16) |
 			(Flash_Save_MS58.parMS58.lot[2] << 8) | Flash_Save_MS58.parMS58.lot[3];
 	TIMEOUT_MOTION_GROUP = lot/1000;
-	RD_LOG("timeout motion init: %d\n", TIMEOUT_MOTION_GROUP);
 	time_start_loop = clock_time_ms();
 }
 
@@ -192,7 +189,7 @@ void RD_Write_Flash_Training(void){
 
 //RD_EDIT LOG UART
 void RD_LOG(const char *format, ...){
-#if 1//RD_LOG_UART
+#if RD_LOG_UART
 	char out[256];
 	char *p = &out[0];
 	va_list args;

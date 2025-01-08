@@ -267,6 +267,7 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 			loop_rada();
 			check_done_provision();
 			RD_Kickout_All();
+			RD_Clear_Flag_Group();
 			//RD_K9B_TimeOutScan_OnOff();
 		}
 	}

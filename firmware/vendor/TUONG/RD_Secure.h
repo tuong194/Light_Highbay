@@ -22,7 +22,7 @@
 //#define RD_CHECK_FLASH_H   (0x55)
 //#define RD_CHECK_FLASH_L   (0xAA )
 
-#define EN_SECURE           0
+#define EN_SECURE           1
 
 
 typedef enum {

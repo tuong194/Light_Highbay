@@ -728,6 +728,7 @@ static void RALI_Handle_Config_Distance(uint8_t par) {
 	lot[3] = Flash_Save_MS58.parMS58.lot[3];
 
 	RD_Mess_Config_MS58(gain, delta, lot);
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S);
 }
 
 static void RALI_Handle_Config_Sensitive(uint8_t *par) {
@@ -741,6 +742,7 @@ static void RALI_Handle_Config_Sensitive(uint8_t *par) {
 	case HIGH_SEN:  // 20
 		delta[0] = 0x00;
 		delta[1] = 0x14;
+		gain = 0x33;
 		break;
 	case MIDLE_SEN: // 30
 		delta[0] = 0x00;
@@ -760,6 +762,7 @@ static void RALI_Handle_Config_Sensitive(uint8_t *par) {
 	lot[3] = Flash_Save_MS58.parMS58.lot[3];
 
 	RD_Mess_Config_MS58(gain, delta, lot);
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S);
 }
 
 //static void RALI_Handle_Config_Sensitive(uint8_t *par) {
@@ -801,12 +804,14 @@ static void RALI_Handle_Config_LOT(uint8_t *par) {
 	RD_LOG("lot: 0x%02X 0x%02X 0x%02X 0x%02X\n",lot[0], lot[1], lot[2], lot[3]);
 #endif
 	RD_Mess_Config_MS58(gain, delta, lot);
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S);
 }
 
 static void RALI_Handle_Set_Mode_Rada(uint8_t mode) {
 
 	Flash_Save_MS58.mode = mode;
 	RD_Write_Flash_MS58();
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S);
 
 #if RD_LOG_UART
 	RD_LOG("hc set mode rada: 0x%02X\n", Flash_Save_MS58.mode);
@@ -824,11 +829,13 @@ static void RALI_Handle_Set_Scene_Rada(u8 *par){
 	}
 	flash_erase_sector(RD_MS58_FLASH_AREA);
 	flash_write_page(RD_MS58_FLASH_AREA, RD_FLASH_SIZE_MS58, (unsigned char *)(&Flash_Save_MS58.user[0]));
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S);
 }
 
 static void RALI_Handle_Set_Startup_Rada(uint8_t mode_start) {
 	Flash_Save_MS58.start_status = mode_start;
 	RD_Write_Flash_MS58();
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S);
 
 #if RD_LOG_UART
 	RD_LOG("set startup rada: 0x%02X\n", Flash_Save_MS58.start_status);

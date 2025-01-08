@@ -37,6 +37,7 @@
 
 #include"../TUONG/RD_Secure.h"
 #include "../TUONG/RD_Type_Device.h"
+#include "../TUONG/RD_MessData.h"
 
 static int count_check_sub_gr = 0;
 
@@ -47,6 +48,7 @@ model_sig_cfg_s_t 		model_sig_cfg_s;  // configuration server model
 #if MD_CFG_CLIENT_EN
 model_client_common_t   model_sig_cfg_c;
 #endif
+
 
 void endianness_swap_ut_ctl(u8 *nw, u8 *par, u32 len_ac/*len_ut*/, int filter_cfg) // len_ut = len_ac for control message.
 {
@@ -710,9 +712,8 @@ int is_existed_sub_addr_and_not_virtual(model_common_t *p_model, u16 group_addr)
 
 u8 mesh_cmd_sig_cfg_model_sub_set2(u16 op, u16 sub_adr, u8 *uuid, model_common_t *p_model, u32 model_id, bool4 sig_model)
 {
-	count_check_sub_gr++;
-	if(count_check_sub_gr >= 10) count_check_sub_gr = 0;
-	//RD_LOG("cnt check %d\n", count_check_sub_gr);
+//	count_check_sub_gr++;
+//	if(count_check_sub_gr >= 10) count_check_sub_gr = 0;
 
 	if(is_use_device_key(model_id, sig_model)){
 		return ST_NOT_SUB_MODEL;
@@ -722,13 +723,12 @@ u8 mesh_cmd_sig_cfg_model_sub_set2(u16 op, u16 sub_adr, u8 *uuid, model_common_t
     u8 st = ST_UNSPEC_ERR;
     if((CFG_MODEL_SUB_ADD == op)||(CFG_MODEL_SUB_VIRTUAL_ADR_ADD == op)){
 
+    	/*-------------------------RD_EDIT:set ID group-----------------------------------*/
 //    	if(count_check_sub_gr == 1){
-//            Flash_Save_MS58.Call_Group.flag_on_off_group = 1; //RD_EDIT:get ID group
-//            Flash_Save_MS58.Call_Group.ID_Group = (sub_adr<<8) | sub_adr;
-//            RD_Write_Flash_MS58(); // RD_EDIT luu data ms58 flash
-//            RD_LOG("set group id: %d\n", Flash_Save_MS58.Call_Group.ID_Group);
+//    		uint8_t ID_Group = sub_adr & 0xff;
+//    		RD_Sub_Del_ID_Group(CFG_MODEL_SUB_ADD, ID_Group);
 //    	}
-
+    	/*------------------------------------------------------------*/
 
         int add_ok = 0;
         #if (0 == VIRTUAL_ADDR_STAND_ALONE_SIZE_EN)
@@ -803,12 +803,12 @@ u8 mesh_cmd_sig_cfg_model_sub_set2(u16 op, u16 sub_adr, u8 *uuid, model_common_t
 		#endif
     }else if((CFG_MODEL_SUB_DEL == op)||(CFG_MODEL_SUB_VIRTUAL_ADR_DEL == op)){
 
+    	/*-------------------------RD_EDIT:del ID group------------------------------*/
 //    	if(count_check_sub_gr == 1){
-//        	Flash_Save_MS58.Call_Group.flag_on_off_group = 0; //RD_EDIT:delete ID group
-//        	Flash_Save_MS58.Call_Group.ID_Group = 0x0000;
-//        	RD_Write_Flash_MS58(); // RD_EDIT luu data ms58 flash
-//        	RD_LOG("delete group id: %d\n", Flash_Save_MS58.Call_Group.ID_Group);
+//    		uint8_t ID_Group = sub_adr & 0xff;
+//    		RD_Sub_Del_ID_Group(CFG_MODEL_SUB_DEL, ID_Group);
 //    	}
+    	/*-------------------------------------------------------*/
 
 		#if (0 == VIRTUAL_ADDR_STAND_ALONE_SIZE_EN)
         foreach(i,SUB_LIST_MAX){
