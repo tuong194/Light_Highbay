@@ -173,7 +173,6 @@ int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len,
 		//uart_Csend("0x0582 wrong header\n");
 		break;
 	}
-	cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
 
 	return 0;
 }
@@ -211,7 +210,7 @@ static void RD_Handle_Config_LOT(uint8_t *par) {
 	RD_LOG("lot: 0x%02X 0x%02X 0x%02X 0x%02X\n",lot[0], lot[1], lot[2], lot[3]);
 #endif
 	RD_Mess_Config_MS58(gain, delta, lot);
-
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
 }
 
 static void RD_Handle_Config_Sensitive(uint8_t *par) {
@@ -244,6 +243,7 @@ static void RD_Handle_Config_Sensitive(uint8_t *par) {
 	lot[3] = Flash_Save_MS58.parMS58.lot[3];
 
 	RD_Mess_Config_MS58(gain, delta, lot);
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
 }
 static void RD_Handle_Min_Max_Lightness(uint8_t *par) {
 	Flash_Save_MS58.lightness_max = par[3] * 0xffff / 100;
@@ -251,6 +251,7 @@ static void RD_Handle_Min_Max_Lightness(uint8_t *par) {
 	RD_Write_Flash_MS58();
 
 	RD_rsp_packing_lot(&par[0]);
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
 	mesh_tx_cmd2normal_primary(op_rsp_packing_lot, par, 5,
 			packing_lot_addr, 2);
 
@@ -269,6 +270,7 @@ static void RD_Handle_Set_Mode_Rada(uint8_t mode) {
 	}
 
 	RD_Write_Flash_MS58();
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
 
 #if RD_LOG_UART
 	RD_LOG("set mode rada: 0x%02X\n", Flash_Save_MS58.mode);
@@ -284,6 +286,7 @@ static void RD_Handle_Set_Startup_Rada(uint8_t mode_start) {
 		Flash_Save_MS58.start_status = KEEP_STATUS;
 	}
 	RD_Write_Flash_MS58();
+	cfg_led_event(LED_EVENT_FLASH_1HZ_1S); // nhay 1 phat
 
 #if RD_LOG_UART
 	RD_LOG("set startup rada: 0x%02X\n", Flash_Save_MS58.start_status);
