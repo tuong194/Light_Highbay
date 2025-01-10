@@ -32,6 +32,7 @@
 #include "../mesh/RD_Lib.h"
 #include "../TUONG/RD_Secure.h"
 #include "../TUONG/RD_Type_Device.h"
+#include "../TUONG/MS58.h"
 
 extern void RD_LOG(const char *format, ...);
 
@@ -669,6 +670,7 @@ void kick_out(int led_en){
 	RD_Clean_Flash_Type();
 	RD_Flash_Reset_Config_MS58(); // reset rada
 	RD_Write_Flash_MS58();
+	//RD_Init_Config_MS58();
 
     #if !WIN32
     if(led_en){
