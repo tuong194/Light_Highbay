@@ -11,7 +11,7 @@
 
 
 #define RD_LOG_UART         0
-#define TRAINING_EN         1
+#define TRAINING_EN         0
 
 #define NAME				HIGHTBAY_RADA
 

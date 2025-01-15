@@ -204,6 +204,62 @@ void RD_rada_rsp_gw(uint8_t stt){
 	}
 	mesh_tx_cmd2normal_primary(RD_RSP_STT_RADA, BuffRec, 6, GW_addr, 1);
 }
+/*
+void RD_on_light(void){
+	static u32 time_motion_ms = 0;
+	if(is_motion() && flag_on_off.flag_check_motion == NO_MOTION){
+		time_motion_ms = clock_time_ms();
+		if(time_motion_ms >= 0xfffffff0) time_motion_ms = 0;
+		flag_on_off.flag_check_motion = MOTION;
+		flag_on_off.flag_on_off_from_mesh = 1;
+		flag_on_off.flag_check_ok = 0;
+	}
+	if(clock_time_exceed_ms(time_motion_ms, TIME_DELAY_ON) && flag_on_off.flag_check_motion == MOTION && flag_on_off.flag_on_off_from_mesh == 1){
+		if(is_motion()){
+			if(!flag_on_off.flag_check_ok){
+				RD_rada_rsp_gw(1);
+				Rada_send_onoff_light();
+				if(Flash_Save_MS58.Call_Scene.on_off[1] == 1){
+					call_scene_from_rada(1);
+				}
+				flag_on_off.flag_check_ok = 1;
+			}
+			RD_set_lightness(Flash_Save_MS58.lightness_max);
+
+		}else{
+			flag_on_off.flag_on_off_from_mesh = 0;
+			flag_on_off.flag_check_motion = NO_MOTION;
+		}
+	}
+}
+
+void RD_off_light(void){
+	static u32 time_no_motion_ms = 0;
+	if(is_motion() == 0 && flag_on_off.flag_check_motion == MOTION){
+		time_no_motion_ms = clock_time_ms();
+		if(time_no_motion_ms >= 0xfffffff0) time_no_motion_ms = 0;
+		flag_on_off.flag_check_motion = NO_MOTION;
+		flag_on_off.flag_on_off_from_mesh = 1;
+		flag_on_off.flag_check_ok = 0;
+
+	}
+	if(clock_time_exceed_ms(time_no_motion_ms, TIME_DELAY_OFF) && flag_on_off.flag_check_motion == NO_MOTION && flag_on_off.flag_on_off_from_mesh == 1){
+		if(!is_motion()){
+			if(!flag_on_off.flag_check_ok){
+				RD_rada_rsp_gw(0);
+				if(Flash_Save_MS58.Call_Scene.on_off[0] == 1){
+					call_scene_from_rada(0);
+				}
+				flag_on_off.flag_check_ok = 1;
+			}
+			RD_set_lightness(Flash_Save_MS58.lightness_min);
+		}else{
+			flag_on_off.flag_on_off_from_mesh = 0;
+			flag_on_off.flag_check_motion = MOTION;
+		}
+	}
+}
+*/
 
 void RD_on_light(void){
 	static u32 time_motion_ms = 0;
@@ -228,7 +284,6 @@ void RD_on_light(void){
 			flag_on_off.flag_on_off_from_mesh = 0;
 			flag_on_off.flag_check_motion = NO_MOTION;
 		}
-
 	}
 }
 

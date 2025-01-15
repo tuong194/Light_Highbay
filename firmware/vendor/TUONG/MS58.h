@@ -38,6 +38,7 @@ typedef struct{
 	u8 flag_check_motion;
 	u8 flag_on_off_from_rada; // ppacking lot
 	u8 flag_on_off_from_mesh;
+	u8 flag_check_ok;
 }flag_on_off_light_t;
 
 extern flag_on_off_light_t flag_on_off;
