@@ -72,7 +72,7 @@ extern "C" {
 #endif
 #endif
 
-#define APP_FLASH_PROTECTION_ENABLE     1
+#define APP_FLASH_PROTECTION_ENABLE     0   //RD_EDIT disable => OTA very good
 
 //////////// product  Information  //////////////////////////////
 #define ID_VENDOR				0x248a			// for report

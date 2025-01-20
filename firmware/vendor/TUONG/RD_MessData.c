@@ -28,6 +28,7 @@ uint8_t *BuffRec;
 uint16_t RD_GATEWAY_ADDR = 0x0001;
 
 _Bool flag_kickout_all = FALSE;
+extern _Bool flag_training_2;
 
 //static void RD_Handle_Select_Rada(uint8_t on_off_mess);
 static void RD_Handle_Config_LOT(uint8_t *par);
@@ -130,6 +131,16 @@ int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par) {
 		}
 
 		break;
+	}
+	return 0;
+}
+
+int RD_Messenger_Training_2(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par){
+	if(get_provision_state() == STATE_DEV_UNPROV){
+		flag_training_2 = TRUE;
+		flash_save_training.rd_flag_test_mode = 1;
+	}else{
+		flag_training_2 = FALSE;
 	}
 	return 0;
 }
@@ -293,7 +304,7 @@ static void RD_Handle_Set_Startup_Rada(uint8_t mode_start) {
 #endif
 }
 
-static void RD_Handle_Set_Group(uint8_t *par, mesh_cb_fun_par_t *cb_par){
+static void RD_Handle_Set_Group(uint8_t *par, mesh_cb_fun_par_t *cb_par){ // chi call 1 group cuoi cung
 	uint16_t Group_ID = (par[4]<<8) | par[3];
 	uint16_t Opcode_Group = (par[6]<<8) | par[5];
 
@@ -312,7 +323,7 @@ static void RD_Handle_Set_Group(uint8_t *par, mesh_cb_fun_par_t *cb_par){
 			Flash_Save_MS58.Call_Group.ID_Group[i] = Group_ID & 0xff;
 		}
 		RD_Write_Flash_MS58();
-		//RD_LOG("set group id: 0x%02X\n", Group_ID & 0xff);
+		//RD_LOG("parkinglot set group id: 0x%02X\n", Group_ID & 0xff);
 
 		parGroup[0] = cb_par_g->adr_dst & 0xff;
 		parGroup[1] = cb_par_g->adr_dst >>8 & 0xff;
@@ -330,6 +341,7 @@ static void RD_Handle_Set_Group(uint8_t *par, mesh_cb_fun_par_t *cb_par){
 			}
 		}
 		RD_Write_Flash_MS58();
+		//RD_LOG("parkinglot del group id: 0x%02X\n", Group_ID & 0xff);
 
 		parGroup[0] = cb_par_g->adr_dst & 0xff;
 		parGroup[1] = cb_par_g->adr_dst >>8 & 0xff;

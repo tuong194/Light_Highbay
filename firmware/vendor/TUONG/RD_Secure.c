@@ -104,7 +104,7 @@ void Kickout_Security(void) {
 //		if(vrs_time_bindall >= 0xfffffffe) vrs_time_bindall = 0;
 //	}
 
-	if (flag_provision == TRUE && rd_check_ota == FALSE) { // OTA not kickout
+	if (flag_provision == TRUE && rd_check_ota == FALSE) { //rd_check_ota == TRUE => OTA not kickout
 		if (flash_save_secure.flag_process_aes == NO_MESS && clock_time_s() - vrs_time_bindall > 120) { // ko co ban tin
 			flag_provision = FALSE;
 			flash_save_secure.flag_process_aes = NO_MESS;

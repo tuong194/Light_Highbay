@@ -146,7 +146,12 @@ void Rada_send_onoff_light(void){
 	memcpy(buff_send, Flash_Save_MS58.Call_Group.ID_Group, 8);
 	if(Flash_Save_MS58.mode == AUTO){
 		mesh_tx_cmd2normal_primary(0xE4, buff_send, 8, 0xffff, 2);
-		//mesh_tx_cmd2normal_primary(0x52, buff_send, 8, 0x0001, 2);
+
+//		RD_LOG("call group: ");
+//		for(u8 i= 0; i<8; i++){
+//			RD_LOG("0x%02X ", buff_send[i]);
+//		}
+//		RD_LOG("\n");
 	}
 }
 
@@ -185,7 +190,6 @@ void call_scene_from_rada(uint8_t is_motion){
 		tid = (u8)(Flash_Save_MS58.Call_Scene.ID_Scene[1] + Flash_Save_MS58.Call_Scene.on_off[1]);
 	}
 	RD_Call_Scene(scene_id, tid);
-
 }
 
 void RD_rada_rsp_gw(uint8_t stt){

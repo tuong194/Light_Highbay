@@ -64,6 +64,7 @@ extern u32 time_reset_flag_gr;
 
 int RD_Messenger_Mess(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par);
 int RD_mesh_cmd_sig_lightness_linear_set(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par);
+int RD_Messenger_Training_2(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par);
 int RD_Control_Group_By_SENSOR(u8 *par, int par_len, mesh_cb_fun_par_t * cb_par);
 uint16_t saveGatewayAddr(uint8_t *para, uint16_t srcAddr);
 void RD_Mess_Config_MS58(uint8_t gain, uint8_t delta[2], uint8_t lot[4]);

@@ -14,6 +14,7 @@ int count = 0;
 int temp_train = 0;
 _Bool flag_start_training = TRUE;
 
+_Bool flag_training_2 = FALSE;
 
 u16 time_s = 0;
 u16 time_s_old = 0;
@@ -69,7 +70,17 @@ void Start_Training(void){
 	}
 }
 
-void RD_Training(void){
+void loop_training(void){
+	if(flash_save_training.step < 5){
+		RD_Training1();
+	}
+	else if(flash_save_training.step == 5){
+		RD_Training2();
+	}
+}
+
+
+void RD_Training1(void){
 	mesh_adv_prov_link_close();
 	if(time_m != flash_save_training.minute && flag_start_training == FALSE){
 		if(flash_save_training.minute < 10){
@@ -96,6 +107,25 @@ void RD_Training(void){
 			time_s_old = time_s;
 			count++;
 			//RD_LOG("time second: %d\n", time_s);
+			if(count == 2){
+				count = 0;
+				temp_train++;
+				if(temp_train == 1){
+					RD_set_lightness_training(20);
+				}else if(temp_train == 2){
+					temp_train = 0;
+					RD_set_lightness_training(100);
+				}
+			}
+		}
+	}
+}
+
+void RD_Training2(void){
+	if(flag_training_2){
+		if(time_s_old != time_s){
+			time_s_old = time_s;
+			count++;
 			if(count == 2){
 				count = 0;
 				temp_train++;

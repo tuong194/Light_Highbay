@@ -820,10 +820,10 @@ static void RALI_Handle_Set_Mode_Rada(uint8_t mode) {
 }
 
 static void RALI_Handle_Set_Scene_Rada(u8 *par){
-	if(par[4] == 0xA0){ // co chuyen dong : call scene ID_Scene[1]
+	if(par[4] & 0x80){ // co chuyen dong : call scene ID_Scene[1]
 		Flash_Save_MS58.Call_Scene.on_off[1] = 1;
 		Flash_Save_MS58.Call_Scene.ID_Scene[1] = (par[3] << 8) | par[2];
-	}else if(par[4] == 0x20){ // ko co chuyen dong : call scene ID_Scene[0]
+	}else if(!(par[4] >> 7)){ // ko co chuyen dong : call scene ID_Scene[0]
 		Flash_Save_MS58.Call_Scene.on_off[0] = 1;
 		Flash_Save_MS58.Call_Scene.ID_Scene[0] = (par[3] << 8) | par[2];
 	}

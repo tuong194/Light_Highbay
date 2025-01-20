@@ -80,11 +80,16 @@ void RD_Flash_Reset_Config_MS58(void){
 	Flash_Save_MS58.parMS58.lot[1] = 0x00;
 	Flash_Save_MS58.parMS58.lot[2] = 0xEA;  //
 	Flash_Save_MS58.parMS58.lot[3] = 0x60;
+
+	Flash_Save_MS58.Call_Scene.on_off[0] = 0;
+	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
+	Flash_Save_MS58.Call_Scene.ID_Scene[0] = 0x0000;
+	Flash_Save_MS58.Call_Scene.ID_Scene[1] = 0x0000;
+
 	for(u8 i=0; i< RD_MAX_NUM_GROUP; i++){
 		Flash_Save_MS58.Call_Group.ID_Group[i] = 0xff;
 	}
-	Flash_Save_MS58.Call_Scene.on_off[0] = 0;
-	Flash_Save_MS58.Call_Scene.on_off[1] = 0;
+
 }
 void RD_Flash_Clean_MS58(void){
 	Flash_Save_MS58.user[0] = RD_CHECK_FLASH_H;
@@ -167,8 +172,9 @@ void RD_Flash_Clean_Training(void){
 void Init_Flash_Training(void){
 #if TRAINING_EN
 	flash_read_page(RD_TRAINING_FLASH_AREA, RD_TRAINING_FLASH_SIZE, (unsigned char *)(&flash_save_training.User[0]));
-	if(flash_save_training.step == 4){
+	if(flash_save_training.step >= 4){
 		flash_save_training.rd_flag_test_mode = 0;
+		flash_save_training.step = 5;
 	}
 	if(flash_save_training.User[0] != RD_CHECK_FLASH_H && flash_save_training.User[1] != RD_CHECK_FLASH_L &&
 		flash_save_training.User[2] != RD_CHECK_FLASH_H && flash_save_training.User[3] != RD_CHECK_FLASH_L){

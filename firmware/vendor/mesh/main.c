@@ -262,7 +262,7 @@ _attribute_ram_code_ int main (void)    //must run in ramcode
 
 		if(flash_save_training.rd_flag_test_mode == 1){
 			Start_Training();
-			RD_Training();
+			loop_training();
 		}else{
 			loop_rada();
 			check_done_provision();

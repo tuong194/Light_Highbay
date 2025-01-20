@@ -25,6 +25,8 @@ extern u16 time_s;
 
 void RD_Kickout_All(void);
 void Start_Training(void);
-void RD_Training(void);
+void loop_training(void);
+void RD_Training1(void);
+void RD_Training2(void);
 
 #endif /* RD_TRAINING_H_ */
