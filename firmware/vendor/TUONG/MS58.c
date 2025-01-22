@@ -267,7 +267,7 @@ void RD_off_light(void){
 
 void RD_on_light(void){
 	static u32 time_motion_ms = 0;
-	if(is_motion() && flag_on_off.flag_check_motion == NO_MOTION){
+	if(is_motion() && flag_on_off.flag_check_motion == NO_MOTION && flag_on_off.flag_on_off_from_mesh == 0){
 		//uart_Csend("co chuyen dong\n");
 		time_motion_ms = clock_time_ms();
 		if(time_motion_ms >= 0xfffffff0) time_motion_ms = 0;
@@ -282,18 +282,19 @@ void RD_on_light(void){
 		}
 	}
 	if(clock_time_exceed_ms(time_motion_ms, TIME_DELAY_ON) && flag_on_off.flag_check_motion == MOTION && flag_on_off.flag_on_off_from_mesh == 1){
-		if(is_motion()){
-			RD_set_lightness(Flash_Save_MS58.lightness_max);
-		}else{
-			flag_on_off.flag_on_off_from_mesh = 0;
-			flag_on_off.flag_check_motion = NO_MOTION;
-		}
+		RD_set_lightness(Flash_Save_MS58.lightness_max);
+//		if(is_motion()){
+//			RD_set_lightness(Flash_Save_MS58.lightness_max);
+//		}else{
+//			flag_on_off.flag_on_off_from_mesh = 0;
+//			flag_on_off.flag_check_motion = NO_MOTION;
+//		}
 	}
 }
 
 void RD_off_light(void){
 	static u32 time_no_motion_ms = 0;
-	if(is_motion() == 0 && flag_on_off.flag_check_motion == MOTION){
+	if(is_motion() == 0 && flag_on_off.flag_check_motion == MOTION && flag_on_off.flag_on_off_from_mesh == 0){
 		//uart_Csend("ko co chuyen dong\n");
 		time_no_motion_ms = clock_time_ms();
 		if(time_no_motion_ms >= 0xfffffff0) time_no_motion_ms = 0;
@@ -306,12 +307,13 @@ void RD_off_light(void){
 		}
 	}
 	if(clock_time_exceed_ms(time_no_motion_ms, TIME_DELAY_OFF) && flag_on_off.flag_check_motion == NO_MOTION && flag_on_off.flag_on_off_from_mesh == 1){
-		if(!is_motion()){
-			RD_set_lightness(Flash_Save_MS58.lightness_min);
-		}else{
-			flag_on_off.flag_on_off_from_mesh = 0;
-			flag_on_off.flag_check_motion = MOTION;
-		}
+		RD_set_lightness(Flash_Save_MS58.lightness_min);
+//		if(!is_motion()){
+//			RD_set_lightness(Flash_Save_MS58.lightness_min);
+//		}else{
+//			flag_on_off.flag_on_off_from_mesh = 0;
+//			flag_on_off.flag_check_motion = MOTION;
+//		}
 	}
 }
 

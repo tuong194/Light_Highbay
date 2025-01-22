@@ -28,7 +28,7 @@ void RD_set_lightness_training(u8 lightness_100){
 }
 
 void Start_Training(void){
-	if(flag_start_training == TRUE){
+	if(flag_start_training == TRUE && flash_save_training.step < 5){
 		mesh_adv_prov_link_close();
 		if(flash_save_training.step == 1){
 			if(time_s <= 4){
@@ -123,6 +123,7 @@ void RD_Training1(void){
 
 void RD_Training2(void){
 	if(flag_training_2){
+		mesh_adv_prov_link_close();
 		if(time_s_old != time_s){
 			time_s_old = time_s;
 			count++;
@@ -130,7 +131,7 @@ void RD_Training2(void){
 				count = 0;
 				temp_train++;
 				if(temp_train == 1){
-					RD_set_lightness_training(20);
+					RD_set_lightness_training(0);
 				}else if(temp_train == 2){
 					temp_train = 0;
 					RD_set_lightness_training(100);
