@@ -323,6 +323,11 @@ void loop_rada(void){
 	if(clock_time_exceed_ms(time_start_loop, TIME_DELAY_START) && first_check_loop == FALSE){
 		flag_loop_rada = TRUE;
 		first_check_loop = TRUE;
+		if(is_motion()){
+			flag_on_off.flag_check_motion = NO_MOTION;
+		}else{
+			flag_on_off.flag_check_motion = MOTION;
+		}
 	}
 	if(flag_loop_rada == TRUE && rd_check_ota == FALSE){
 		RD_on_light();
